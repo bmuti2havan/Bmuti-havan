@@ -1763,8 +1763,36 @@ document.addEventListener("DOMContentLoaded", function() {
     // Enlem bandı güney hemisfer mi?
     const _SOUTH_BANDS = 'CDEFGHJKLM';
 
+    // ── MGRS FORMAT NORMALİZASYON ──────────────────────────────────────────
+    // "37SBV8905958179", "37sdg3456726899", "37S BV89059 58179" gibi
+    // tüm formatları standart "37S BV 89059 58179" haline getirir
+    function normalizeMgrs(raw) {
+        var s = raw.trim().toUpperCase().replace(/[-,]+/g,'').replace(/\s+/g,' ').trim();
+        var m;
+        // P1: "37S BV 89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P2: "37SBV 89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P3: "37SBV89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P4: "37S BV8905958179"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2})(\d{8,10})$/);
+        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        // P5: "37SBV8905958179"
+        m = s.match(/^(\d{1,2})([A-Z])([A-Z]{2})(\d{8,10})$/);
+        if (m) { var d=m[4],mid=Math.floor(d.length/2); return m[1]+m[2]+' '+m[3]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        // P6: "37S DG 3456726899"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{8,10})$/);
+        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        return raw; // değiştiremedik, olduğu gibi bırak
+    }
+
     function mgrsToUtm(gridStr) {
-        // Trim + büyük harf
+        // Normalize format first (handle boşluksuz yazım etc.)
+        gridStr = normalizeMgrs(gridStr);
         const s = gridStr.trim().toUpperCase().replace(/\s+/g, ' ');
         const parts = s.split(' ');
         if (parts.length < 4) return null;
