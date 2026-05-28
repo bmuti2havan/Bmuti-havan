@@ -134,6 +134,36 @@ body {
   background: #f0cc80 !important;
   animation: none !important;
 }
+.konvoy-header-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(16,185,129,0.15) !important;
+  color: #6ee7b7 !important;
+  border: 1.5px solid rgba(16,185,129,0.4) !important;
+  padding: 7px 14px !important;
+  border-radius: 7px !important;
+  font-family: inherit !important;
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: .15s !important;
+}
+.konvoy-header-btn:hover { background: rgba(16,185,129,0.25) !important; }
+.kv-yon {
+  padding:8px 4px;border:1.5px solid #d0d5dd;border-radius:8px;
+  background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;
+  color:#344054;cursor:pointer;text-align:center;transition:all .15s;
+}
+.kv-yon:hover  { border-color:#1d2b45;background:#f5f6f8;color:#1d2b45; }
+.kv-yon.active { border-color:#1d2b45;background:#1d2b45;color:#fff; }
+.kv-dk {
+  padding:6px 14px;border:1.5px solid #d0d5dd;border-radius:99px;
+  background:#fff;font-family:inherit;font-size:.78rem;font-weight:700;
+  color:#344054;cursor:pointer;transition:all .15s;
+}
+.kv-dk:hover  { border-color:#1d2b45;color:#1d2b45; }
+.kv-dk.active { border-color:#1d2b45;background:#1d2b45;color:#fff; }
 .ai-header-btn {
   display: flex !important;
   align-items: center !important;
@@ -617,6 +647,103 @@ tr:nth-child(even) td { background: var(--c-bg); }
         </div>
       </div>
 
+      <!-- KONVOY BÖLÜMÜ -->
+      <div class="section-title fn-toggle" id="konvoyToggle"><span>🚗 Konvoy Hedef</span><span class="section-icon" id="konvoyIcon">▸</span></div>
+      <div class="accordion-content" id="konvoyContent">
+        <div class="param-group">
+
+          <div id="kvSistemBilgiLeft" style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:7px 10px;font-size:.72rem;color:#166534;margin-bottom:6px;">
+            Ana sistemde hesap yapınca veriler otomatik dolar.
+          </div>
+
+          <div class="param-row">
+            <label>Konvoy Koordinatı (MGRS)</label>
+            <input type="text" id="kvGrid" placeholder="Hedef grid otomatik alınır">
+          </div>
+          <div class="param-row">
+            <label>Hız (km/h)</label>
+            <input type="number" id="kvHiz" value="70" min="1" max="300" step="5">
+          </div>
+          <div class="param-row">
+            <label>Uçuş Süresi (sn) <span style="color:#059669;font-size:.65rem;">● otomatik</span></label>
+            <input type="number" id="kvUcus" placeholder="Hesaplamadan alınır" style="background:#f0fdf4;">
+          </div>
+
+          <div class="param-row">
+            <label>Hareket Yönü</label>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:4px;">
+              <button class="kv-yon" data-mil="5600" onclick="kvSecYon(this)">↖ KBatı</button>
+              <button class="kv-yon" data-mil="0"    onclick="kvSecYon(this)">↑ Kuzey</button>
+              <button class="kv-yon" data-mil="800"  onclick="kvSecYon(this)">↗ KDoğu</button>
+              <button class="kv-yon" data-mil="4800" onclick="kvSecYon(this)">← Batı</button>
+              <button class="kv-yon" style="visibility:hidden;" disabled></button>
+              <button class="kv-yon" data-mil="1600" onclick="kvSecYon(this)">→ Doğu</button>
+              <button class="kv-yon" data-mil="4000" onclick="kvSecYon(this)">↙ GBatı</button>
+              <button class="kv-yon" data-mil="3200" onclick="kvSecYon(this)">↓ Güney</button>
+              <button class="kv-yon" data-mil="2400" onclick="kvSecYon(this)">↘ GDoğu</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+              <span style="font-size:.68rem;color:#667085;">Manuel (mil):</span>
+              <input type="number" id="kvManuelYon" placeholder="0–6400" min="0" max="6400"
+                style="width:90px;padding:6px 8px;border:1.5px solid var(--c-border);border-radius:6px;font-family:inherit;font-size:.78rem;outline:none;"
+                oninput="kvSecYonManuel(this.value)">
+            </div>
+          </div>
+
+          <button onclick="kvHesapla()" class="btn btn-primary" style="width:100%;margin-top:4px;">🎯 Konvoy Hesapla (3 Namlu)</button>
+
+          <!-- Sonuç: 3 namlu -->
+          <div id="kvSonucBlok" style="display:none;margin-top:8px;">
+            <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#667085;margin-bottom:5px;">🎯 3 Namlu Koordinatları (40m aralık)</div>
+            <div id="kvNamlu1" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
+              <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 1 — Konvoy Başı</div>
+              <div id="kvN1Grid" style="font-size:.85rem;font-weight:700;color:#e5bc66;font-family:'DM Mono',monospace;"></div>
+            </div>
+            <div id="kvNamlu2" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
+              <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 2 — Konvoy Ortası</div>
+              <div id="kvN2Grid" style="font-size:.85rem;font-weight:700;color:#4ade80;font-family:'DM Mono',monospace;"></div>
+            </div>
+            <div id="kvNamlu3" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:6px;">
+              <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 3 — Konvoy Sonu</div>
+              <div id="kvN3Grid" style="font-size:.85rem;font-weight:700;color:#f97316;font-family:'DM Mono',monospace;"></div>
+            </div>
+            <div id="kvBilgiSatir" style="font-size:.7rem;color:#667085;background:#f5f6f8;border-radius:5px;padding:5px 8px;"></div>
+          </div>
+
+          <!-- Zaman tablosu butonları -->
+          <div style="margin-top:10px;border-top:1px solid var(--c-border);padding-top:8px;">
+            <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#344054;margin-bottom:5px;">⏱ Zaman Tablosu</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <button class="kv-dk" onclick="kvSecDk(this,1)">1 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,2)">2 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,3)">3 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,4)">4 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,5)">5 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,6)">6 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,7)">7 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,8)">8 dk</button>
+              <button class="kv-dk" onclick="kvSecDk(this,9)">9 dk</button>
+            </div>
+          </div>
+
+          <div id="kvTabloLeft" style="display:none;margin-top:6px;overflow-x:auto;">
+            <div id="kvTabloTitleLeft" style="font-size:.65rem;color:#667085;font-weight:600;margin-bottom:4px;"></div>
+            <table style="width:100%;border-collapse:collapse;font-size:.7rem;">
+              <thead>
+                <tr style="background:#f5f6f8;">
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Zaman</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Mesafe</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Baş (N1)</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Orta (N2)</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Son (N3)</th>
+                </tr>
+              </thead>
+              <tbody id="kvTabloBodyLeft"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div class="section-title fn-toggle" id="demetToggle"><span>💥 Demetler</span><span class="section-icon" id="demetIcon">▸</span></div>
       <div class="accordion-content" id="demetContent">
         <div class="param-group">
@@ -723,6 +850,128 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
 
 
+
+
+<!-- KONVOY MODALİ -->
+<div id="konvoyModal" style="display:none;position:fixed;inset:0;background:rgba(16,24,40,.85);
+     backdrop-filter:blur(8px);z-index:600;align-items:center;justify-content:center;padding:12px;overflow-y:auto;">
+  <div style="background:#fff;border-radius:14px;max-width:500px;width:100%;
+              box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden;max-height:92vh;display:flex;flex-direction:column;">
+
+    <div style="background:#1d2b45;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" style="width:26px;height:26px;">
+          <defs><radialGradient id="kdg" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></radialGradient></defs>
+          <path d="M14 3C14 3,7 11,7 16C7 19.9 10.1 23 14 23C17.9 23 21 19.9 21 16C21 11 14 3 14 3Z" fill="url(#kdg)">
+            <animate attributeName="d" dur="3s" repeatCount="indefinite"
+              values="M14 3C14 3,7 11,7 16C7 19.9 10.1 23 14 23C17.9 23 21 19.9 21 16C21 11 14 3 14 3Z;M14 2C14 2,6 10,6 15.5C6 19.8 9.7 23 14 23C18.3 23 22 19.8 22 15.5C22 10 14 2 14 2Z;M14 3C14 3,7 11,7 16C7 19.9 10.1 23 14 23C17.9 23 21 19.9 21 16C21 11 14 3 14 3Z"/>
+          </path>
+        </svg>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:.92rem;">🚗 Konvoy Hedef Hesabı</div>
+          <div style="color:rgba(255,255,255,.4);font-size:.65rem;">Hareketli Hedef · Ana Sistemle Entegre</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('konvoyModal').style.display='none'"
+        style="background:rgba(255,255,255,.1);border:none;color:#fff;width:30px;height:30px;border-radius:7px;font-size:1rem;cursor:pointer;">✕</button>
+    </div>
+
+    <div style="overflow-y:auto;padding:16px;flex:1;">
+
+      <!-- Ana sistemden alınan değerler -->
+      <div id="kvSistemBilgi" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:#166534;">
+        <div style="font-weight:700;margin-bottom:4px;">📡 Ana Sistemden Alınan Değerler</div>
+        <div id="kvSistemText">Henüz hesaplama yapılmadı — önce ana sistemde hesap yapın.</div>
+      </div>
+
+      <div style="margin-bottom:11px;">
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#344054;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Konvoyun Mevcut Koordinatı (MGRS)</label>
+        <input type="text" id="kvGrid" placeholder="37S BV 91000 55000"
+          style="width:100%;padding:9px 12px;border:1.5px solid #d0d5dd;border-radius:8px;font-family:inherit;font-size:.88rem;outline:none;">
+        <div style="font-size:.68rem;color:#667085;margin-top:3px;">Hedef koordinatından farklıysa manuel girin</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px;">
+        <div>
+          <label style="display:block;font-size:.7rem;font-weight:700;color:#344054;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Hız (km/h)</label>
+          <input type="number" id="kvHiz" placeholder="70" min="1" max="300" value="70"
+            style="width:100%;padding:9px 12px;border:1.5px solid #d0d5dd;border-radius:8px;font-family:inherit;font-size:.88rem;outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:.7rem;font-weight:700;color:#344054;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Uçuş Süresi (sn)</label>
+          <input type="number" id="kvUcus" placeholder="Ana sistemden alınır" min="1" max="120"
+            style="width:100%;padding:9px 12px;border:1.5px solid #d0d5dd;border-radius:8px;font-family:inherit;font-size:.88rem;outline:none;background:#f0fdf4;">
+        </div>
+      </div>
+
+      <div style="margin-bottom:13px;">
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#344054;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Hareket Yönü</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <button class="kv-yon" data-mil="5600" onclick="kvSecYon(this)">↖ Kuzeybatı</button>
+          <button class="kv-yon" data-mil="0"    onclick="kvSecYon(this)">↑ Kuzey</button>
+          <button class="kv-yon" data-mil="800"  onclick="kvSecYon(this)">↗ Kuzeydoğu</button>
+          <button class="kv-yon" data-mil="4800" onclick="kvSecYon(this)">← Batı</button>
+          <button class="kv-yon empty" disabled style="visibility:hidden;"></button>
+          <button class="kv-yon" data-mil="1600" onclick="kvSecYon(this)">→ Doğu</button>
+          <button class="kv-yon" data-mil="4000" onclick="kvSecYon(this)">↙ Güneybatı</button>
+          <button class="kv-yon" data-mil="3200" onclick="kvSecYon(this)">↓ Güney</button>
+          <button class="kv-yon" data-mil="2400" onclick="kvSecYon(this)">↘ Güneydoğu</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:7px;">
+          <span style="font-size:.7rem;color:#667085;">Manuel (milyem):</span>
+          <input type="number" id="kvManuelYon" placeholder="0–6400" min="0" max="6400"
+            style="width:110px;padding:7px 10px;border:1.5px solid #d0d5dd;border-radius:7px;font-family:inherit;font-size:.82rem;outline:none;"
+            oninput="kvSecYonManuel(this.value)">
+        </div>
+      </div>
+
+      <button onclick="kvHesapla()"
+        style="width:100%;padding:11px;background:#1d2b45;color:#fff;border:none;border-radius:9px;
+               font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;">
+        🎯 Hesapla
+      </button>
+
+      <div id="kvSonucAna" style="display:none;background:#1d2b45;border-radius:10px;padding:13px 15px;margin-bottom:10px;">
+        <div style="font-size:.65rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">🎯 Atış Yapılacak Koordinat</div>
+        <div id="kvSonucGrid" style="font-size:1.1rem;font-weight:700;color:#e5bc66;font-family:'Courier New',monospace;"></div>
+        <div id="kvSonucSub" style="font-size:.73rem;color:rgba(255,255,255,.5);margin-top:5px;"></div>
+      </div>
+
+      <div id="kvUyari" style="display:none;background:#fff8e6;border:1.5px solid #fec84b;border-radius:8px;padding:9px 12px;font-size:.75rem;color:#b54708;margin-bottom:10px;"></div>
+
+      <div style="border-top:1px solid #e4e7ec;padding-top:12px;">
+        <label style="display:block;font-size:.7rem;font-weight:700;color:#344054;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">⏱ Zaman Tablosu</label>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">
+          <button class="kv-dk" onclick="kvSecDk(this,1)">1 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,2)">2 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,3)">3 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,4)">4 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,5)">5 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,6)">6 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,7)">7 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,8)">8 dk</button>
+          <button class="kv-dk" onclick="kvSecDk(this,9)">9 dk</button>
+        </div>
+        <div id="kvTablo" style="display:none;">
+          <div id="kvTabloTitle" style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#667085;margin-bottom:6px;"></div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:.76rem;">
+              <thead>
+                <tr style="background:#f5f6f8;">
+                  <th style="padding:7px 8px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#667085;border-bottom:1.5px solid #e4e7ec;">Zaman</th>
+                  <th style="padding:7px 8px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#667085;border-bottom:1.5px solid #e4e7ec;">Mesafe</th>
+                  <th style="padding:7px 8px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#667085;border-bottom:1.5px solid #e4e7ec;">Koordinat</th>
+                  <th style="padding:7px 8px;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;color:#667085;border-bottom:1.5px solid #e4e7ec;">Not</th>
+                </tr>
+              </thead>
+              <tbody id="kvTabloBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </div><!-- /mortar-card -->
 
@@ -1240,6 +1489,232 @@ tr:nth-child(even) td { background: var(--c-bg); }
         return { lat: lat*180/Math.PI, lng: lng*180/Math.PI };
     }
 
+
+    // ── KONVOY SİSTEMİ ─────────────────────────────────────────────────────
+    let kvYonMil = null;
+    let kvSonHesap = null;
+
+    const kvYonAdlari = {
+        0:'Kuzey', 800:'Kuzeydoğu', 1600:'Doğu', 2400:'Güneydoğu',
+        3200:'Güney', 4000:'Güneybatı', 4800:'Batı', 5600:'Kuzeybatı'
+    };
+
+    function kvSecYon(btn) {
+        document.querySelectorAll('.kv-yon').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        kvYonMil = parseInt(btn.dataset.mil);
+        document.getElementById('kvManuelYon').value = '';
+    }
+
+    function kvSecYonManuel(val) {
+        document.querySelectorAll('.kv-yon').forEach(function(b){ b.classList.remove('active'); });
+        kvYonMil = parseInt(val) || 0;
+    }
+
+    function kvDoldurSistemden() {
+        var hedefGrid = document.getElementById('hedefGrid').value;
+        var kvGridEl  = document.getElementById('kvGrid');
+        if (hedefGrid && !kvGridEl.value) kvGridEl.value = hedefGrid;
+        if (typeof sonuc !== 'undefined' && sonuc && sonuc.ucusSuresi) {
+            document.getElementById('kvUcus').value = sonuc.ucusSuresi;
+        }
+        var kal    = (typeof currentCaliber !== 'undefined') ? currentCaliber + 'mm' : '—';
+        var ucus   = document.getElementById('kvUcus').value || '—';
+        var mesafe = (typeof sonuc !== 'undefined' && sonuc && sonuc.mesafe) ? sonuc.mesafe + 'm' : '—';
+        document.getElementById('kvSistemBilgiLeft').innerHTML =
+            '<b>' + kal + '</b> &nbsp;·&nbsp; Uçuş: <b>' + ucus + 'sn</b> &nbsp;·&nbsp; Mesafe: <b>' + mesafe + '</b>';
+    }
+
+    // Parse MGRS → {zone, band, sq, easting, northing}
+    function kvParseMgrs(mgrs) {
+        var s = mgrs.trim().toUpperCase().replace(/\s+/g,' ');
+        var p = s.split(' ');
+        if (p.length < 4) return null;
+        // p[0] = "37S" or "37" with separate band
+        var zoneStr = p[0];
+        var zone, band, sq, eL, nL;
+        if (/^\d+[A-Z]$/.test(zoneStr)) {
+            zone = parseInt(zoneStr);
+            band = zoneStr.slice(-1);
+            sq   = p[1];
+            eL   = parseInt(p[2]);
+            nL   = parseInt(p[3]);
+        } else if (/^\d+$/.test(zoneStr) && p.length >= 5) {
+            zone = parseInt(zoneStr);
+            band = p[1];
+            sq   = p[2];
+            eL   = parseInt(p[3]);
+            nL   = parseInt(p[4]);
+        } else { return null; }
+        var COL = ['ABCDEFGH','JKLMNPQR','STUVWXYZ'];
+        var ROW = 'ABCDEFGHJKLMNPQRSTUV';
+        var cSet = COL[(zone-1)%3];
+        var cIdx = cSet.indexOf(sq[0]);
+        var rIdx = ROW.indexOf(sq[1]);
+        if (cIdx < 0 || rIdx < 0) return null;
+        // S band min northing ~3,500,000 → cycles=1
+        var LAT_MIN = {'C':1100000,'D':2000000,'E':2800000,'F':3700000,'G':4600000,
+                       'H':5500000,'J':6400000,'K':7300000,'L':8200000,'M':9100000,
+                       'N':0,'P':900000,'Q':1800000,'R':2700000,'S':3600000,
+                       'T':4500000,'U':5400000,'V':6300000,'W':7200000,'X':8100000};
+        var minN   = LAT_MIN[band] || 0;
+        var cycles = Math.floor(minN / 2000000);
+        var northing = rIdx*100000 + nL + cycles*2000000;
+        if (northing < minN - 500000) northing += 2000000;
+        return { zone:zone, band:band, sq:sq, easting:(cIdx+1)*100000+eL, northing:northing };
+    }
+
+    function kvToMgrs(zone, sq, easting, northing) {
+        var COL = ['ABCDEFGH','JKLMNPQR','STUVWXYZ'];
+        var ROW = 'ABCDEFGHJKLMNPQRSTUV';
+        var cSet = COL[(zone-1)%3];
+        var cIdx = Math.floor(easting/100000)-1;
+        var cLet = cSet[((cIdx%8)+8)%8] || sq[0];
+        var rIdx = Math.floor((northing%2000000)/100000);
+        var rLet = ROW[rIdx%20] || sq[1];
+        var e5   = Math.round(easting%100000).toString().padStart(5,'0');
+        var n5   = Math.round(northing%100000).toString().padStart(5,'0');
+        return zone + 'S ' + cLet + rLet + ' ' + e5 + ' ' + n5;
+    }
+
+    function kvKoord(utm, hiz, yon, saniye) {
+        var hizMs = hiz * 1000 / 3600;
+        var mes   = hizMs * saniye;
+        var rad   = yon * 2 * Math.PI / 6400;
+        return {
+            easting:  utm.easting  + Math.sin(rad)*mes,
+            northing: utm.northing + Math.cos(rad)*mes,
+            mesafe: Math.round(mes)
+        };
+    }
+
+    function kvHesapla() {
+        var gridVal = document.getElementById('kvGrid').value.trim();
+        var hizVal  = parseFloat(document.getElementById('kvHiz').value);
+        var ucusVal = parseFloat(document.getElementById('kvUcus').value);
+
+        // Koordinat boşsa ana sistemden hedef grid'i al
+        if (!gridVal) {
+            gridVal = document.getElementById('hedefGrid').value.trim();
+            if (gridVal) {
+                document.getElementById('kvGrid').value = gridVal;
+            } else {
+                alert('Konvoy koordinatı girin!');
+                return;
+            }
+        }
+        if (!hizVal || hizVal <= 0) { alert('Hız girin!'); return; }
+        if (kvYonMil === null) { alert('Hareket yönü seçin!'); return; }
+        // Uçuş süresi yoksa 30sn varsayılan kullan
+        if (!ucusVal || ucusVal <= 0) ucusVal = 30;
+
+        var utm = kvParseMgrs(gridVal);
+        if (!utm) { alert('Geçersiz MGRS koordinatı!\nÖrnek: 37S BV 89059 58179'); return; }
+
+        kvSonHesap = { utm:utm, hizVal:hizVal, ucusVal:ucusVal };
+
+        // Konvoy merkezi → uçuş süresi sonunda
+        var center = kvKoord(utm, hizVal, kvYonMil, ucusVal);
+        var centerUtm = { zone:utm.zone, sq:utm.sq, band:utm.band,
+                          easting:center.easting, northing:center.northing };
+
+        // 40m aralık → yön vektörüne dik değil, yön boyunca
+        // Başı → merkez + 40m, Son → merkez - 40m
+        var rad = kvYonMil * 2 * Math.PI / 6400;
+        var dx40 = Math.sin(rad)*40;
+        var dy40 = Math.cos(rad)*40;
+
+        var n1 = kvToMgrs(utm.zone, utm.sq, center.easting + dx40, center.northing + dy40); // Baş
+        var n2 = kvToMgrs(utm.zone, utm.sq, center.easting,         center.northing);        // Orta
+        var n3 = kvToMgrs(utm.zone, utm.sq, center.easting - dx40, center.northing - dy40); // Son
+
+        document.getElementById('kvN1Grid').textContent = n1;
+        document.getElementById('kvN2Grid').textContent = n2;
+        document.getElementById('kvN3Grid').textContent = n3;
+
+        var yonAd  = kvYonAdlari[kvYonMil] || kvYonMil + ' mil';
+        var hizSn  = (hizVal * 1000 / 3600).toFixed(1);
+        var kmDk   = (hizVal / 60).toFixed(2);
+        document.getElementById('kvBilgiSatir').innerHTML =
+            'Hız: <b>' + hizVal + ' km/h</b> (' + hizSn + ' m/s) · ' +
+            'Uçuş: <b>' + ucusVal + ' sn</b> · ' +
+            'Kat edilen: <b>' + center.mesafe + ' m</b> · ' +
+            'Yön: <b>' + yonAd + '</b> · ' +
+            'Dakikada: <b>' + kmDk + ' km</b>';
+
+        document.getElementById('kvSonucBlok').style.display = 'block';
+
+        var activeDk = document.querySelector('.kv-dk.active');
+        if (activeDk) kvSecDk(activeDk, parseInt(activeDk.textContent));
+    }
+
+    function kvSecDk(btn, dk) {
+        document.querySelectorAll('.kv-dk').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        if (!kvSonHesap) { kvHesapla(); return; }
+
+        var utm    = kvSonHesap.utm;
+        var hizVal = kvSonHesap.hizVal;
+        var ucusVal = kvSonHesap.ucusVal || 0;
+        if (kvYonMil === null) return;
+
+        var toplamSn = dk * 60;
+        var rad = kvYonMil * 2 * Math.PI / 6400;
+        var dx40 = Math.sin(rad)*40;
+        var dy40 = Math.cos(rad)*40;
+        var adim = 15;
+        var snler = [];
+        for (var s = adim; s <= toplamSn; s += adim) snler.push(s);
+        if (snler.length === 0 || snler[snler.length-1] !== toplamSn) snler.push(toplamSn);
+
+        var tbody = document.getElementById('kvTabloBodyLeft');
+        tbody.innerHTML = '';
+
+        snler.forEach(function(sn) {
+            var c    = kvKoord(utm, hizVal, kvYonMil, sn);
+            var g1   = kvToMgrs(utm.zone, utm.sq, c.easting+dx40, c.northing+dy40);
+            var g2   = kvToMgrs(utm.zone, utm.sq, c.easting,      c.northing);
+            var g3   = kvToMgrs(utm.zone, utm.sq, c.easting-dx40, c.northing-dy40);
+            var d2   = Math.floor(sn/60);
+            var s2   = sn % 60;
+            var zStr = d2 + ':' + String(s2).padStart(2,'0');
+            var isAtis = sn === toplamSn;
+            var isUcus = ucusVal > 0 && Math.abs(sn-ucusVal) <= adim/2;
+            var not = isAtis ? '🎯' : (isUcus ? '⏱' : '');
+            var bg  = isAtis ? '#1d2b45' : (sn % 60 === 0 ? '#f0fdf4' : '#fff');
+            var tc  = isAtis ? '#e5bc66' : '#101828';
+            var tr  = document.createElement('tr');
+            tr.style.background = bg;
+            var td  = 'padding:5px 6px;border-bottom:1px solid #f0f2f5;font-family:DM Mono,monospace;font-size:.68rem;color:' + tc + ';white-space:nowrap;';
+            tr.innerHTML =
+                '<td style="' + td + 'font-weight:700;">' + zStr + '</td>' +
+                '<td style="' + td + '">' + c.mesafe + 'm</td>' +
+                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#1d5fa8') + ';">' + g1 + '</td>' +
+                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#166534') + ';">' + g2 + '</td>' +
+                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#c2410c') + ';">' + g3 + '</td>';
+            tbody.appendChild(tr);
+        });
+
+        var yonAd = kvYonAdlari[kvYonMil] || kvYonMil + ' mil';
+        document.getElementById('kvTabloTitleLeft').textContent =
+            dk + ' dk · ' + hizVal + ' km/h · ' + yonAd + ' · her 15sn · 🔵Baş 🟢Orta 🟠Son';
+        document.getElementById('kvTabloLeft').style.display = 'block';
+    }
+
+    // Hesapla butonundan sonra konvoy güncelle
+    document.getElementById('hesaplaBtn').addEventListener('click', function() {
+        setTimeout(kvDoldurSistemden, 300);
+    }, true);
+
+    function kvModalAc() {
+        kvDoldurSistemden();
+        var content = document.getElementById('konvoyContent');
+        if (!content.classList.contains('show')) {
+            content.classList.add('show');
+            document.getElementById('konvoyToggle').classList.add('open');
+        }
+        document.getElementById('konvoyToggle').scrollIntoView({ behavior:'smooth', block:'center' });
+    }
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -2494,6 +2969,7 @@ document.addEventListener("DOMContentLoaded", function() {
     toggleAccordion('metroToggle','metroContent');
     toggleAccordion('ucHedefToggle','ucHedefContent');
     toggleAccordion('gozetPanelToggle','gozetPanelContent');
+    toggleAccordion('konvoyToggle','konvoyContent');
     createUcHedefUI();
     updateDemetUI();
     setCaliber('81');
@@ -2723,6 +3199,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (mainChat && bilgiChat) bilgiChat.innerHTML = mainChat.innerHTML;
         });
     }
+
 
 });
 </script>
