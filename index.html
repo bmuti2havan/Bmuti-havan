@@ -4,13 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Bmuti Havan 81/106/120 Ateş İdare | MGRS, Düzeltmeler, İleri Gözetleyici</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+    <!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1d2b45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bmuti">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   --c-bg:       #f5f6f8;
+  --c-surface:  #ffffff;
+  --c-border:   #e4e7ec;
+  --c-border2:  #d0d5dd;
+  --c-text:     #101828;
+  --c-muted:    #667085;
+  --c-faint:    #98a2b3;
+  --c-navy:     #1d2b45;
+  --c-accent:   #2563eb;
+  --c-blue:     #1a5fa8;
+  --c-red:      #e05252;
+  --c-green:    #059669;
+}
+
+[data-theme="dark"] {
+  --c-bg:       #0d1117;
+  --c-surface:  #161b22;
+  --c-border:   #30363d;
+  --c-border2:  #484f58;
+  --c-text:     #e6edf3;
+  --c-muted:    #8b949e;
+  --c-faint:    #6e7681;
+  --c-navy:     #1f2937;
+  --c-accent:   #58a6ff;
+  --c-blue:     #388bfd;
+  --c-red:      #f85149;
+  --c-green:    #3fb950;
+}
+
+[data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+[data-theme="dark"] .card, [data-theme="dark"] .mortar-card { background: #161b22; }
+[data-theme="dark"] input, [data-theme="dark"] select { background: #0d1117; color: #e6edf3; border-color: #30363d; }
+[data-theme="dark"] .result-card { background: #161b22; border-color: #30363d; color: #e6edf3; }
+[data-theme="dark"] .result-label { color: #8b949e; }
+[data-theme="dark"] .result-value { color: #e6edf3; }
+[data-theme="dark"] .section-title { background: #161b22; color: #e6edf3; border-color: #30363d; }
+[data-theme="dark"] .accordion-content { background: #0d1117; }
+[data-theme="dark"] .param-row label { color: #8b949e; }
+[data-theme="dark"] .btn { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+[data-theme="dark"] .btn:hover { background: #30363d; }
+[data-theme="dark"] .btn-primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+[data-theme="dark"] .fn-toggle { background: #161b22; color: #c9d1d9; }
+[data-theme="dark"] .fn-toggle:hover { background: #21262d; }
+[data-theme="dark"] .right-panel { background: #0d1117; }
+[data-theme="dark"] .left-panel { background: #0d1117; }
+[data-theme="dark"] .result-empty { color: #6e7681; }
+[data-theme="dark"] .range-badge { background: #1f2937; color: #58a6ff; border-color: #1d4ed8; }
+[data-theme="dark"] #bilgiContent h3 { color: #58a6ff; border-color: #30363d; }
+[data-theme="dark"] #bilgiContent p, [data-theme="dark"] #bilgiContent li { color: #c9d1d9; }
+[data-theme="dark"] #bilgiContent b { color: #e6edf3; }
+[data-theme="dark"] #mapSonucPanel { background: #161b22; border-color: #30363d; }
+[data-theme="dark"] .kv-yon { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+[data-theme="dark"] .kv-yon.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+[data-theme="dark"] .kv-dk { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+[data-theme="dark"] .kv-dk.active { background: #1d2b45; color: #fff; }
+[data-theme="dark"] .ai-quick-btn { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+[data-theme="dark"] #aiChat { background: #0d1117; }
+[data-theme="dark"] .ai-msg-ai { background: #21262d; border-color: #30363d; color: #c9d1d9; }
+[data-theme="dark"] table td, [data-theme="dark"] table th { border-color: #30363d; color: #c9d1d9; }
+[data-theme="dark"] table tr:hover td { background: #21262d; }
+
+:root {       #f5f6f8;
   --c-surface:  #ffffff;
   --c-border:   #e4e7ec;
   --c-border2:  #d0d5dd;
@@ -550,6 +619,16 @@ tr:nth-child(even) td { background: var(--c-bg); }
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
+      <!-- PWA Yükle butonu - sadece desteklenince görünür -->
+      <button id="pwaInstallBtn" onclick="pwaInstall()"
+        style="display:none;background:rgba(52,211,153,0.2);color:#6ee7b7;
+               border:1.5px solid rgba(52,211,153,0.4);padding:7px 12px;
+               border-radius:7px;font-family:inherit;font-size:.78rem;
+               font-weight:700;cursor:pointer;align-items:center;gap:5px;">
+        📲 Uygulamayı Kur
+      </button>
+
+      
       <button class="bilgi-btn" onclick="document.getElementById('bilgiModal').style.display='flex'">
         📚 Teknik Bilgiler
       </button>
@@ -573,10 +652,20 @@ tr:nth-child(even) td { background: var(--c-bg); }
   </div>
 
   <!-- CALIBER TABS -->
-  <div class="caliber-switch">
-    <button class="caliber-btn active" id="btn81mm">81 mm</button>
-    <button class="caliber-btn" id="btn106mm">106 mm</button>
-    <button class="caliber-btn" id="btn120mm">120 mm</button>
+  <div class="caliber-switch" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;gap:6px;">
+      <button class="caliber-btn active" id="btn81mm">81 mm</button>
+      <button class="caliber-btn" id="btn106mm">106 mm</button>
+      <button class="caliber-btn" id="btn120mm">120 mm</button>
+    </div>
+    <button id="darkModeBtn" onclick="toggleDarkMode()" title="Gece / Gündüz Modu"
+      style="width:28px;height:28px;border-radius:50%;border:1px solid var(--c-border);
+             background:var(--c-bg);color:var(--c-muted);font-size:.85rem;
+             cursor:pointer;display:flex;align-items:center;justify-content:center;
+             transition:.2s;flex-shrink:0;">
+      <span id="darkModeIcon">🌙</span>
+      <span id="darkModeLabel" style="display:none;"></span>
+    </button>
   </div>
 
   <!-- AMMO BAR -->
@@ -1034,6 +1123,24 @@ tr:nth-child(even) td { background: var(--c-bg); }
     </div>
   </div>
 </div>
+
+  <!-- TELEFONA KUR -->
+  <div id="pwaInstallBar" style="display:flex;background:linear-gradient(135deg,#0f4c35,#166534);
+       padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.6rem;">📲</span>
+      <div>
+        <div style="color:#fff;font-size:.82rem;font-weight:700;">Uygulamayı Telefona Kur</div>
+        <div style="color:rgba(255,255,255,.6);font-size:.7rem;">İnternetsiz çalışır · Ana ekrana ekle · Uygulama gibi açılır</div>
+      </div>
+    </div>
+    <button onclick="pwaInstall()"
+      style="background:#fff;color:#166534;border:none;padding:10px 22px;border-radius:8px;
+             font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
+             box-shadow:0 2px 8px rgba(0,0,0,.2);white-space:nowrap;">
+      ⬇️ Kur
+    </button>
+  </div>
 
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
@@ -1826,6 +1933,129 @@ tr:nth-child(even) td { background: var(--c-bg); }
         }
         document.getElementById('konvoyToggle').scrollIntoView({ behavior:'smooth', block:'center' });
     }
+
+    // ── GECE MODU ─────────────────────────────────────────────────────────────
+    function toggleDarkMode() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            document.documentElement.removeAttribute('data-theme');
+            document.getElementById('darkModeIcon').textContent = '🌙';
+            document.getElementById('darkModeLabel').textContent = 'Gece';
+            document.getElementById('darkModeBtn').style.background = 'rgba(255,255,255,0.1)';
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('darkModeIcon').textContent = '☀️';
+            document.getElementById('darkModeLabel').textContent = 'Gündüz';
+            document.getElementById('darkModeBtn').style.background = 'rgba(255,255,255,0.25)';
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    // Kayıtlı temayı uygula
+    (function() {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            setTimeout(function() {
+                var btn = document.getElementById('darkModeBtn');
+                var icon = document.getElementById('darkModeIcon');
+                var lbl  = document.getElementById('darkModeLabel');
+                if (btn)  btn.style.background  = 'rgba(255,255,255,0.25)';
+                if (icon) icon.textContent = '☀️';
+                if (lbl)  lbl.textContent  = 'Gündüz';
+            }, 100);
+        }
+    })();
+
+
+    // ── PWA — Service Worker Kaydı ────────────────────────────────────────────
+    // Sadece kendi domain'inde çalışır (Netlify/localhost), Claude preview'da çalışmaz
+    var _swEligible = window.location.protocol === 'https:' &&
+                      !window.location.hostname.includes('claudeusercontent.com') &&
+                      !window.location.hostname.includes('codepen.io');
+
+    if ('serviceWorker' in navigator && _swEligible) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('./sw.js')
+                .then(function(reg) {
+                    console.log('[PWA] SW kayıtlı:', reg.scope);
+                    // Güncelleme var mı kontrol et
+                    reg.addEventListener('updatefound', function() {
+                        var newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', function() {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateBanner();
+                            }
+                        });
+                    });
+                })
+                .catch(function(err) {
+                    console.warn('[PWA] SW kayıt hatası:', err);
+                });
+        });
+    }
+
+    // PWA Yükleme butonu
+    var _deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        _deferredPrompt = e;
+        // Yükle butonunu göster
+        var btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.style.display = 'flex';
+        var bar = document.getElementById('pwaInstallBar');
+        if (bar) { bar.style.display = 'flex'; bar.style.setProperty('display','flex','important'); }
+    });
+
+    window.addEventListener('appinstalled', function() {
+        _deferredPrompt = null;
+        var btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.style.display = 'none';
+        var bar = document.getElementById('pwaInstallBar');
+        if (bar) bar.style.display = 'none';
+        console.log('[PWA] Uygulama kuruldu!');
+    });
+
+    function pwaInstall() {
+        if (_deferredPrompt) {
+            // Tarayıcı destekliyorsa direkt kur
+            _deferredPrompt.prompt();
+            _deferredPrompt.userChoice.then(function(result) {
+                if (result.outcome === 'accepted') {
+                    console.log('[PWA] Kurulum kabul edildi');
+                }
+                _deferredPrompt = null;
+            });
+        } else {
+            // Manuel kurulum talimatı göster
+            var ua = navigator.userAgent.toLowerCase();
+            var msg = '';
+            if (/iphone|ipad|ipod/.test(ua)) {
+                msg = '📱 iPhone/iPad Kurulum:\n\n1. Alttaki Paylaş butonuna tap \n2. "Ana Ekrana Ekle" seçin\n3. "Ekle" ye dokunun\n\nUygulama ana ekranınıza eklenir!';
+            } else if (/android/.test(ua)) {
+                msg = '📱 Android Kurulum:\n\n1. Tarayıcı menüsünü açın (⋮)\n2. "Ana ekrana ekle" veya "Uygulamayı yükle" seçin\n3. "Ekle" ye dokunun\n\nUygulama ana ekranınıza eklenir!';
+            } else {
+                msg = '💻 Masaüstü Kurulum:\n\nAdres çubuğunun sağındaki ⊕ veya ↓ ikonuna tıklayın.\nYoksa Chrome menüsünden "Uygulamayı yükle" seçin.';
+            }
+            alert(msg);
+        }
+    }
+
+    function showUpdateBanner() {
+        var banner = document.getElementById('pwaUpdateBanner');
+        if (banner) banner.style.display = 'flex';
+    }
+
+    function pwaUpdate() {
+        navigator.serviceWorker.getRegistration().then(function(reg) {
+            if (reg && reg.waiting) {
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            window.location.reload();
+        });
+    }
+
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -3884,6 +4114,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         document.getElementById('mapStatus').textContent = 'Konum izleme durduruldu.';
     }
+
 
 });
 </script>
