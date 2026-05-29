@@ -3528,6 +3528,19 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             document.getElementById('mapStatus').innerHTML = statusHtml;
 
+            // Hedef rakımını otomatik çek
+            (function(lt, ln) {
+                fetch('https://api.open-elevation.com/api/v1/lookup?locations=' + lt.toFixed(5) + ',' + ln.toFixed(5))
+                    .then(function(r){ return r.json(); })
+                    .then(function(d){
+                        if (d.results && d.results[0]) {
+                            var el = document.getElementById('hedefRakim');
+                            if (el) el.value = d.results[0].elevation;
+                        }
+                    })
+                    .catch(function(){});
+            })(lat, lng);
+
             // Haritayı hedefe odakla
             _map.panTo([lat, lng]);
 
@@ -3650,36 +3663,49 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Harita → Ana sistem aktarım + hesapla
     function mapSonuclaraGit() {
-        // Popup'ı kapat
         if (_hedefMarker) _hedefMarker.closePopup();
 
-        // Hedef grid zaten yazılı
         var hedefGrid = document.getElementById('hedefGrid').value.trim();
         if (!hedefGrid) { alert('Hedef koordinatı bulunamadı!'); return; }
 
-        // Rakım çek
-        var hedefRakimEl = document.getElementById('hedefRakim');
-        if (hedefRakimEl && (!hedefRakimEl.value || parseFloat(hedefRakimEl.value) === 0)) {
-            fetchElevation(hedefGrid, 'hedefRakim');
-        }
-
-        // Hesapla butonunu bul ve tıkla
-        var hesaplaBtn = document.getElementById('hesaplaBtn');
-        if (!hesaplaBtn) { alert('Hesapla butonu bulunamadı!'); return; }
-
-        // Sonuç alanına scroll
+        // Sonuç paneline scroll
         var rightPanel = document.querySelector('.right-panel');
-        if (rightPanel) rightPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (rightPanel) rightPanel.scrollIntoView({ behavior:'smooth', block:'start' });
 
-        // 400ms sonra hesapla (scroll tamamlansın)
-        setTimeout(function() {
-            hesaplaBtn.click();
-            // Hesaplama sonrası sonuç kartına scroll
+        var hedefRakimEl = document.getElementById('hedefRakim');
+        var rakimVar = hedefRakimEl && parseFloat(hedefRakimEl.value) !== 0;
+
+        function doHesapla() {
+            hesaplaTekHedef();
             setTimeout(function() {
                 var sonucAlan = document.getElementById('sonucAlan');
-                if (sonucAlan) sonucAlan.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 500);
-        }, 400);
+                if (sonucAlan) sonucAlan.scrollIntoView({ behavior:'smooth', block:'center' });
+            }, 400);
+        }
+
+        if (!rakimVar) {
+            // Rakım çek, gelince hesapla
+            var utm = mgrsToUtm(hedefGrid);
+            if (utm) {
+                var isSouth = 'CDEFGHJKLM'.includes(utm.latBand || 'S');
+                var ll = utmToLatLng(utm.zone, utm.easting, utm.northing, isSouth);
+                if (ll && !isNaN(ll.lat)) {
+                    fetch('https://api.open-elevation.com/api/v1/lookup?locations=' + ll.lat.toFixed(5) + ',' + ll.lng.toFixed(5))
+                        .then(function(r){ return r.json(); })
+                        .then(function(d){
+                            if (d.results && d.results[0]) {
+                                hedefRakimEl.value = d.results[0].elevation;
+                            }
+                        })
+                        .catch(function(){})
+                        .finally(function(){
+                            setTimeout(doHesapla, 200);
+                        });
+                    return;
+                }
+            }
+        }
+        setTimeout(doHesapla, 300);
     }
 
     function mapHemenHesapla() {
