@@ -854,12 +854,25 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
       <!-- HARİTA -->
       <div style="margin-top:14px;">
+        <!-- Harita notu -->
+        <div style="background:linear-gradient(135deg,#1d2b45,#2a3f60);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.2rem;">🛰</span>
+          <div>
+            <div style="color:#fff;font-size:.78rem;font-weight:700;margin-bottom:2px;">Haritadan Hedef Seçin</div>
+            <div style="color:rgba(255,255,255,.55);font-size:.68rem;line-height:1.4;">Haritada istediğiniz noktaya dokunun — yan, yükseliş, barut hakkı ve tüm atış değerleri otomatik hesaplanır.</div>
+          </div>
+        </div>
+
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c-faint);">🛰 Uydu Haritası</span>
-          <div style="display:flex;gap:5px;">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
             <button id="mapMevziBtn" class="btn" style="font-size:.68rem;padding:3px 9px;">📍 Mevzi</button>
             <button id="mapHedefBtn" class="btn" style="font-size:.68rem;padding:3px 9px;background:#e05252;color:#fff;border-color:#e05252;">🎯 Hedef</button>
             <button id="mapFitBtn"   class="btn" style="font-size:.68rem;padding:3px 9px;">⊞ Fit</button>
+            <button id="mapGpsBtn"   class="btn" style="font-size:.68rem;padding:3px 9px;background:#059669;color:#fff;border-color:#059669;display:flex;align-items:center;gap:4px;">
+              <span id="gpsDot" style="width:7px;height:7px;border-radius:50%;background:#fff;display:inline-block;"></span>
+              <span id="gpsLabel">📡 Konumum</span>
+            </button>
           </div>
         </div>
         <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
@@ -3321,11 +3334,24 @@ document.addEventListener("DOMContentLoaded", function() {
         mapEl.style.height = '280px';
         mapEl.style.width  = '100%';
         mapEl.style.display = 'block';
+        // Mevzi koordinatından başla
+        var startView = [37.08, 36.24];
+        var mevziGridVal = document.getElementById('mevziGrid').value.trim();
+        if (mevziGridVal) {
+            try {
+                var mU = mgrsToUtm(mevziGridVal);
+                if (mU) {
+                    var mLL2 = utmToLatLng(mU.zone, mU.easting, mU.northing, true);
+                    if (mLL2 && !isNaN(mLL2.lat)) startView = [mLL2.lat, mLL2.lng];
+                }
+            } catch(e) {}
+        }
+
         _map = L.map('mapDiv', {
             zoomControl: true,
             attributionControl: false,
             preferCanvas: true
-        }).setView([37.08, 36.24], 10);
+        }).setView(startView, 13);
 
         // invalidateSize - tile yükleme hatası için kritik
         setTimeout(function() { _map.invalidateSize(true); }, 100);
@@ -3427,10 +3453,31 @@ document.addEventListener("DOMContentLoaded", function() {
                     '<div style="grid-column:1/-1;"><span style="color:#667085;">Yön</span>: <b>' + yonBilgi + '</b></div>' +
                     '</div>';
             }
-            popupHtml += '<button onclick="navigator.clipboard.writeText(\'' + mgrsGrid + '\')" ' +
-                'style="margin-top:6px;width:100%;padding:4px;background:#e05252;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.72rem;">📋 Kopyala</button>' +
-                '<button onclick="hesaplaTekHedef()" ' +
-                'style="margin-top:3px;width:100%;padding:4px;background:#1d2b45;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.72rem;">⚡ Hemen Hesapla</button>' +
+            // Hesaplamayı şimdi yap - popup beklemeden
+            document.getElementById('hedefGrid').value = mgrsGrid;
+            var hesapSonuc = null;
+            try { hesapSonuc = calculateTargetSimple(mgrsGrid); } catch(e) {}
+
+            var sonucHtml = '';
+            if (hesapSonuc && !hesapSonuc.hata) {
+                sonucHtml = '<hr style="border:none;border-top:1px solid #e4e7ec;margin:6px 0;">' +
+                    '<div style="font-size:.72rem;font-weight:700;color:#1d2b45;margin-bottom:4px;">⚡ Hesaplama Sonucu</div>' +
+                    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:.72rem;">' +
+                    '<div style="background:#f5f6f8;padding:4px 7px;border-radius:4px;"><div style="color:#667085;font-size:.6rem;">YAN</div><b>' + hesapSonuc.yan + ' mil</b></div>' +
+                    '<div style="background:#f5f6f8;padding:4px 7px;border-radius:4px;"><div style="color:#667085;font-size:.6rem;">YÜKSELİŞ</div><b>' + hesapSonuc.yukselis + ' mil</b></div>' +
+                    '<div style="background:#f5f6f8;padding:4px 7px;border-radius:4px;"><div style="color:#667085;font-size:.6rem;">MESAFE</div><b>' + hesapSonuc.mesafe + ' m</b></div>' +
+                    '<div style="background:#f5f6f8;padding:4px 7px;border-radius:4px;"><div style="color:#667085;font-size:.6rem;">BH</div><b>' + hesapSonuc.bh + '</b></div>' +
+                    (hesapSonuc.ucusSuresi ? '<div style="grid-column:1/-1;background:#f5f6f8;padding:4px 7px;border-radius:4px;"><div style="color:#667085;font-size:.6rem;">UÇUŞ SÜRESİ</div><b>' + hesapSonuc.ucusSuresi + ' sn</b></div>' : '') +
+                    '</div>';
+            }
+
+            popupHtml += sonucHtml +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:6px;">' +
+                '<button onclick="navigator.clipboard.writeText(\'' + mgrsGrid + '\')" ' +
+                'style="padding:5px;background:#f5f6f8;color:#344054;border:1px solid #d0d5dd;border-radius:4px;cursor:pointer;font-size:.7rem;">📋 Kopyala</button>' +
+                '<button onclick="mapHemenHesapla()" ' +
+                'style="padding:5px;background:#1d2b45;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.7rem;">📊 Sonuçlara Git</button>' +
+                '</div>' +
                 '</div>';
 
             _hedefMarker = L.marker([lat, lng], {
@@ -3451,6 +3498,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Haritayı hedefe odakla
             _map.panTo([lat, lng]);
+
+            // 1.5 saniye sonra otomatik hesapla (opsiyonel - kullanıcı popup'ı okuyabilsin)
+            // mapHemenHesapla() -- otomatik tetikleme için bu satırı aktif et
         });
     }
 
@@ -3524,6 +3574,66 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sayfa açılınca haritayı lazy init
     setTimeout(initMap, 800);
 
+    // Harita için hızlı hesaplama (popup'ta sonuç göstermek için)
+    function calculateTargetSimple(hedefGridVal) {
+        try {
+            var mevziVal = document.getElementById('mevziGrid').value.trim();
+            var mevziRak = parseFloat(document.getElementById('mevziRakim').value) || 0;
+            var hedefRak = parseFloat(document.getElementById('hedefRakim').value) || 0;
+            var dtnIA    = parseFloat(document.getElementById('dtnAzimuth').value) || 0;
+            var dtnY     = parseFloat(document.getElementById('dtnYan').value) || 3100;
+            if (!mevziVal || !hedefGridVal) return null;
+
+            var mevziUtm = mgrsToUtm(mevziVal);
+            var hedefUtm = mgrsToUtm(hedefGridVal);
+            if (!mevziUtm || !hedefUtm) return null;
+
+            var dx = hedefUtm.easting  - mevziUtm.easting;
+            var dy = hedefUtm.northing - mevziUtm.northing;
+            var mesafe = Math.round(Math.sqrt(dx*dx + dy*dy));
+            if (mesafe < 50) return null;
+
+            var azDeg = (Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360;
+            var havIA = Math.round(azDeg * 6400 / 360);
+            var yan   = (dtnIA + dtnY - havIA + 6400) % 6400;
+            var altFark = hedefRak - mevziRak;
+
+            // BH ve yükseliş (sadece 81mm MKE214 için hızlı hesap)
+            var bh, yukselis, ucus;
+            if (currentCaliber === '81' && typeof getBH214 === 'function') {
+                bh = getBH214(mesafe);
+                var bhStr = bh + '. BH';
+                var interpData = interp214(bh, mesafe);
+                var cbSight = getCetvelBSight(bh, mesafe, altFark);
+                yukselis = cbSight !== null ? Math.round(cbSight) : Math.round(interpData.sight);
+                ucus = interpData.flight ? interpData.flight.toFixed(1) : null;
+                return { yan:Math.round(yan), yukselis:yukselis, mesafe:mesafe, bh:bhStr, ucusSuresi:ucus, hata:null };
+            } else if (currentCaliber === '120' && typeof getDataFor120 === 'function') {
+                var d120 = getDataFor120(mesafe);
+                if (d120) return { yan:Math.round(yan), yukselis:Math.round(d120.sight + (d120.tabiiYan||0)), mesafe:mesafe, bh:'BH'+d120.bh, ucusSuresi:d120.flight||null, hata:null };
+            }
+            return { yan:Math.round(yan), yukselis:'—', mesafe:mesafe, bh:'—', ucusSuresi:null, hata:null };
+        } catch(e) { return null; }
+    }
+
+    // Harita → Ana sistem aktarım + hesapla
+    function mapHemenHesapla() {
+        if (_hedefMarker) _hedefMarker.closePopup();
+        var hedefGrid = document.getElementById('hedefGrid').value.trim();
+        if (!hedefGrid) return;
+        // Rakım fetch
+        var hedefRakimEl = document.getElementById('hedefRakim');
+        if (hedefRakimEl && (!hedefRakimEl.value || hedefRakimEl.value === '0')) {
+            fetchElevation(hedefGrid, 'hedefRakim');
+        }
+        // Sonuç alanına scroll + hesapla
+        var sonucAlan = document.getElementById('sonucAlan');
+        if (sonucAlan) sonucAlan.scrollIntoView({ behavior:'smooth', block:'center' });
+        setTimeout(function() {
+            document.getElementById('hesaplaBtn').click();
+        }, 300);
+    }
+
     // ResizeObserver - container boyutu değişince invalidateSize
     if (typeof ResizeObserver !== 'undefined') {
         var mapObs = new ResizeObserver(function() {
@@ -3537,6 +3647,122 @@ document.addEventListener("DOMContentLoaded", function() {
     window.addEventListener('resize', function() {
         if (_map) _map.invalidateSize(true);
     });
+
+    // ── GERÇEK ZAMANLI KONUM (GPS) ────────────────────────────────────────────
+    var _gpsActive    = false;
+    var _gpsWatchId   = null;
+    var _gpsMarker    = null;
+    var _gpsCircle    = null;
+
+    document.getElementById('mapGpsBtn').addEventListener('click', function() {
+        if (!_gpsActive) {
+            gpsBaslat();
+        } else {
+            gpsDurdur();
+        }
+    });
+
+    function gpsBaslat() {
+        if (!navigator.geolocation) {
+            alert('Tarayıcınız konum özelliğini desteklemiyor.');
+            return;
+        }
+        initMap();
+
+        // Buton — aktif görünüm
+        _gpsActive = true;
+        var btn = document.getElementById('mapGpsBtn');
+        btn.style.background = '#dc2626';
+        btn.style.borderColor = '#dc2626';
+        document.getElementById('gpsLabel').textContent = '📡 Dur';
+        document.getElementById('gpsDot').style.animation = 'btnPulse 1s infinite';
+
+        // Konum izle
+        _gpsWatchId = navigator.geolocation.watchPosition(
+            function(pos) {
+                var lat = pos.coords.latitude;
+                var lng = pos.coords.longitude;
+                var acc = Math.round(pos.coords.accuracy);
+
+                // Marker güncelle
+                if (_gpsMarker) {
+                    _gpsMarker.setLatLng([lat, lng]);
+                    _gpsCircle.setLatLng([lat, lng]).setRadius(acc);
+                } else {
+                    _gpsCircle = L.circle([lat, lng], {
+                        radius: acc, color:'#059669', fillColor:'#059669',
+                        fillOpacity:.15, weight:1.5
+                    }).addTo(_map);
+                    _gpsMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            html: '<div style="width:16px;height:16px;background:#059669;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.4);"></div>',
+                            iconAnchor:[8,8], className:''
+                        })
+                    }).addTo(_map);
+                }
+
+                // MGRS dönüşümü
+                var mgrsGrid = latLonToMgrsApprox(lat, lng);
+
+                // Mevzi alanına yaz
+                document.getElementById('mevziGrid').value = mgrsGrid;
+
+                // Popup
+                _gpsMarker.bindPopup(
+                    '<b style="color:#059669;">📡 Mevziniz (GPS)</b><br>' +
+                    '<span style="font-family:monospace;font-size:.82rem;">' + mgrsGrid + '</span><br>' +
+                    '<span style="font-size:.7rem;color:#667085;">' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E</span><br>' +
+                    '<span style="font-size:.7rem;color:#667085;">Doğruluk: ±' + acc + 'm</span>'
+                );
+
+                // Status güncelle
+                document.getElementById('mapStatus').innerHTML =
+                    '📡 Mevzi (GPS): <b>' + mgrsGrid + '</b> &nbsp;|&nbsp; ±' + acc + 'm &nbsp;|&nbsp; ' +
+                    lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E';
+
+                // İlk kez gelince haritayı konuma götür
+                if (!_gpsMarker._firstSet) {
+                    _map.setView([lat, lng], 14);
+                    _gpsMarker._firstSet = true;
+                    // Mevzi marker da göster
+                    setTimeout(mapShowMevzi, 500);
+                }
+
+                // Rakımı da çek
+                fetchElevation(mgrsGrid, 'mevziRakim');
+            },
+            function(err) {
+                var mesaj = {
+                    1: 'Konum izni reddedildi. Tarayıcı ayarlarından izin verin.',
+                    2: 'Konum alınamadı. GPS sinyali zayıf.',
+                    3: 'Konum zaman aşımı. Tekrar deneyin.'
+                }[err.code] || 'Konum hatası.';
+                alert(mesaj);
+                gpsDurdur();
+            },
+            { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+        );
+    }
+
+    function gpsDurdur() {
+        _gpsActive = false;
+        if (_gpsWatchId !== null) {
+            navigator.geolocation.clearWatch(_gpsWatchId);
+            _gpsWatchId = null;
+        }
+        // Marker'ları kaldır
+        if (_gpsMarker) { _map.removeLayer(_gpsMarker); _gpsMarker = null; }
+        if (_gpsCircle) { _map.removeLayer(_gpsCircle); _gpsCircle = null; }
+
+        // Buton — pasif görünüm
+        var btn = document.getElementById('mapGpsBtn');
+        btn.style.background = '#059669';
+        btn.style.borderColor = '#059669';
+        document.getElementById('gpsLabel').textContent = '📡 Konumum';
+        document.getElementById('gpsDot').style.animation = '';
+
+        document.getElementById('mapStatus').textContent = 'Konum izleme durduruldu.';
+    }
 
 });
 </script>
