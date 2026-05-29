@@ -1977,22 +1977,72 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
     if ('serviceWorker' in navigator && _swEligible) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('./sw.js')
-                .then(function(reg) {
-                    console.log('[PWA] SW kayıtlı:', reg.scope);
-                    // Güncelleme var mı kontrol et
-                    reg.addEventListener('updatefound', function() {
-                        var newWorker = reg.installing;
-                        newWorker.addEventListener('statechange', function() {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                showUpdateBanner();
-                            }
+
+            // SW kodu inline — ayrı sw.js dosyası gerekmez
+            var swCode = `
+const CACHE = 'bmuti-v2';
+const ASSETS = [location.href];
+
+self.addEventListener('install', e => {
+    e.waitUntil(
+        caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {})
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+    e.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+        )
+    );
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+    var url = new URL(e.request.url);
+    // Tile ve API istekleri — network first
+    if (url.hostname.includes('arcgisonline') ||
+        url.hostname.includes('openstreetmap') ||
+        url.hostname.includes('open-elevation') ||
+        url.hostname.includes('open-meteo') ||
+        url.hostname.includes('groq.com') ||
+        url.hostname.includes('anthropic')) {
+        e.respondWith(fetch(e.request).catch(() => new Response('', {status:503})));
+        return;
+    }
+    // Diğerleri — cache first
+    e.respondWith(
+        caches.match(e.request).then(cached => {
+            if (cached) return cached;
+            return fetch(e.request).then(res => {
+                if (res && res.status === 200) {
+                    caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+                }
+                return res;
+            }).catch(() => caches.match(location.href));
+        })
+    );
+});`;
+
+            try {
+                var blob = new Blob([swCode], { type: 'application/javascript' });
+                var swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl, { scope: './' })
+                    .then(function(reg) {
+                        console.log('[PWA] SW inline kayıtlı');
+                        // Ana sayfayı cache'e al
+                        caches.open('bmuti-v2').then(function(c) {
+                            c.add(location.href);
                         });
+                    })
+                    .catch(function(err) {
+                        // Blob SW desteklenmiyorsa sw.js dene
+                        navigator.serviceWorker.register('./sw.js').catch(function(){});
                     });
-                })
-                .catch(function(err) {
-                    console.warn('[PWA] SW kayıt hatası:', err);
-                });
+            } catch(e) {
+                navigator.serviceWorker.register('./sw.js').catch(function(){});
+            }
         });
     }
 
