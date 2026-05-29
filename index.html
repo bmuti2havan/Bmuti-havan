@@ -3168,10 +3168,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (!result) return null;
         return {
-            yanMils:  result.yanMils  || 0,
-            ruzgarM:  result.ruzgarMesafeM || 0,
-            tempM:    result.tempPressM    || 0,
-            toplamM:  (result.ruzgarMesafeM || 0) + (result.tempPressM || 0)
+            yanMils: result.yanMils    || 0,
+            toplamM: result.rangeMeters || 0
         };
     }
 
@@ -3209,7 +3207,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 ctx += '\n=== METRO HESABI ===\n'
                     + 'Yan duzeltmesi: ' + (metro.yanMils >= 0 ? '+' : '') + metro.yanMils + ' mil\n'
                     + 'Mesafe duzeltmesi: ' + (metro.toplamM >= 0 ? '+' : '') + metro.toplamM + ' m\n'
-                    + 'Ruzgar etkisi: ' + metro.ruzgarM + 'm, Sicaklik/Basinc: ' + metro.tempM + 'm\n';
             }
         }
         return ctx;
@@ -3510,7 +3507,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:6px;">' +
                 '<button onclick="navigator.clipboard.writeText(\'' + mgrsGrid + '\')" ' +
                 'style="padding:5px;background:#f5f6f8;color:#344054;border:1px solid #d0d5dd;border-radius:4px;cursor:pointer;font-size:.7rem;">📋 Kopyala</button>' +
-                '<button onclick="mapHemenHesapla()" ' +
+                '<button onclick="mapSonuclaraGit()" ' +
                 'style="padding:5px;background:#1d2b45;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.7rem;">📊 Sonuçlara Git</button>' +
                 '</div>' +
                 '</div>';
@@ -3652,6 +3649,39 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Harita → Ana sistem aktarım + hesapla
+    function mapSonuclaraGit() {
+        // Popup'ı kapat
+        if (_hedefMarker) _hedefMarker.closePopup();
+
+        // Hedef grid zaten yazılı
+        var hedefGrid = document.getElementById('hedefGrid').value.trim();
+        if (!hedefGrid) { alert('Hedef koordinatı bulunamadı!'); return; }
+
+        // Rakım çek
+        var hedefRakimEl = document.getElementById('hedefRakim');
+        if (hedefRakimEl && (!hedefRakimEl.value || parseFloat(hedefRakimEl.value) === 0)) {
+            fetchElevation(hedefGrid, 'hedefRakim');
+        }
+
+        // Hesapla butonunu bul ve tıkla
+        var hesaplaBtn = document.getElementById('hesaplaBtn');
+        if (!hesaplaBtn) { alert('Hesapla butonu bulunamadı!'); return; }
+
+        // Sonuç alanına scroll
+        var rightPanel = document.querySelector('.right-panel');
+        if (rightPanel) rightPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // 400ms sonra hesapla (scroll tamamlansın)
+        setTimeout(function() {
+            hesaplaBtn.click();
+            // Hesaplama sonrası sonuç kartına scroll
+            setTimeout(function() {
+                var sonucAlan = document.getElementById('sonucAlan');
+                if (sonucAlan) sonucAlan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }, 400);
+    }
+
     function mapHemenHesapla() {
         if (_hedefMarker) _hedefMarker.closePopup();
         var hedefGrid = document.getElementById('hedefGrid').value.trim();
