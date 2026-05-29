@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Bmuti Havan 81/106/120 Ateş İdare | MGRS, Düzeltmeler, İleri Gözetleyici</title>
-    <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
@@ -150,6 +152,11 @@ body {
   transition: .15s !important;
 }
 .konvoy-header-btn:hover { background: rgba(16,185,129,0.25) !important; }
+/* Leaflet harita fix */
+#mapDiv { height:280px !important; width:100% !important; position:relative !important; display:block !important; }
+.leaflet-container { height:100% !important; width:100% !important; }
+.leaflet-tile-pane { opacity:1 !important; }
+
 .kv-yon {
   padding:8px 4px;border:1.5px solid #d0d5dd;border-radius:8px;
   background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;
@@ -731,7 +738,8 @@ tr:nth-child(even) td { background: var(--c-bg); }
             <table style="width:100%;border-collapse:collapse;font-size:.7rem;">
               <thead>
                 <tr style="background:#f5f6f8;">
-                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Zaman</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Süre</th>
+                  <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#059669;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Saat</th>
                   <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Mesafe</th>
                   <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Baş (N1)</th>
                   <th style="padding:5px 6px;text-align:left;font-size:.6rem;color:#667085;border-bottom:1.5px solid #e4e7ec;white-space:nowrap;">Orta (N2)</th>
@@ -843,6 +851,20 @@ tr:nth-child(even) td { background: var(--c-bg); }
         </div>
       </div>
       <button id="copyResultsBtn" class="btn copy-btn">Sonuçları Kopyala</button>
+
+      <!-- HARİTA -->
+      <div style="margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c-faint);">🛰 Uydu Haritası</span>
+          <div style="display:flex;gap:5px;">
+            <button id="mapMevziBtn" class="btn" style="font-size:.68rem;padding:3px 9px;">📍 Mevzi</button>
+            <button id="mapHedefBtn" class="btn" style="font-size:.68rem;padding:3px 9px;background:#e05252;color:#fff;border-color:#e05252;">🎯 Hedef</button>
+            <button id="mapFitBtn"   class="btn" style="font-size:.68rem;padding:3px 9px;">⊞ Fit</button>
+          </div>
+        </div>
+        <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
+        <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'DM Mono',monospace;min-height:16px;"></div>
+      </div>
 
     </div>
 
@@ -1497,7 +1519,39 @@ tr:nth-child(even) td { background: var(--c-bg); }
     }
 
 
-    // ── KONVOY SİSTEMİ ─────────────────────────────────────────────────────
+    // Lat/Lon → MGRS yaklaşık dönüşüm (harita tıklama için)
+    function latLonToMgrsApprox(lat, lon) {
+        var zone = Math.floor((lon + 180) / 6) + 1;
+        var bands = 'CDEFGHJKLMNPQRSTUVWX';
+        var bandIdx = Math.min(Math.floor((lat + 80) / 8), 19);
+        var latBand = bands[bandIdx];
+        var lonRad = lon * Math.PI / 180;
+        var latRad = lat * Math.PI / 180;
+        var lon0   = ((zone-1)*6 - 180 + 3) * Math.PI / 180;
+        var a=6378137, f=1/298.257223563, b=a*(1-f);
+        var e2=1-(b/a)*(b/a), ep2=e2/(1-e2), k0=0.9996;
+        var N=a/Math.sqrt(1-e2*Math.sin(latRad)*Math.sin(latRad));
+        var T=Math.tan(latRad)*Math.tan(latRad);
+        var C=ep2*Math.cos(latRad)*Math.cos(latRad);
+        var A=Math.cos(latRad)*(lonRad-lon0);
+        var M=a*((1-e2/4-3*e2*e2/64)*latRad-(3*e2/8+3*e2*e2/32)*Math.sin(2*latRad)+(15*e2*e2/256)*Math.sin(4*latRad));
+        var easting  = k0*N*(A+(1-T+C)*A*A*A/6) + 500000;
+        var northing = k0*(M+N*Math.tan(latRad)*(A*A/2+(5-T+9*C+4*C*C)*A*A*A*A/24)) + (lat<0?10000000:0);
+        var COL=['ABCDEFGH','JKLMNPQR','STUVWXYZ'];
+        var ROW_ODD='ABCDEFGHJKLMNPQRSTUV';
+        var ROW_EVEN='FGHJKLMNPQRSTUVABCDE';
+        var colSet=COL[(zone-1)%3];
+        var colIdx=Math.floor(easting/100000)-1;
+        var colLetter=colSet[((colIdx%8)+8)%8]||'A';
+        var rowAlpha=zone%2===1?ROW_ODD:ROW_EVEN;
+        var rowIdx=Math.floor((northing%2000000)/100000);
+        var rowLetter=rowAlpha[rowIdx%20]||'A';
+        var e5=Math.round(easting%100000).toString().padStart(5,'0');
+        var n5=Math.round(northing%100000).toString().padStart(5,'0');
+        return zone+latBand+' '+colLetter+rowLetter+' '+e5+' '+n5;
+    }
+
+        // ── KONVOY SİSTEMİ ─────────────────────────────────────────────────────
     let kvYonMil = null;
     let kvSonHesap = null;
 
@@ -1677,6 +1731,10 @@ tr:nth-child(even) td { background: var(--c-bg); }
         var tbody = document.getElementById('kvTabloBodyLeft');
         tbody.innerHTML = '';
 
+        // Şu anki saat
+        var now = new Date();
+        var baseMs = now.getTime();
+
         snler.forEach(function(sn) {
             var c    = kvKoord(utm, hizVal, kvYonMil, sn);
             var g1   = kvToMgrs(utm.zone, utm.sq, c.easting+dx40, c.northing+dy40);
@@ -1685,6 +1743,11 @@ tr:nth-child(even) td { background: var(--c-bg); }
             var d2   = Math.floor(sn/60);
             var s2   = sn % 60;
             var zStr = d2 + ':' + String(s2).padStart(2,'0');
+            // Gerçek saat hesabı
+            var hedefZaman = new Date(baseMs + sn * 1000);
+            var saatStr = String(hedefZaman.getHours()).padStart(2,'0') + ':'
+                        + String(hedefZaman.getMinutes()).padStart(2,'0') + ':'
+                        + String(hedefZaman.getSeconds()).padStart(2,'0');
             var isAtis = sn === toplamSn;
             var isUcus = ucusVal > 0 && Math.abs(sn-ucusVal) <= adim/2;
             var not = isAtis ? '🎯' : (isUcus ? '⏱' : '');
@@ -1695,6 +1758,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
             var td  = 'padding:5px 6px;border-bottom:1px solid #f0f2f5;font-family:DM Mono,monospace;font-size:.68rem;color:' + tc + ';white-space:nowrap;';
             tr.innerHTML =
                 '<td style="' + td + 'font-weight:700;">' + zStr + '</td>' +
+                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#059669') + ';font-weight:700;">' + saatStr + '</td>' +
                 '<td style="' + td + '">' + c.mesafe + 'm</td>' +
                 '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#1d5fa8') + ';">' + g1 + '</td>' +
                 '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#166534') + ';">' + g2 + '</td>' +
@@ -3235,6 +3299,244 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+
+    // ── UYDU HARİTASI (Leaflet + Esri) ─────────────────────────────────────
+    var _map = null;
+    var _mevziMarker = null;
+    var _hedefMarker = null;
+    var _hatLat = null;
+
+    function initMap() {
+        if (_map) return;
+        if (typeof L === 'undefined') {
+            document.getElementById('mapDiv').innerHTML =
+                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);font-size:.78rem;flex-direction:column;gap:8px;">' +
+                '<span style="font-size:1.5rem;">🛰</span>' +
+                '<span>Harita için internet bağlantısı gerekli</span>' +
+                '<span style="font-size:.65rem;">Netlify veya internet bağlantısıyla çalışır</span></div>';
+            return;
+        }
+        // Harita container görünür ve boyutlu olmalı
+        var mapEl = document.getElementById('mapDiv');
+        mapEl.style.height = '280px';
+        mapEl.style.width  = '100%';
+        mapEl.style.display = 'block';
+        _map = L.map('mapDiv', {
+            zoomControl: true,
+            attributionControl: false,
+            preferCanvas: true
+        }).setView([37.08, 36.24], 10);
+
+        // invalidateSize - tile yükleme hatası için kritik
+        setTimeout(function() { _map.invalidateSize(true); }, 100);
+        setTimeout(function() { _map.invalidateSize(true); }, 500);
+        setTimeout(function() { _map.invalidateSize(true); }, 1000);
+
+        // Katman seçici - 3 farklı kaynak
+        var layers = {
+            'Uydu (Esri)': L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                { maxZoom:19, attribution:'Esri World Imagery' }
+            ),
+            'Harita (OSM)': L.tileLayer(
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                { maxZoom:19, attribution:'OpenStreetMap' }
+            ),
+            'Topo': L.tileLayer(
+                'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                { maxZoom:17, attribution:'OpenTopoMap' }
+            )
+        };
+        layers['Uydu (Esri)'].addTo(_map);
+        L.control.layers(layers, null, { position:'topright' }).addTo(_map);
+
+        // Haritaya tıklayınca otomatik hedef + anlık hesaplama
+        _map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            // Eski marker ve çizgiyi sil
+            if (_hedefMarker) { _map.removeLayer(_hedefMarker); _hedefMarker = null; }
+            if (_hatLat)      { _map.removeLayer(_hatLat);      _hatLat = null; }
+
+            // MGRS dönüşümü
+            var mgrsGrid = latLonToMgrsApprox(lat, lng);
+
+            // Hedef Grid alanına yaz
+            document.getElementById('hedefGrid').value = mgrsGrid;
+
+            // Mevzi koordinatını al - mesafe & azimut hesapla
+            var mevziGrid = document.getElementById('mevziGrid').value.trim();
+            var mesafeBilgi = '', azimutBilgi = '', yonBilgi = '', milBilgi = '';
+
+            if (mevziGrid) {
+                try {
+                    var mUtm = mgrsToUtm(mevziGrid);
+                    if (mUtm) {
+                        var isSouth = 'CDEFGHJKLM'.includes((mUtm.latBand || 'S'));
+                        var mLL = utmToLatLng(mUtm.zone, mUtm.easting, mUtm.northing, isSouth);
+                        if (mLL && !isNaN(mLL.lat)) {
+                            // Haversine mesafe
+                            var R = 6371000;
+                            var dLat = (lat - mLL.lat) * Math.PI / 180;
+                            var dLon = (lng - mLL.lng) * Math.PI / 180;
+                            var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+                                    Math.cos(mLL.lat*Math.PI/180)*Math.cos(lat*Math.PI/180)*
+                                    Math.sin(dLon/2)*Math.sin(dLon/2);
+                            var mesafe = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+
+                            // Azimut (derece)
+                            var y = Math.sin((lng-mLL.lng)*Math.PI/180) * Math.cos(lat*Math.PI/180);
+                            var x = Math.cos(mLL.lat*Math.PI/180)*Math.sin(lat*Math.PI/180) -
+                                    Math.sin(mLL.lat*Math.PI/180)*Math.cos(lat*Math.PI/180)*
+                                    Math.cos((lng-mLL.lng)*Math.PI/180);
+                            var azimutDeg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+                            var azimutMil = Math.round(azimutDeg * 6400 / 360);
+
+                            // Yön adı
+                            var yonler = ['Kuzey','Kuzeydoğu','Doğu','Güneydoğu','Güney','Güneybatı','Batı','Kuzeybatı'];
+                            var yonIdx = Math.round(azimutDeg / 45) % 8;
+                            var yonAd  = yonler[yonIdx];
+
+                            mesafeBilgi = mesafe + ' m';
+                            azimutBilgi = azimutDeg.toFixed(1) + '°';
+                            milBilgi    = azimutMil + ' mil';
+                            yonBilgi    = yonAd;
+
+                            // Mevzi marker varsa çizgi ekle
+                            if (_mevziMarker) {
+                                _hatLat = L.polyline([_mevziMarker.getLatLng(), [lat, lng]], {
+                                    color:'#e5bc66', weight:2.5, dashArray:'6,4', opacity:.9
+                                }).addTo(_map);
+                            }
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            // Kırmızı hedef marker
+            var popupHtml = '<div style="min-width:180px;">' +
+                '<b style="color:#e05252;font-size:.88rem;">🎯 HEDEF</b><br>' +
+                '<div style="font-family:monospace;font-size:.82rem;color:#101828;margin:4px 0;">' + mgrsGrid + '</div>' +
+                '<div style="font-size:.72rem;color:#667085;">' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E</div>';
+            if (mesafeBilgi) {
+                popupHtml += '<hr style="border:none;border-top:1px solid #e4e7ec;margin:6px 0;">' +
+                    '<div style="font-size:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:3px;">' +
+                    '<div><span style="color:#667085;">Mesafe</span><br><b>' + mesafeBilgi + '</b></div>' +
+                    '<div><span style="color:#667085;">İstikamet</span><br><b>' + azimutBilgi + ' / ' + milBilgi + '</b></div>' +
+                    '<div style="grid-column:1/-1;"><span style="color:#667085;">Yön</span>: <b>' + yonBilgi + '</b></div>' +
+                    '</div>';
+            }
+            popupHtml += '<button onclick="navigator.clipboard.writeText(\'' + mgrsGrid + '\')" ' +
+                'style="margin-top:6px;width:100%;padding:4px;background:#e05252;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.72rem;">📋 Kopyala</button>' +
+                '<button onclick="hesaplaTekHedef()" ' +
+                'style="margin-top:3px;width:100%;padding:4px;background:#1d2b45;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.72rem;">⚡ Hemen Hesapla</button>' +
+                '</div>';
+
+            _hedefMarker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    html: '<div style="background:#e05252;color:#fff;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.5);white-space:nowrap;">🎯 HEDEF</div>',
+                    iconAnchor: [30, 12], className: ''
+                })
+            }).addTo(_map);
+            _hedefMarker.bindPopup(popupHtml, { maxWidth: 220 }).openPopup();
+
+            // Status bar güncelle
+            var statusHtml = '🎯 <b>' + mgrsGrid + '</b>';
+            if (mesafeBilgi) {
+                statusHtml += ' &nbsp;|&nbsp; ' + mesafeBilgi +
+                              ' &nbsp;|&nbsp; ' + azimutBilgi + ' (' + milBilgi + ') &nbsp;|&nbsp; ' + yonBilgi;
+            }
+            document.getElementById('mapStatus').innerHTML = statusHtml;
+
+            // Haritayı hedefe odakla
+            _map.panTo([lat, lng]);
+        });
+    }
+
+    function mapIconHtml(color, label) {
+        return L.divIcon({
+            html: '<div style="background:' + color + ';color:#fff;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4);">' + label + '</div>',
+            iconAnchor: [20, 10],
+            className: ''
+        });
+    }
+
+    function mapShowMevzi() {
+        initMap();
+        var grid = document.getElementById('mevziGrid').value.trim();
+        if (!grid) { alert('Mevzi koordinatı girin!'); return; }
+        var utm = mgrsToUtm(grid);
+        if (!utm) { alert('Geçersiz MGRS!'); return; }
+        var isSouth = 'CDEFGHJKLM'.includes(utm.latBand || 'S');
+        var ll = utmToLatLng(utm.zone, utm.easting, utm.northing, isSouth);
+        if (!ll || isNaN(ll.lat)) { alert('Koordinat dönüşüm hatası!'); return; }
+        if (_mevziMarker) _map.removeLayer(_mevziMarker);
+        _mevziMarker = L.marker([ll.lat, ll.lng], { icon: mapIconHtml('#1d2b45','M') }).addTo(_map);
+        _mevziMarker.bindPopup('<b>Mevzi</b><br>' + grid).openPopup();
+        document.getElementById('mapStatus').textContent = 'Mevzi: ' + ll.lat.toFixed(5) + '°N, ' + ll.lng.toFixed(5) + '°E';
+        mapFit();
+    }
+
+    function mapShowHedef() {
+        initMap();
+        var grid = document.getElementById('hedefGrid').value.trim();
+        if (!grid) { alert('Hedef koordinatı girin!'); return; }
+        var utm = mgrsToUtm(grid);
+        if (!utm) { alert('Geçersiz MGRS!'); return; }
+        var isSouth = 'CDEFGHJKLM'.includes(utm.latBand || 'S');
+        var ll = utmToLatLng(utm.zone, utm.easting, utm.northing, isSouth);
+        if (!ll || isNaN(ll.lat)) { alert('Koordinat dönüşüm hatası!'); return; }
+        if (_hedefMarker) _map.removeLayer(_hedefMarker);
+        _hedefMarker = L.marker([ll.lat, ll.lng], { icon: mapIconHtml('#e05252','H') }).addTo(_map);
+        _hedefMarker.bindPopup('<b>Hedef</b><br>' + grid).openPopup();
+        document.getElementById('mapStatus').textContent = 'Hedef: ' + ll.lat.toFixed(5) + '°N, ' + ll.lng.toFixed(5) + '°E';
+        // Mevzi-hedef arası çizgi
+        if (_mevziMarker) {
+            if (_hatLat) _map.removeLayer(_hatLat);
+            _hatLat = L.polyline([_mevziMarker.getLatLng(), [ll.lat, ll.lng]], {
+                color:'#e5bc66', weight:2, dashArray:'6,4', opacity:.8
+            }).addTo(_map);
+        }
+        mapFit();
+    }
+
+    function mapFit() {
+        var pts = [];
+        if (_mevziMarker) pts.push(_mevziMarker.getLatLng());
+        if (_hedefMarker) pts.push(_hedefMarker.getLatLng());
+        if (pts.length === 2) _map.fitBounds(L.latLngBounds(pts), { padding:[30,30] });
+        else if (pts.length === 1) _map.setView(pts[0], 13);
+    }
+
+    // Hesapla sonrası otomatik güncelle
+    document.getElementById('hesaplaBtn').addEventListener('click', function() {
+        setTimeout(function() {
+            if (_map) { mapShowMevzi(); mapShowHedef(); }
+        }, 400);
+    });
+
+    // Buton listeners
+    document.getElementById('mapMevziBtn').addEventListener('click', mapShowMevzi);
+    document.getElementById('mapHedefBtn').addEventListener('click', mapShowHedef);
+    document.getElementById('mapFitBtn').addEventListener('click', function() { initMap(); mapFit(); });
+
+    // Sayfa açılınca haritayı lazy init
+    setTimeout(initMap, 800);
+
+    // ResizeObserver - container boyutu değişince invalidateSize
+    if (typeof ResizeObserver !== 'undefined') {
+        var mapObs = new ResizeObserver(function() {
+            if (_map) setTimeout(function(){ _map.invalidateSize(true); }, 50);
+        });
+        var mapEl2 = document.getElementById('mapDiv');
+        if (mapEl2) mapObs.observe(mapEl2);
+    }
+
+    // Scroll veya visibility değişince de düzelt
+    window.addEventListener('resize', function() {
+        if (_map) _map.invalidateSize(true);
+    });
 
 });
 </script>
