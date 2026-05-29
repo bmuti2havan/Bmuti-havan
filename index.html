@@ -877,6 +877,13 @@ tr:nth-child(even) td { background: var(--c-bg); }
         </div>
         <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
         <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'DM Mono',monospace;min-height:16px;"></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-top:8px;background:#fff8e6;border:1.5px solid #fec84b;border-left:4px solid #f59e0b;border-radius:7px;padding:8px 12px;">
+          <span style="font-size:.95rem;flex-shrink:0;">⚠️</span>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;color:#92400e;margin-bottom:2px;">SİBER GÜVENLİK UYARISI</div>
+            <div style="font-size:.68rem;color:#92400e;line-height:1.5;">Harekât bölgesinde canlı konum (GPS) kullanmayınız. Sinyal tespiti ve konum ifşası operasyonel güvenliği tehlikeye atabilir. Koordinatları haritadan manuel olarak seçiniz.</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -3127,17 +3134,45 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── Metro hesapla (koddaki formülle) ─────────────────────────────────────
     function calcMetroAI(weather, havIaDeg, mesafe) {
         if (!weather || !mesafe) return null;
-        const atisIaMils   = Math.round(havIaDeg * 6400 / 360);
-        const ruzgarYonuM  = Math.round(weather.windDirDeg * 6400 / 360);
-        const gidisYonu    = (ruzgarYonuM + 3200) % 6400;
-        const relWind      = (gidisYonu - atisIaMils + 6400) % 6400;
-        const yanB         = Math.sin(relWind * Math.PI / 3200);
-        const mesafeB      = Math.cos(relWind * Math.PI / 3200);
-        const knot         = weather.windSpeed / 1.852;
-        const yanMils      = Math.round(yanB * knot * (mesafe/1000) * 0.9);
-        const ruzgarM      = Math.round(mesafeB * knot * (mesafe/1000) * 0.5);
-        const tempM        = Math.round(((weather.temp - 15) * 0.001 + (1013 - weather.pressure) * 0.0001) * mesafe);
-        return { yanMils, ruzgarM, tempM, toplamM: ruzgarM + tempM };
+
+        // Hava durumu değerlerini metro form'una geçici yaz
+        var ruzgarHiziEl  = document.getElementById('ruzgarHizi');
+        var ruzgarYonuEl  = document.getElementById('ruzgarYonu');
+        var sicaklikEl    = document.getElementById('havaSicaklik');
+        var basincEl      = document.getElementById('havaBasinc');
+        var nemEl         = document.getElementById('nemOrani');
+
+        // Mevcut değerleri sakla
+        var prevHiz  = ruzgarHiziEl  ? ruzgarHiziEl.value  : '';
+        var prevYon  = ruzgarYonuEl  ? ruzgarYonuEl.value   : '';
+        var prevSic  = sicaklikEl    ? sicaklikEl.value     : '';
+        var prevBas  = basincEl      ? basincEl.value       : '';
+        var prevNem  = nemEl         ? nemEl.value          : '';
+
+        // Weather datasını form'a yaz
+        if (ruzgarHiziEl) ruzgarHiziEl.value = Math.round(weather.windSpeed / 1.852 * 10) / 10; // km/h → knot
+        if (ruzgarYonuEl) ruzgarYonuEl.value = Math.round(weather.windDirDeg * 6400 / 360);
+        if (sicaklikEl)   sicaklikEl.value   = weather.temp;
+        if (basincEl)     basincEl.value     = Math.round(weather.pressure);
+        if (nemEl)        nemEl.value        = weather.humidity;
+
+        // Gerçek metro formülünü çalıştır
+        var result = calculateManualMetro(havIaDeg, mesafe);
+
+        // Değerleri geri yükle
+        if (ruzgarHiziEl) ruzgarHiziEl.value = prevHiz;
+        if (ruzgarYonuEl) ruzgarYonuEl.value = prevYon;
+        if (sicaklikEl)   sicaklikEl.value   = prevSic;
+        if (basincEl)     basincEl.value     = prevBas;
+        if (nemEl)        nemEl.value        = prevNem;
+
+        if (!result) return null;
+        return {
+            yanMils:  result.yanMils  || 0,
+            ruzgarM:  result.ruzgarMesafeM || 0,
+            tempM:    result.tempPressM    || 0,
+            toplamM:  (result.ruzgarMesafeM || 0) + (result.tempPressM || 0)
+        };
     }
 
     // ── Sistem bağlamını topla ────────────────────────────────────────────────
