@@ -677,9 +677,11 @@ tr:nth-child(even) td { background: var(--c-bg); }
       <div data-ammo="m56a1" class="ammo-option">M-56A1</div>
       <div data-ammo="m57" class="ammo-option">M-57 (Sis)</div>
       <div data-ammo="m43a1b1" class="ammo-option">M-43A1B1</div>
+      <div data-ammo="m301a2" class="ammo-option" id="ammoOpt_m301a2">💡 M-301 A2 Aydınlatma</div>
     </div>
     <div id="ammoSelector120" style="display:none" class="ammo-selector">
       <div data-ammo120="tahrip" class="ammo-option selected">Mod 209 (Tahrip)</div>
+      <div data-ammo120="mod236" class="ammo-option">💡 MOD 236 Aydınlatma</div>
       <div data-ammo120="sis" class="ammo-option">Mod 226 (Sis)</div>
     </div>
     <div id="ammoSelector106" style="display:none" class="ammo-selector">
@@ -2110,6 +2112,9 @@ self.addEventListener('fetch', e => {
 document.addEventListener("DOMContentLoaded", function() {
 
     setTimeout(() => renderBilgi(0), 100);
+    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
+    var optM301init = document.getElementById('ammoOpt_m301a2');
+    if (optM301init) optM301init.style.display = '';
 
     // ======================== GİRİŞ KONTROLÜ ========================
     document.getElementById('loginBtn').addEventListener('click', function() {
@@ -2571,8 +2576,148 @@ document.addEventListener("DOMContentLoaded", function() {
         m64:{name:'M-64',maxRange:6400,type:'tahrip',getBH:(m)=>getBHFor81ByMidpoint('m64',m),getSight:(bh,m)=>interpolateTable(sight_M64[bh],m)},
         m56a1:{name:'M-56a1',maxRange:2350,type:'tahrip',getBH:(m)=>getBHFor81ByMidpoint('m56a1',m),getSight:(bh,m)=>interpolateTable(sight_M56a1[bh],m)},
         m57:{name:'M-57 (Sis)',maxRange:2250,type:'sis',getBH:(m)=>getBHFor81ByMidpoint('m57',m),getSight:(bh,m)=>interpolateTable(sight_M57[bh],m)},
-        m43a1b1:{name:'M-43a1b1',maxRange:3400,type:'tahrip',getBH:(m)=>getBHFor81ByMidpoint('m43a1b1',m),getSight:(bh,m)=>interpolateTable(sight_M43a1b1[bh],m)}
-    };
+        m43a1b1:{name:'M-43a1b1',maxRange:3400,type:'tahrip',getBH:(m)=>getBHFor81ByMidpoint('m43a1b1',m),getSight:(bh,m)=>interpolateTable(sight_M43a1b1[bh],m)},
+        m301a2:{name:'M-301 A2 Aydınlatma',maxRange:2100,type:'aydinlatma',
+            getBH:(m)=>getBH_M301A2(m),
+            getSight:(bh,m)=>interp_M301A2(bh,m)?.sight || 0,
+            getFlight:(bh,m)=>interp_M301A2(bh,m)?.flight || 0,
+            getTapa:(bh,m)=>interp_M301A2(bh,m)?.tapa || 0,
+            getTAC:(bh,m,altFark)=>getTAC_M301A2(bh,m,altFark)}
+    };;
+
+    // ── M-301 A2 AYDINLATMA TABLOLARI ─────────────────────────────────────────
+    // Kaynak: KKYY 164-14, AAC 81 UT1-A Bölüm 5
+    // Tapa: M84A1E, İdeal paralanma yüksekliği: 381m
+    // Format: [mesafe(m), nişangah(mil), tapa_sn, uçuş_sn]
+
+    // BH2 - İlk Hız 129 m/s - Yüksek açı (ana menzil)
+    const m301a2_BH2_yuksek = [
+        [200,1519,21.1,21.1],[250,1498,21.0,21.0],[300,1477,21.0,21.0],
+        [350,1455,20.9,20.9],[400,1433,20.7,20.7],[450,1410,20.6,20.6],
+        [500,1387,20.5,20.5],[550,1363,20.3,20.3],[600,1338,20.1,20.1],
+        [650,1311,19.9,19.9],[700,1282,19.6,19.6],[750,1252,19.3,19.3],
+        [800,1220,19.0,19.0],[850,1184,18.6,18.6],[900,1144,17.9,17.9]
+    ];
+    // BH2 - Alçak açı (kısa menzil)
+    const m301a2_BH2_alcak = [
+        [200,1181,4.0,4.0],[250,1101,4.3,4.3],[300,1032,4.6,4.6],
+        [350,975,5.0,5.0],[400,927,5.3,5.3],[450,888,5.7,5.7],
+        [500,857,6.2,6.2],[550,834,6.7,6.7],[600,816,7.1,7.1]
+    ];
+
+    // BH3 - İlk Hız 156 m/s - Yüksek açı
+    const m301a2_BH3_yuksek = [
+        [200,1536,24.7,24.7],[250,1520,24.8,24.8],[300,1505,24.9,24.9],
+        [350,1490,25.0,25.0],[400,1475,25.0,25.0],[450,1461,25.0,25.0],
+        [500,1445,25.0,25.0],[550,1430,25.0,25.0],[600,1414,25.0,25.0],
+        [650,1399,25.0,25.0],[700,1383,25.0,25.0],[750,1367,24.9,24.9],
+        [800,1351,24.9,24.9],[850,1333,24.8,24.8],[900,1316,24.7,24.7],
+        [950,1299,24.6,24.6],[1000,1282,24.5,24.5],[1050,1264,24.3,24.3],
+        [1100,1245,24.2,24.2],[1150,1226,23.9,23.9],[1200,1206,23.7,23.7],
+        [1250,1185,23.5,23.5],[1300,1163,23.2,23.2],[1350,1139,22.9,22.9],
+        [1400,1113,22.5,22.5],[1450,1084,22.1,22.1],[1500,1050,21.5,21.5],
+        [1550,1009,20.8,20.8],[1600,945,19.2,19.2]
+    ];
+    // BH3 - Alçak açı
+    const m301a2_BH3_alcak = [
+        [200,1155,3.1,3.1],[250,1068,3.3,3.3],[300,992,3.5,3.5],
+        [350,927,3.8,3.8],[400,871,4.1,4.1],[450,824,4.4,4.4]
+    ];
+
+    // BH4 - İlk Hız 181 m/s - Yüksek açı
+    const m301a2_BH4_yuksek = [
+        [200,1559,31.4,31.4],[250,1549,31.4,31.4],[300,1538,31.3,31.3],
+        [350,1528,31.3,31.3],[400,1517,31.2,31.2],[450,1506,31.2,31.2],
+        [500,1496,31.1,31.1],[550,1485,31.0,31.0],[600,1474,31.0,31.0],
+        [650,1463,30.9,30.9],[700,1451,30.8,30.8],[750,1440,30.7,30.7],
+        [800,1428,30.6,30.6],[850,1416,30.5,30.5],[900,1404,30.4,30.4],
+        [950,1392,30.3,30.3],[1000,1379,30.2,30.2],[1050,1365,30.1,30.1],
+        [1100,1352,29.9,29.9],[1150,1339,29.8,29.8],[1200,1325,29.6,29.6],
+        [1250,1311,29.5,29.5],[1300,1297,29.3,29.3],[1350,1282,29.1,29.1],
+        [1400,1267,28.8,28.8],[1450,1251,28.6,28.6],[1500,1234,28.4,28.4],
+        [1550,1217,28.1,28.1],[1600,1199,27.8,27.8],[1650,1180,27.5,27.5],
+        [1700,1160,27.2,27.2],[1750,1138,26.8,26.8],[1800,1115,26.4,26.4],
+        [1850,1089,25.9,25.9],[1900,1060,25.3,25.3],[1950,1026,24.6,24.6],
+        [2000,983,23.6,23.6],[2050,837,20.9,20.9],[2100,888,19.4,19.4]
+    ];
+    // BH4 - Alçak açı
+    const m301a2_BH4_alcak = [
+        [200,1142,2.6,2.6],[250,1052,2.8,2.8],[300,972,3.0,3.0],
+        [350,904,3.2,3.2],[400,845,3.4,3.4]
+    ];
+
+    // TAÇ faktörleri M301A2 - Cetvel-G'den DTAC değerleri
+    // [mesafe, dtac_+1mil, dtac_-1mil] → nişangah_değişimi
+    const m301a2_tac_BH2 = [
+        [200,-1.0,1.0],[300,-1.0,1.0],[400,-1.0,1.0],[500,-1.0,1.0],
+        [600,-1.2,1.2],[700,-1.3,1.3],[800,-1.5,1.5],[900,-2.4,2.4]
+    ];
+    const m301a2_tac_BH3 = [
+        [200,-1.0,1.0],[400,-1.0,1.0],[600,-1.1,1.1],[800,-1.2,1.2],
+        [1000,-1.2,1.2],[1200,-1.2,1.2],[1400,-1.4,1.4],[1600,-2.1,2.1]
+    ];
+    const m301a2_tac_BH4 = [
+        [200,-1.0,1.0],[400,-1.0,1.0],[600,-1.0,1.0],[800,-1.1,1.1],
+        [1000,-1.1,1.1],[1200,-1.1,1.1],[1400,-1.1,1.1],[1600,-1.2,1.2],
+        [1800,-1.3,1.3],[2000,-1.8,1.8],[2100,-3.2,3.2]
+    ];
+
+    // M301A2 BH seçimi
+    // BH2: 200-900m, BH3: 200-1600m, BH4: 200-2100m
+    // Talimnameye göre: en uygun menzil için BH seç
+    function getBH_M301A2(mesafe) {
+        if (mesafe <= 900)  return 2;
+        if (mesafe <= 1600) return 3;
+        if (mesafe <= 2100) return 4;
+        return null; // menzil dışı
+    }
+
+    // M301A2 interpolasyon
+    function interp_M301A2(bh, mesafe) {
+        let tablo;
+        if (bh === 2) tablo = mesafe <= 600 ? m301a2_BH2_alcak : m301a2_BH2_yuksek;
+        else if (bh === 3) tablo = mesafe <= 450 ? m301a2_BH3_alcak : m301a2_BH3_yuksek;
+        else if (bh === 4) tablo = mesafe <= 400 ? m301a2_BH4_alcak : m301a2_BH4_yuksek;
+        else return null;
+
+        if (!tablo || tablo.length === 0) return null;
+        if (mesafe <= tablo[0][0]) return {sight:tablo[0][1], tapa:tablo[0][2], flight:tablo[0][3]};
+        if (mesafe >= tablo[tablo.length-1][0]) {
+            const l = tablo[tablo.length-1];
+            return {sight:l[1], tapa:l[2], flight:l[3]};
+        }
+        for (let i = 0; i < tablo.length-1; i++) {
+            if (mesafe >= tablo[i][0] && mesafe <= tablo[i+1][0]) {
+                const t = (mesafe - tablo[i][0]) / (tablo[i+1][0] - tablo[i][0]);
+                return {
+                    sight:  Math.round(tablo[i][1] + t*(tablo[i+1][1]-tablo[i][1])),
+                    tapa:   Math.round((tablo[i][2] + t*(tablo[i+1][2]-tablo[i][2]))*10)/10,
+                    flight: Math.round((tablo[i][3] + t*(tablo[i+1][3]-tablo[i][3]))*10)/10
+                };
+            }
+        }
+        return null;
+    }
+
+    // M301A2 TAÇ hesabı (nişangah düzeltmesi)
+    function getTAC_M301A2(bh, mesafe, altFark) {
+        if (!altFark || altFark === 0) return 0;
+        let tacTablo;
+        if (bh === 2) tacTablo = m301a2_tac_BH2;
+        else if (bh === 3) tacTablo = m301a2_tac_BH3;
+        else if (bh === 4) tacTablo = m301a2_tac_BH4;
+        else return 0;
+        // interpolate dtac
+        let dtac = tacTablo[0][1];
+        for (let i = 0; i < tacTablo.length-1; i++) {
+            if (mesafe >= tacTablo[i][0] && mesafe <= tacTablo[i+1][0]) {
+                const t = (mesafe - tacTablo[i][0]) / (tacTablo[i+1][0] - tacTablo[i][0]);
+                dtac = tacTablo[i][1] + t*(tacTablo[i+1][1]-tacTablo[i][1]);
+                break;
+            }
+        }
+        return Math.round(dtac * altFark);
+    }
 
     // ---------- 106 mm M329A1 Tabloları ----------
     // Cetvel D Temel Esaslar, 900 milyem yüksekliş
@@ -2847,6 +2992,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let currentCaliber = '81';
     let currentAmmo81 = 'mke214';
     let currentAmmo106 = 'm329';
+    // MOD 236 Aydınlatma tapa faktörleri (AAC 120-C-3, Sayfa 77)
+    const mod236TapaFaktor = {1:5.5,2:5.5,3:4.5,4:4.5,5:3.5,6:3.5,7:3.5,8:3.5,9:3.0,10:3.0};
+    function getMod236Tapa(bh, ucus) {
+        if (!ucus || !bh) return null;
+        const f = mod236TapaFaktor[bh] || 4.5;
+        const t = parseFloat(ucus) - f;
+        return t > 0 ? Math.round(t*10)/10 : null;
+    }
     let currentAmmo120 = 'tahrip';
     let bhAuto120 = true;
 
@@ -2898,7 +3051,9 @@ document.addEventListener("DOMContentLoaded", function() {
             // BH kitap formatı: '4 ncü BH' -> Türkçe sıra sayısı eki
             const _sfx = ['nci','nci','nci','ncü','ncü','ncı'];
             const bhStr81 = `${bh} ${_sfx[bh-1]||'nci'} BH`;
-            sonuc = { yan: Math.round(finalYan), yukselis: Math.round(yukselis), mesafe: Math.round(finalRange), bh: bhStr81, mühimmat: ammo.name, altFark, havIaDeg, havIaMils, ucusSuresi: flight };
+            // Aydınlatma için tapa saniyesi
+            const tapaSn = (ammo.getTapa && bh) ? ammo.getTapa(bh, finalRange) : null;
+            sonuc = { yan: Math.round(finalYan), yukselis: Math.round(yukselis), mesafe: Math.round(finalRange), bh: bhStr81, mühimmat: ammo.name, altFark, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
         } else if(currentCaliber === '106') {
             if(finalRange > 5480) throw new Error(`Menzil dışı (${Math.round(finalRange)}m > azami 5480m)`);
             if(finalRange < 920) throw new Error(`Menzil dışı (${Math.round(finalRange)}m < asgari 920m)`);
@@ -2929,6 +3084,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 yukselis = Math.min(1550, Math.max(400, yukselis));
                 sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'Mod 209 Tahrip', altFark, havIaDeg, havIaMils, ucusSuresi: flight };
+            } else if (currentAmmo120 === 'mod236') {
+                // MOD 236 Aydınlatma: aynı tablo, sadece tapa saniyesi eklenir
+                let bh = bhAuto120 ? getBH(finalRange) : parseInt(document.getElementById('bh120Manual').value);
+                bh = Math.min(10, Math.max(1, bh));
+                let yukselis = Math.round(interpolateTable(elev120_Tahrip[bh], finalRange) + paralanma);
+                let tabiiYanVal = interpolateTable(tabiiYan120_Tahrip[bh], finalRange);
+                let flight = Number(interpolateTable(flightTime120_Tahrip[bh], finalRange).toFixed(1));
+                let duzYan = Math.round(normalizeMils(finalYan + tabiiYanVal));
+                if (tacEnabled) {
+                    let dtac = altFark / (finalRange / 1000);
+                    let tacFactor = tacFaktorByBH[bh] || -4.1;
+                    let tac = Math.round((dtac / 10) * tacFactor);
+                    yukselis += tac;
+                }
+                yukselis = Math.min(1550, Math.max(400, yukselis));
+                const tapaSn = getMod236Tapa(bh, flight);
+                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'MOD 236 Aydınlatma', altFark, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
             } else { // Sis
                 let weight = document.getElementById('weightGroup').value;
                 let elev = get120Elevation(finalRange, weight);
@@ -3285,6 +3457,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     function setCaliber(cal) {
+        // M-301 A2 sadece 81mm'de görünür
+        var optM301 = document.getElementById('ammoOpt_m301a2');
+        if (optM301) optM301.style.display = (cal === '81') ? '' : 'none';
+        // 81mm dışında m301a2 seçiliyse ilk geçerli mühimmata dön
+        if (cal !== '81' && currentAmmo81 === 'm301a2') {
+            currentAmmo81 = 'mke214';
+            document.querySelectorAll('.ammo-option').forEach(b => {
+                b.classList.toggle('selected', b.dataset.ammo === 'mke214');
+            });
+        }
         currentCaliber = cal;
         document.querySelectorAll('.caliber-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`btn${cal}mm`).classList.add('active');
