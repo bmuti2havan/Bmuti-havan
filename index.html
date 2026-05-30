@@ -2117,10 +2117,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (optM301init) optM301init.style.display = '';
 
     // ======================== GİRİŞ KONTROLÜ ========================
-    document.getElementById('loginBtn').addEventListener('click', function() {
+    document.getElementById('loginBtn').addEventListener('click', async function() {
         let username = document.getElementById('username').value.trim();
         let password = document.getElementById('password').value.trim();
-        if (username.toLowerCase() === 'osmaniye' && password === 'osmaniye12') {
+        async function hashPwd(p) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        }
+        const pwdHash = await hashPwd(password);
+        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
+        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
         } else {
@@ -2646,21 +2652,68 @@ document.addEventListener("DOMContentLoaded", function() {
         [350,904,3.2,3.2],[400,845,3.4,3.4]
     ];
 
-    // TAÇ faktörleri M301A2 - Cetvel-G'den DTAC değerleri
-    // [mesafe, dtac_+1mil, dtac_-1mil] → nişangah_değişimi
-    const m301a2_tac_BH2 = [
-        [200,-1.0,1.0],[300,-1.0,1.0],[400,-1.0,1.0],[500,-1.0,1.0],
-        [600,-1.2,1.2],[700,-1.3,1.3],[800,-1.5,1.5],[900,-2.4,2.4]
+    // Cetvel-G M301A2: [mesafe, tepeYuksekligi, DTAC_kaldir, DTAC_indir]
+    // Tapa saniyesi düzeltmesi = (rakımFarkı/50) × DTAC_50m
+    // Tepe yüksekliği: merminin geçtiği en yüksek nokta
+    const m301a2_cetvelG_BH2 = [
+        // [mesafe, tepe_m, dtac_kaldir(50m), dtac_indir(50m)]
+        // Alçak açı (yüksek açıdan DTAC farklı)
+        [200,199,-0.4,0.4],[250,249,-0.4,0.4],[300,298,-0.4,0.4],
+        [350,349,-0.4,0.4],[400,397,-0.4,0.4],[450,446,-0.4,0.4],
+        [500,497,-0.4,0.4],[550,546,-0.4,0.4],[600,596,-0.4,0.4],
+        // Yüksek açı
+        [200,117,-0.4,0.4],[250,147,-0.4,0.4],[300,177,-0.4,0.4],
+        [350,206,-0.4,0.4],[400,236,-0.4,0.4],[450,267,-0.4,0.4],
+        [500,296,-0.4,0.4],[550,327,-0.4,0.4],[600,358,-0.5,0.5],
+        [650,389,-0.5,0.5],[700,421,-0.5,0.5],[750,455,-0.6,0.6],
+        [800,489,-0.6,0.6],[850,527,-0.7,0.7],[900,569,-0.8,0.8]
     ];
-    const m301a2_tac_BH3 = [
-        [200,-1.0,1.0],[400,-1.0,1.0],[600,-1.1,1.1],[800,-1.2,1.2],
-        [1000,-1.2,1.2],[1200,-1.2,1.2],[1400,-1.4,1.4],[1600,-2.1,2.1]
+    const m301a2_cetvelG_BH3 = [
+        [200,114,-0.4,0.4],[300,170,-0.4,0.4],[400,227,-0.4,0.4],
+        [500,284,-0.4,0.4],[600,341,-0.4,0.4],[700,397,-0.4,0.4],
+        [800,456,-0.5,0.5],[900,514,-0.5,0.5],[1000,574,-0.5,0.5],
+        [1100,638,-0.5,0.5],[1200,704,-0.5,0.5],[1300,767,-0.5,0.5],
+        [1400,834,-0.5,0.5],[1500,902,-0.6,0.6],[1550,942,-0.6,0.6],
+        [1600,996,-0.7,0.7]
     ];
-    const m301a2_tac_BH4 = [
-        [200,-1.0,1.0],[400,-1.0,1.0],[600,-1.0,1.0],[800,-1.1,1.1],
-        [1000,-1.1,1.1],[1200,-1.1,1.1],[1400,-1.1,1.1],[1600,-1.2,1.2],
-        [1800,-1.3,1.3],[2000,-1.8,1.8],[2100,-3.2,3.2]
+    const m301a2_cetvelG_BH4 = [
+        [200,109,-0.4,0.4],[300,164,-0.4,0.4],[400,219,-0.4,0.4],
+        [500,274,-0.4,0.4],[600,330,-0.4,0.4],[700,385,-0.4,0.4],
+        [800,441,-0.4,0.4],[900,498,-0.4,0.4],[1000,553,-0.4,0.4],
+        [1100,612,-0.4,0.4],[1200,670,-0.4,0.4],[1300,731,-0.4,0.4],
+        [1400,796,-0.4,0.4],[1500,857,-0.4,0.4],[1600,919,-0.5,0.5],
+        [1700,982,-0.5,0.5],[1800,1048,-0.5,0.5],[1900,1119,-0.6,0.6],
+        [2000,1198,-0.7,0.7],[2050,1260,-0.9,0.9],[2100,1273,-1.3,1.3]
     ];
+
+    // M301A2 Tapa Saniyesi = temel_tapa ± (rakımFarkı/50) × DTAC_50m
+    // rakımFarkı pozitif = hedef yukarıda = "KALDIR" = tapa azalır
+    function getTapa_M301A2(bh, mesafe, ucusSuresi, altFark) {
+        if (!ucusSuresi) return null;
+        let tablo;
+        if (bh === 2) tablo = m301a2_cetvelG_BH2;
+        else if (bh === 3) tablo = m301a2_cetvelG_BH3;
+        else if (bh === 4) tablo = m301a2_cetvelG_BH4;
+        else return Math.round(ucusSuresi * 10) / 10;
+
+        // DTAC değerini mesafeye göre interpolasyon
+        let dtac = -0.4; // varsayılan
+        for (let i = 0; i < tablo.length - 1; i++) {
+            if (mesafe >= tablo[i][0] && mesafe <= tablo[i+1][0]) {
+                const t = (mesafe - tablo[i][0]) / (tablo[i+1][0] - tablo[i][0]);
+                dtac = tablo[i][2] + t * (tablo[i+1][2] - tablo[i][2]);
+                break;
+            }
+        }
+
+        // Tapa düzeltmesi: rakım_farkı/50 × dtac
+        // altFark > 0: hedef yukarıda (KALDIR) → tapa azalır
+        const faktor = altFark / 50;
+        const tapaDuzeltme = faktor * dtac; // dtac zaten negatif
+        const temelTapa = parseFloat(ucusSuresi);
+        const sonucTapa = temelTapa + tapaDuzeltme;
+        return Math.round(sonucTapa * 10) / 10;
+    }
 
     // M301A2 BH seçimi
     // BH2: 200-900m, BH3: 200-1600m, BH4: 200-2100m
@@ -2994,10 +3047,20 @@ document.addEventListener("DOMContentLoaded", function() {
     let currentAmmo106 = 'm329';
     // MOD 236 Aydınlatma tapa faktörleri (AAC 120-C-3, Sayfa 77)
     const mod236TapaFaktor = {1:5.5,2:5.5,3:4.5,4:4.5,5:3.5,6:3.5,7:3.5,8:3.5,9:3.0,10:3.0};
-    function getMod236Tapa(bh, ucus) {
+    // MOD 236 rakım farkı dahil tapa saniyesi
+    // AAC 120-C-3 Sayfa 77: her BH için paralanma yüksekliği ±50m = tapa değişimi
+    const mod236DtacPerBH = {1:0.6,2:0.6,3:0.5,4:0.5,5:0.4,6:0.4,7:0.4,8:0.4,9:0.3,10:0.3};
+
+    function getMod236Tapa(bh, ucus, altFark) {
         if (!ucus || !bh) return null;
         const f = mod236TapaFaktor[bh] || 4.5;
-        const t = parseFloat(ucus) - f;
+        let t = parseFloat(ucus) - f;
+        // Rakım farkı: hedef yukarda → paralanma azalır → tapa artır
+        // hedef aşağıda → paralanma artar → tapa azalt
+        if (altFark) {
+            const dtac = mod236DtacPerBH[bh] || 0.4;
+            t -= (altFark / 50) * dtac;
+        }
         return t > 0 ? Math.round(t*10)/10 : null;
     }
     let currentAmmo120 = 'tahrip';
@@ -3052,8 +3115,26 @@ document.addEventListener("DOMContentLoaded", function() {
             const _sfx = ['nci','nci','nci','ncü','ncü','ncı'];
             const bhStr81 = `${bh} ${_sfx[bh-1]||'nci'} BH`;
             // Aydınlatma için tapa saniyesi
-            const tapaSn = (ammo.getTapa && bh) ? ammo.getTapa(bh, finalRange) : null;
-            sonuc = { yan: Math.round(finalYan), yukselis: Math.round(yukselis), mesafe: Math.round(finalRange), bh: bhStr81, mühimmat: ammo.name, altFark, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
+            // M301A2 için rakım farkını hesaba katan tapa saniyesi
+            let tapaSn = null;
+            if (ammo.type === 'aydinlatma') {
+                const temelUcus = flight ? parseFloat(flight) : null;
+                if (temelUcus && typeof getTapa_M301A2 === 'function') {
+                    tapaSn = getTapa_M301A2(bh, finalRange, temelUcus, altFark);
+                } else if (ammo.getTapa && bh) {
+                    tapaSn = ammo.getTapa(bh, finalRange);
+                }
+            }
+            // Aydınlatma mühimmatında tabii yan ve TAÇ uygulanmaz (KKT 315-30A)
+            let sonucYan = Math.round(finalYan);
+            let sonucYukselis = Math.round(yukselis);
+            let sonucAltFark = altFark;
+            if (ammo.type === 'aydinlatma') {
+                // Tabii yan yoktur, TAÇ yoktur
+                sonucYan = Math.round(hedefYan); // sadece plan yanı
+                sonucAltFark = 0;
+            }
+            sonuc = { yan: sonucYan, yukselis: sonucYukselis, mesafe: Math.round(finalRange), bh: bhStr81, mühimmat: ammo.name, altFark: sonucAltFark, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
         } else if(currentCaliber === '106') {
             if(finalRange > 5480) throw new Error(`Menzil dışı (${Math.round(finalRange)}m > azami 5480m)`);
             if(finalRange < 920) throw new Error(`Menzil dışı (${Math.round(finalRange)}m < asgari 920m)`);
@@ -3085,22 +3166,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 yukselis = Math.min(1550, Math.max(400, yukselis));
                 sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'Mod 209 Tahrip', altFark, havIaDeg, havIaMils, ucusSuresi: flight };
             } else if (currentAmmo120 === 'mod236') {
-                // MOD 236 Aydınlatma: aynı tablo, sadece tapa saniyesi eklenir
+                // MOD 236 Aydınlatma:
+                // KKT 315-30A L21749: Aydınlatmada tabii yan VE TAÇ (rakım farkı) uygulanmaz!
+                // Sadece mesafe → nişangah → tapa saniyesi
                 let bh = bhAuto120 ? getBH(finalRange) : parseInt(document.getElementById('bh120Manual').value);
                 bh = Math.min(10, Math.max(1, bh));
-                let yukselis = Math.round(interpolateTable(elev120_Tahrip[bh], finalRange) + paralanma);
-                let tabiiYanVal = interpolateTable(tabiiYan120_Tahrip[bh], finalRange);
+                let yukselis = Math.round(interpolateTable(elev120_Tahrip[bh], finalRange));
+                // NOT: paralanma (TAÇ rakım) ve tabiiYan eklenmez - talimnameye göre
                 let flight = Number(interpolateTable(flightTime120_Tahrip[bh], finalRange).toFixed(1));
-                let duzYan = Math.round(normalizeMils(finalYan + tabiiYanVal));
-                if (tacEnabled) {
-                    let dtac = altFark / (finalRange / 1000);
-                    let tacFactor = tacFaktorByBH[bh] || -4.1;
-                    let tac = Math.round((dtac / 10) * tacFactor);
-                    yukselis += tac;
-                }
-                yukselis = Math.min(1550, Math.max(400, yukselis));
-                const tapaSn = getMod236Tapa(bh, flight);
-                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'MOD 236 Aydınlatma', altFark, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
+                // Yan: sadece plan yanı (tabii yan yok, TAÇ yok)
+                let duzYan = Math.round(normalizeMils(finalYan));
+                const tapaSn = getMod236Tapa(bh, flight, altFark);
+                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'MOD 236 Aydınlatma', altFark: 0, havIaDeg, havIaMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
             } else { // Sis
                 let weight = document.getElementById('weightGroup').value;
                 let elev = get120Elevation(finalRange, weight);
@@ -3175,6 +3252,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 html += `<div class="result-card">
                     <div class="result-label">Uçuş Süresi</div>
                     <div class="result-value">${sonuc.ucusSuresi}<span class="result-unit">sn</span></div>
+                </div>`;
+            }
+            if (sonuc.tapaSaniyesi !== null && sonuc.tapaSaniyesi !== undefined) {
+                html += `<div class="result-card" style="border-color:#f97316;border-width:2px;">
+                    <div class="result-label" style="color:#f97316;">🕐 Tapa Saniyesi</div>
+                    <div class="result-value" style="color:#f97316;">${sonuc.tapaSaniyesi}<span class="result-unit">sn</span></div>
+                    <div style="font-size:.62rem;color:#f97316;margin-top:2px;">${sonuc.mühimmat && sonuc.mühimmat.includes('236') ? 'MOD 236 · 600m paralanma' : 'M84A1E · 381m paralanma'}</div>
                 </div>`;
             }
             html += `</div><hr class="result-divider">`;
@@ -3581,9 +3665,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // ── YAPAY ZEKA ASİSTANI (Groq / Llama-3.3-70B) ─────────────────────────
-    const GROQ_API_KEY = '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';
+    // API anahtarı Cloudflare Worker'da gizli — buraya sadece Worker URL'i yazılır
+    // Cloudflare Worker kurulduktan sonra aşağıdaki URL'i güncelleyin
+    const GROQ_PROXY_URL = 'https://WORKER_ADINIZ.workers.dev/groq';  // ← Cloudflare Worker URL
     const GROQ_MODEL   = 'llama-3.3-70b-versatile';
-    const GROQ_URL     = 'https://api.groq.com/openai/v1/chat/completions';
+    const GROQ_URL = GROQ_PROXY_URL; // Worker proxy kullanılıyor
 
     const _WIND_DIRS_AI = ['Kuzey','Kuzeydoğu','Doğu','Güneydoğu','Güney','Güneybatı','Batı','Kuzeybatı'];
     let aiHistory = [];   // Konuşma geçmişi
@@ -3761,8 +3847,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const resp = await fetch(GROQ_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + GROQ_API_KEY
+                    'Content-Type': 'application/json'
+                    // Authorization Worker tarafında ekleniyor
                 },
                 body: JSON.stringify({
                     model: GROQ_MODEL,
