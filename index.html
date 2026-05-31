@@ -580,31 +580,6 @@ tr:nth-child(even) td { background: var(--c-bg); }
 .ai-msg-ai .ai-role { font-size:.65rem;color:var(--c-faint);margin-bottom:3px; }
 .ai-loading { color:var(--c-muted);font-size:.75rem;padding:6px 10px;font-style:italic; }
 
-/* Çevre analizi */
-#cevreAnaliziPanel {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #fff8e6;
-  border: 1.5px solid #fec84b;
-  border-radius: 8px;
-  font-size: .72rem;
-  color: #92400e;
-  line-height: 1.6;
-  display: none;
-}
-#cevreAnaliziPanel .cevre-title {
-  font-weight: 700;
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  margin-bottom: 4px;
-  color: #78350f;
-}
-#cevreAnaliziPanel .cevre-loading {
-  color: #b45309;
-  font-style: italic;
-}
-
 /* Bilgi modal content styles */
 #bilgiContent h3{color:#1d2b45;font-size:.95rem;font-weight:700;margin:18px 0 8px;border-bottom:1px solid #e4e7ec;padding-bottom:4px}
 #bilgiContent h3:first-child{margin-top:0}
@@ -981,11 +956,6 @@ tr:nth-child(even) td { background: var(--c-bg); }
         </div>
       </div>
       <button id="copyResultsBtn" class="btn copy-btn">Sonuçları Kopyala</button>
-      <div id="cevreAnaliziPanel">
-        <div class="cevre-title">📍 Çevre Analizi</div>
-        <div id="cevreAnaliziIcerik" class="cevre-loading">Analiz ediliyor...</div>
-        <div style="font-size:.62rem;color:#b45309;margin-top:3px;">Kaynak: OpenStreetMap · 500m yarıçap · Veriler eksik olabilir</div>
-      </div>
 
       <!-- HARİTA -->
       <div style="margin-top:14px;">
@@ -3313,12 +3283,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             html += `</div><hr class="result-divider">`;
             document.getElementById('sonucAlan').innerHTML = html;
-
-            // Çevre analizi - hedef etrafındaki OSM verileri
-            if (sonuc && sonuc.mesafe) {
-                fetchCevreAnalizi(document.getElementById('hedefGrid').value);
-            }
-
         } catch(e) {
             document.getElementById('sonucAlan').innerHTML = `<div class="danger-box">${e.message}</div>`;
         }
@@ -4490,142 +4454,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('mapStatus').textContent = 'Konum izleme durduruldu.';
     }
 
-
-    // ── ÇEVRE ANALİZİ (OpenStreetMap Overpass API) ───────────────────────────
-    async function fetchCevreAnalizi(hedefGrid) {
-        const panel = document.getElementById('cevreAnaliziPanel');
-        const icerik = document.getElementById('cevreAnaliziIcerik');
-        if (!panel || !icerik) return;
-
-        panel.style.display = 'block';
-        icerik.textContent = 'Analiz ediliyor...';
-
-        try {
-            // MGRS → lat/lng
-            const u = mgrsToUtm(hedefGrid);
-            if (!u) { panel.style.display = 'none'; return; }
-            const isSouth = 'CDEFGHJKLM'.includes((u.latBand || 'S').toUpperCase());
-            const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
-            if (!ll || isNaN(ll.lat)) { panel.style.display = 'none'; return; }
-
-            const lat = ll.lat, lon = ll.lng, r = 500;
-
-            // Overpass API sorgusu
-            const query = `[out:json][timeout:10];(
-                node["amenity"~"school|hospital|mosque|church|fuel|police"](around:${r},${lat},${lon});
-                way["building"~"residential|commercial|industrial|yes"](around:${r},${lat},${lon});
-                way["highway"~"primary|secondary|tertiary|residential|unclassified|track"](around:${r},${lat},${lon});
-                way["waterway"~"river|stream|canal"](around:${r},${lat},${lon});
-                way["landuse"~"residential|industrial|farmland"](around:${r},${lat},${lon});
-            );out count;`;
-
-            const resp = await fetch('https://overpass-api.de/api/interpreter', {
-                method: 'POST',
-                body: query,
-                signal: AbortSignal.timeout(12000)
-            });
-
-            if (!resp.ok) throw new Error('API hatası');
-            const data = await resp.json();
-
-            // Detaylı sorgu - her kategori ayrı
-            const q2 = `[out:json][timeout:15];
-                (node["amenity"~"school|hospital|mosque|church"](around:${r},${lat},${lon});)->.amenities;
-                (way["building"](around:${r},${lat},${lon});)->.buildings;
-                (way["highway"](around:${r},${lat},${lon});)->.roads;
-                (way["waterway"](around:${r},${lat},${lon});)->.water;
-                .amenities out tags;
-                .buildings out count;
-                .roads out count;
-                .water out count;`;
-
-            const resp2 = await fetch('https://overpass-api.de/api/interpreter', {
-                method: 'POST',
-                body: `[out:json][timeout:15];(
-                    node["amenity"~"school|hospital|mosque|church|fuel|police|fire_station"](around:${r},${lat},${lon});
-                    way["building"](around:${r},${lat},${lon});
-                    way["highway"](around:${r},${lat},${lon});
-                    way["waterway"](around:${r},${lat},${lon});
-                );out tags;`,
-                signal: AbortSignal.timeout(15000)
-            });
-
-            const data2 = await resp2.json();
-            const elements = data2.elements || [];
-
-            // Kategorilere ayır
-            const amenities = {};
-            let binaSayisi = 0;
-            let yolSayisi = 0;
-            let suSayisi = 0;
-            const yolTipleri = new Set();
-
-            elements.forEach(function(el) {
-                const tags = el.tags || {};
-                if (tags.amenity) {
-                    const tip = tags.amenity;
-                    amenities[tip] = (amenities[tip] || 0) + 1;
-                }
-                if (tags.building) binaSayisi++;
-                if (tags.highway) { yolSayisi++; yolTipleri.add(tags.highway); }
-                if (tags.waterway) suSayisi++;
-            });
-
-            // Sonuç metni oluştur
-            const satirlar = [];
-
-            // Kritik tesisler
-            const kritikler = [];
-            if (amenities.school)        kritikler.push('🏫 Okul: ' + amenities.school + ' adet');
-            if (amenities.hospital)      kritikler.push('🏥 Hastane: ' + amenities.hospital + ' adet');
-            if (amenities.mosque)        kritikler.push('🕌 Cami: ' + amenities.mosque + ' adet');
-            if (amenities.church)        kritikler.push('⛪ Kilise: ' + amenities.church + ' adet');
-            if (amenities.fuel)          kritikler.push('⛽ Akaryakıt: ' + amenities.fuel + ' adet');
-            if (amenities.police)        kritikler.push('🚔 Karakol: ' + amenities.police + ' adet');
-            if (amenities.fire_station)  kritikler.push('🚒 İtfaiye: ' + amenities.fire_station + ' adet');
-
-            if (kritikler.length > 0) {
-                satirlar.push('⚠️ Kritik Tesis: ' + kritikler.join(' · '));
-            }
-
-            // Yapı
-            if (binaSayisi > 0) {
-                const yogunluk = binaSayisi > 50 ? 'yoğun yerleşim' : binaSayisi > 15 ? 'orta yoğunluk' : 'seyrek yapılaşma';
-                satirlar.push('🏘️ Yapı: ' + binaSayisi + ' adet (' + yogunluk + ')');
-            } else {
-                satirlar.push('🏘️ Yapı: Tespit edilmedi');
-            }
-
-            // Yol
-            if (yolSayisi > 0) {
-                const yolList = Array.from(yolTipleri).slice(0,3).join(', ');
-                satirlar.push('🛣️ Yol: ' + yolSayisi + ' adet (' + yolList + ')');
-            }
-
-            // Su
-            if (suSayisi > 0) {
-                satirlar.push('💧 Su kaynağı: ' + suSayisi + ' adet');
-            }
-
-            if (satirlar.length === 0) {
-                satirlar.push('Belirgin yapı veya tesis tespit edilmedi.');
-            }
-
-            icerik.innerHTML = satirlar.join('<br>');
-
-            // Kritik tesis varsa panel rengini değiştir
-            if (kritikler.length > 0) {
-                panel.style.borderColor = '#ef4444';
-                panel.style.background = '#fff1f1';
-            } else {
-                panel.style.borderColor = '#fec84b';
-                panel.style.background = '#fff8e6';
-            }
-
-        } catch(e) {
-            panel.style.display = 'none';
-        }
-    }
 
 });
 </script>
