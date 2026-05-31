@@ -2121,58 +2121,6 @@ self.addEventListener('fetch', e => {
     }
 
 
-document.addEventListener("DOMContentLoaded", function() {
-
-    setTimeout(() => renderBilgi(0), 100);
-    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
-    var optM301init = document.getElementById('ammoOpt_m301a2');
-    if (optM301init) optM301init.style.display = '';
-
-    // ======================== GİRİŞ KONTROLÜ ========================
-    document.getElementById('loginBtn').addEventListener('click', async function() {
-        let username = document.getElementById('username').value.trim();
-        let password = document.getElementById('password').value.trim();
-        async function hashPwd(p) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
-            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-        }
-        const pwdHash = await hashPwd(password);
-        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
-        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
-        } else {
-            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
-        }
-    });
-    document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    });
-
-    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
-    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
-    // Kaynak: NGA.STND.0037 MGRS standardı
-
-    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
-    const _COL_LETTERS = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'];
-    // 100km satır harfleri: zone çift/tek'e göre iki farklı set
-    const _ROW_ODD  = 'ABCDEFGHJKLMNPQRSTUV';  // tek zone
-    const _ROW_EVEN = 'FGHJKLMNPQRSTUVABCDE';  // çift zone
-
-    // Enlem bandı → minimum northing (metre, ekvatordan kuzey hemisfer için)
-    const _LAT_BAND_MIN_N = {
-        'C':1100000,'D':2000000,'E':2800000,'F':3700000,
-        'G':4600000,'H':5500000,'J':6400000,'K':7300000,
-        'L':8200000,'M':9100000,'N':0,'P':900000,
-        'Q':1800000,'R':2700000,'S':3600000,'T':4500000,
-        'U':5400000,'V':6300000,'W':7200000,'X':8100000,
-    };
-    // Enlem bandı güney hemisfer mi?
-    const _SOUTH_BANDS = 'CDEFGHJKLM';
-
-    // ── MGRS FORMAT NORMALİZASYON ──────────────────────────────────────────
-    // "37SBV8905958179", "37sdg3456726899", "37S BV89059 58179" gibi
-    // tüm formatları standart "37S BV 89059 58179" haline getirir
     function normalizeMgrs(raw) {
         var s = raw.trim().toUpperCase().replace(/[-,]+/g,'').replace(/\s+/g,' ').trim();
         var m;
@@ -2314,6 +2262,59 @@ document.addEventListener("DOMContentLoaded", function() {
         m57: { 1: [[350,20.5],[850,15.5]], 2: [[450,25.4],[1300,18.9]], 3: [[600,29.8],[1800,22.9]], 4: [[700,33.2],[2250,25.2]] },
         m43a1b1: { 1: [[250,21.3],[1100,15.9]], 2: [[300,26.8],[1600,20.5]], 3: [[400,29.6],[2150,23.0]], 4: [[450,35.3],[2550,24.6]], 5: [[500,35.1],[2950,28.6]], 6: [[700,37.8],[3400,29.6]] }
     };
+document.addEventListener("DOMContentLoaded", function() {
+
+    setTimeout(() => renderBilgi(0), 100);
+    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
+    var optM301init = document.getElementById('ammoOpt_m301a2');
+    if (optM301init) optM301init.style.display = '';
+
+    // ======================== GİRİŞ KONTROLÜ ========================
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+        let username = document.getElementById('username').value.trim();
+        let password = document.getElementById('password').value.trim();
+        async function hashPwd(p) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        }
+        const pwdHash = await hashPwd(password);
+        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
+        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
+        } else {
+            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
+        }
+    });
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
+    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
+    // Kaynak: NGA.STND.0037 MGRS standardı
+
+    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
+    const _COL_LETTERS = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'];
+    // 100km satır harfleri: zone çift/tek'e göre iki farklı set
+    const _ROW_ODD  = 'ABCDEFGHJKLMNPQRSTUV';  // tek zone
+    const _ROW_EVEN = 'FGHJKLMNPQRSTUVABCDE';  // çift zone
+
+    // Enlem bandı → minimum northing (metre, ekvatordan kuzey hemisfer için)
+    const _LAT_BAND_MIN_N = {
+        'C':1100000,'D':2000000,'E':2800000,'F':3700000,
+        'G':4600000,'H':5500000,'J':6400000,'K':7300000,
+        'L':8200000,'M':9100000,'N':0,'P':900000,
+        'Q':1800000,'R':2700000,'S':3600000,'T':4500000,
+        'U':5400000,'V':6300000,'W':7200000,'X':8100000,
+    };
+    // Enlem bandı güney hemisfer mi?
+    const _SOUTH_BANDS = 'CDEFGHJKLM';
+
+    // ── MGRS FORMAT NORMALİZASYON ──────────────────────────────────────────
+    // "37SBV8905958179", "37sdg3456726899", "37S BV89059 58179" gibi
+    // tüm formatları standart "37S BV 89059 58179" haline getirir
+
     function get81FlightTime(ammoId, bh, range) {
         let table = flightTime81[ammoId]?.[bh];
         if (!table) return (range * 0.0095 + 4).toFixed(1);
