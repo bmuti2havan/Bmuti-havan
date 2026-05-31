@@ -15,21 +15,45 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --c-bg:       #f5f6f8;
+  /* Kurumsal Renk Paleti */
+  --c-bg:       #f0f2f5;
   --c-surface:  #ffffff;
-  --c-border:   #e4e7ec;
-  --c-border2:  #d0d5dd;
-  --c-text:     #101828;
-  --c-muted:    #667085;
-  --c-faint:    #98a2b3;
-  --c-navy:     #1d2b45;
-  --c-accent:   #2563eb;
-  --c-blue:     #1a5fa8;
-  --c-red:      #e05252;
-  --c-green:    #059669;
+  --c-border:   #dde1e9;
+  --c-border2:  #c4cad6;
+  --c-text:     #0f172a;
+  --c-muted:    #64748b;
+  --c-faint:    #94a3b8;
+  --c-navy:     #0f2554;
+  --c-accent:   #1d4ed8;
+  --c-blue:     #1e40af;
+  --c-red:      #dc2626;
+  --c-green:    #047857;
+
+  /* Tasarım Sistemi */
+  --r:          8px;
+  --r-sm:       5px;
+  --r-lg:       12px;
+  --shadow-sm:  0 1px 3px rgba(15,37,84,.08), 0 1px 2px rgba(15,37,84,.06);
+  --shadow-md:  0 4px 12px rgba(15,37,84,.1), 0 2px 4px rgba(15,37,84,.06);
+  --shadow-lg:  0 10px 30px rgba(15,37,84,.12), 0 4px 8px rgba(15,37,84,.08);
+}
+
+[data-theme="dark"] {
+  --c-bg:       #060d1f;
+  --c-surface:  #0d1a35;
+  --c-border:   #1e3a5f;
+  --c-border2:  #2d5282;
+  --c-text:     #e2e8f0;
+  --c-muted:    #94a3b8;
+  --c-faint:    #64748b;
+  --c-navy:     #1e3a8a;
+  --c-accent:   #3b82f6;
+  --c-blue:     #60a5fa;
+  --c-red:      #f87171;
+  --c-green:    #34d399;
 }
 
 [data-theme="dark"] {
@@ -189,8 +213,8 @@ body {
   100% { box-shadow: 0 0 0 0 rgba(229,188,102,0); transform: scale(1); }
 }
 .bilgi-btn {
-  background: #e5bc66 !important;
-  color: #1a2332 !important;
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  color: #fff !important;
   border: none !important;
   padding: 8px 18px !important;
   border-radius: 7px !important;
@@ -267,11 +291,17 @@ body {
   background: var(--c-bg); border-bottom: 1px solid var(--c-border);
 }
 .caliber-btn {
-  padding: 9px 24px; background: #fff;
-  border: 1.5px solid var(--c-border); border-radius: 8px;
-  font-family: inherit; font-size: .86rem; font-weight: 600;
-  color: var(--c-muted); cursor: pointer; transition: .15s;
-  letter-spacing: .2px;
+  padding: 8px 22px;
+  background: transparent;
+  border: 1.5px solid var(--c-border);
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: .2s;
+  letter-spacing: .3px;
 }
 .caliber-btn:hover { border-color: var(--c-border2); color: var(--c-text); background: #fff; }
 .caliber-btn.active {
@@ -302,7 +332,7 @@ body {
   color: var(--c-accent); font-weight: 600;
 }
 .range-badge {
-  font-family: 'DM Mono', monospace; font-size: .78rem; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace; font-size: .78rem; font-weight: 700;
   color: #1a4a7a; background: #dbeafe;
   border: 2px solid #93c5fd; padding: 6px 16px; border-radius: 99px;
   white-space: nowrap; letter-spacing: .3px;
@@ -353,7 +383,7 @@ body {
 .param-row input, .param-row select {
   flex: 1; min-width: 0; padding: 8px 11px;
   border: 1.5px solid var(--c-border); border-radius: var(--r);
-  font-family: 'DM Mono', monospace; font-size: .82rem; color: var(--c-text);
+  font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--c-text);
   background: #fff; outline: none; transition: .15s;
   -moz-appearance: textfield;
 }
@@ -442,7 +472,7 @@ body {
 }
 .result-card.highlight .result-label { color: rgba(255,255,255,.4); }
 .result-value {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1.45rem; font-weight: 500; color: var(--c-text); line-height: 1.1;
 }
 .result-value.big { font-size: 1.85rem; }
@@ -454,7 +484,7 @@ body {
 .result-card.highlight .result-unit { color: rgba(255,255,255,.35); }
 .result-meta {
   font-size: .68rem; color: var(--c-faint); margin-top: 2px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
 }
 .result-card.highlight .result-meta { color: rgba(255,255,255,.35); }
 .result-divider { border: none; border-top: 1px solid var(--c-border); margin: 12px 0; }
@@ -481,7 +511,7 @@ th {
 }
 td {
   border: 1px solid var(--c-border); padding: 7px 10px;
-  text-align: center; font-family: 'DM Mono', monospace;
+  text-align: center; font-family: 'JetBrains Mono', monospace;
   font-size: .78rem; color: var(--c-text);
 }
 tr:nth-child(even) td { background: var(--c-bg); }
@@ -496,7 +526,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
   display: flex; flex-wrap: wrap; gap: 10px;
   margin-top: 8px; padding: 8px 0;
   border-top: 1px solid var(--c-border);
-  font-size: .74rem; font-family: 'DM Mono', monospace;
+  font-size: .74rem; font-family: 'JetBrains Mono', monospace;
   color: var(--c-amber);
 }
 .hedef-girdi {
@@ -580,6 +610,31 @@ tr:nth-child(even) td { background: var(--c-bg); }
 .ai-msg-ai .ai-role { font-size:.65rem;color:var(--c-faint);margin-bottom:3px; }
 .ai-loading { color:var(--c-muted);font-size:.75rem;padding:6px 10px;font-style:italic; }
 
+/* Çevre analizi */
+#cevreAnaliziPanel {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #fff8e6;
+  border: 1.5px solid #fec84b;
+  border-radius: 8px;
+  font-size: .72rem;
+  color: #92400e;
+  line-height: 1.6;
+  display: none;
+}
+#cevreAnaliziPanel .cevre-title {
+  font-weight: 700;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+  color: #78350f;
+}
+#cevreAnaliziPanel .cevre-loading {
+  color: #b45309;
+  font-style: italic;
+}
+
 /* Bilgi modal content styles */
 #bilgiContent h3{color:#1d2b45;font-size:.95rem;font-weight:700;margin:18px 0 8px;border-bottom:1px solid #e4e7ec;padding-bottom:4px}
 #bilgiContent h3:first-child{margin-top:0}
@@ -587,6 +642,147 @@ tr:nth-child(even) td { background: var(--c-bg); }
 #bilgiContent ul{color:#344054;font-size:.84rem;line-height:1.65;padding-left:20px;margin-bottom:10px}
 #bilgiContent li{margin-bottom:5px}
 #bilgiContent b{color:#1d2b45}
+
+/* ── KURUMSAL TASARIM EKLERİ ─────────────────────────────── */
+
+/* Genel arka plan */
+body { background: linear-gradient(160deg, #e8edf5 0%, #f0f2f7 100%); min-height: 100vh; }
+
+/* Wrapper padding */
+.app-wrapper { padding: 20px 16px; }
+
+/* Left panel */
+.left-panel {
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-border);
+}
+
+/* Right panel */
+.right-panel {
+  background: #f8fafc;
+}
+
+/* Param label */
+.param-row label {
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--c-muted);
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+/* Input fields */
+input[type="text"], input[type="number"], select {
+  border: 1.5px solid var(--c-border);
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus, select:focus {
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.1);
+  outline: none;
+}
+
+/* Result header card */
+.result-card.highlight {
+  background: linear-gradient(135deg, #0f2554, #1e3a8a);
+  border-color: #1d4ed8;
+}
+
+/* fn-toggle open state */
+.fn-toggle.open {
+  border-left-color: var(--c-accent);
+  color: var(--c-accent);
+  background: #f0f4ff;
+}
+
+/* Hesapla button */
+#hesaplaBtn {
+  background: linear-gradient(135deg, #0f2554, #1e40af) !important;
+  border: none !important;
+  font-size: .9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .3px !important;
+  box-shadow: 0 4px 14px rgba(15,37,84,.3) !important;
+  transition: all .2s !important;
+}
+#hesaplaBtn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(15,37,84,.4) !important;
+}
+#hesaplaBtn:active { transform: translateY(0) !important; }
+
+/* Status dot */
+.status-dot {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34,197,94,.6);
+}
+
+/* Ammo selector pills */
+.ammo-option {
+  font-size: .76rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--c-muted);
+  transition: .15s;
+  border: 1.5px solid transparent;
+}
+.ammo-option:hover { background: #f0f4ff; color: var(--c-accent); }
+.ammo-option.selected {
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  color: #1e40af;
+  border-color: #bfdbfe;
+  font-weight: 700;
+}
+
+/* Result divider */
+.result-divider {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 8px 0;
+}
+
+/* Copy btn */
+.copy-btn {
+  width: 100%;
+  margin-top: 8px;
+  background: #f8fafc !important;
+  color: var(--c-muted) !important;
+  border-color: var(--c-border) !important;
+  font-size: .78rem !important;
+}
+.copy-btn:hover {
+  background: #f0f4ff !important;
+  color: var(--c-accent) !important;
+  border-color: var(--c-accent) !important;
+}
+
+/* AI panel header */
+.ai-header-btn {
+  background: rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.85) !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  font-size: .76rem !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  transition: .2s !important;
+}
+.ai-header-btn:hover {
+  background: rgba(255,255,255,.2) !important;
+}
+
+/* Dark mode fixes */
+[data-theme="dark"] body { background: linear-gradient(160deg, #020b1a 0%, #060d1f 100%); }
+[data-theme="dark"] .left-panel,
+[data-theme="dark"] .mortar-card { background: #0d1a35; border-color: #1e3a5f; }
+[data-theme="dark"] .right-panel { background: #060d1f; }
+[data-theme="dark"] .result-card { background: #0d1a35; border-color: #1e3a5f; }
+[data-theme="dark"] input, [data-theme="dark"] select { background: #060d1f; border-color: #1e3a5f; color: #e2e8f0; }
+[data-theme="dark"] .fn-toggle.open { background: #0d2040; }
+[data-theme="dark"] .ammo-option.selected { background: #0d2040; color: #60a5fa; border-color: #1e3a5f; }
 
 </style>
 <body>
@@ -795,15 +991,15 @@ tr:nth-child(even) td { background: var(--c-bg); }
             <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#667085;margin-bottom:5px;">🎯 3 Namlu Koordinatları (40m aralık)</div>
             <div id="kvNamlu1" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 1 — Konvoy Başı</div>
-              <div id="kvN1Grid" style="font-size:.85rem;font-weight:700;color:#e5bc66;font-family:'DM Mono',monospace;"></div>
+              <div id="kvN1Grid" style="font-size:.85rem;font-weight:700;color:#e5bc66;font-family:'JetBrains Mono',monospace;"></div>
             </div>
             <div id="kvNamlu2" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 2 — Konvoy Ortası</div>
-              <div id="kvN2Grid" style="font-size:.85rem;font-weight:700;color:#4ade80;font-family:'DM Mono',monospace;"></div>
+              <div id="kvN2Grid" style="font-size:.85rem;font-weight:700;color:#4ade80;font-family:'JetBrains Mono',monospace;"></div>
             </div>
             <div id="kvNamlu3" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:6px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 3 — Konvoy Sonu</div>
-              <div id="kvN3Grid" style="font-size:.85rem;font-weight:700;color:#f97316;font-family:'DM Mono',monospace;"></div>
+              <div id="kvN3Grid" style="font-size:.85rem;font-weight:700;color:#f97316;font-family:'JetBrains Mono',monospace;"></div>
             </div>
             <div id="kvBilgiSatir" style="font-size:.7rem;color:#667085;background:#f5f6f8;border-radius:5px;padding:5px 8px;"></div>
           </div>
@@ -956,6 +1152,11 @@ tr:nth-child(even) td { background: var(--c-bg); }
         </div>
       </div>
       <button id="copyResultsBtn" class="btn copy-btn">Sonuçları Kopyala</button>
+      <div id="cevreAnaliziPanel">
+        <div class="cevre-title">📍 Çevre Analizi</div>
+        <div id="cevreAnaliziIcerik" class="cevre-loading">Analiz ediliyor...</div>
+        <div style="font-size:.62rem;color:#b45309;margin-top:3px;">Kaynak: OpenStreetMap · 500m yarıçap · Veriler eksik olabilir</div>
+      </div>
 
       <!-- HARİTA -->
       <div style="margin-top:14px;">
@@ -981,7 +1182,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
           </div>
         </div>
         <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
-        <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'DM Mono',monospace;min-height:16px;"></div>
+        <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'JetBrains Mono',monospace;min-height:16px;"></div>
 
         <!-- ALT SONUÇ PANELİ -->
         <div id="mapSonucPanel" style="display:none;margin-top:8px;background:#fff;border:1.5px solid var(--c-border);border-radius:var(--r);overflow:hidden;">
@@ -991,7 +1192,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
               style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.9rem;padding:0;">✕</button>
           </div>
           <div style="padding:10px 12px;">
-            <div style="font-size:.7rem;color:#667085;font-family:'DM Mono',monospace;margin-bottom:8px;" id="mapSonucKoord"></div>
+            <div style="font-size:.7rem;color:#667085;font-family:'JetBrains Mono',monospace;margin-bottom:8px;" id="mapSonucKoord"></div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="mapSonucGrid">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;">
@@ -1436,7 +1637,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
           <p>106mm'de yükseliş sabit tutulur; değişen parametre barut miktarıdır. Bu yöntem atış hazırlık süresini kısaltır ve standart bir yükseliş açısı üzerinden farklı menzillere erişimi kolaylaştırır.</p>
 
           <h3>Emniyet Şeması Örneği</h3>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
             (X) mesafesi: 3200 m → Karşılık: 17 4/8 BH<br>
             Fazla barut hakları çıkarılarak imha edilir<br>
             (KKT 315-29 Ek-E, Madde d)
@@ -1468,7 +1669,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
           <h3>TAÇ Faktörleri (BH bazlı)</h3>
           <p>120mm için TAÇ her BH'a özgü sabit çarpanla hesaplanır:</p>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
             BH1: −3.2 &nbsp; BH3: −3.8 &nbsp; BH5: −4.5<br>
             BH7: −5.3 &nbsp; BH9: −5.7 &nbsp; BH10: −5.9
           </p>
@@ -1490,7 +1691,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
           </ul>
 
           <h3>Hedef Yanı Formülü (KKT 315-29)</h3>
-          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.88rem;margin:10px 0;">
+          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.88rem;margin:10px 0;">
             Hedef Yanı = DTN İstikameti + DTN Yanı − Hedef İstikameti
           </p>
 
@@ -1510,7 +1711,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
           </ul>
 
           <h3>Rakım Farkı Formülü</h3>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
             Rakım Farkı = Hedef Rakımı − Mevzi Rakımı<br>
             Pozitif (+) → Hedef yukarıda → Nişangah azalır<br>
             Negatif (−) → Hedef aşağıda → Nişangah artar<br>
@@ -1524,7 +1725,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
           <p>Military Grid Reference System — NATO standardı askeri koordinat sistemi. UTM sistemini temel alır; dünyayı 6°'lik dilimler ve 8°'lik bantlara böler.</p>
 
           <h3>MGRS Format</h3>
-          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.88rem;">
+          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.88rem;">
             37S &nbsp; BV &nbsp; 89059 &nbsp; 58179<br>
             ↑ &nbsp;&nbsp;&nbsp;&nbsp; ↑↑ &nbsp;&nbsp; ←Doğu→ ←Kuzey→<br>
             Dilim &nbsp;100km &nbsp; metre &nbsp;&nbsp; metre
@@ -2818,53 +3019,179 @@ self.addEventListener('fetch', e => {
         return `${zone}${u.latBand} ${colLetter}${rowLetter} ${eLocal} ${nLocal}`;
     }
 
-document.addEventListener("DOMContentLoaded", function() {
+    function calculateManualMetro(atisIaDeg, hedefMesafe) {
+        let ruzgarHizi = parseFloat(document.getElementById('ruzgarHizi').value) || 0;
+        let ruzgarYonuMils = parseFloat(document.getElementById('ruzgarYonu').value) || 0;
+        let havaSicaklik = parseFloat(document.getElementById('havaSicaklik').value) || 15;
+        let havaBasinc = parseFloat(document.getElementById('havaBasinc').value) || 1013;
+        let nemOrani = parseFloat(document.getElementById('nemOrani').value) || 60;
+        let atisIaMils = Math.round(atisIaDeg * 6400 / 360);
+        let ruzgarGidisYonu = (ruzgarYonuMils + 3200) % 6400;
+        let relWind = (ruzgarGidisYonu - atisIaMils + 6400) % 6400;
+        let yanBilesen = Math.sin(relWind * Math.PI / 3200);
+        let mesafeBilesen = Math.cos(relWind * Math.PI / 3200);
+        let yanMils = Math.round(yanBilesen * ruzgarHizi * (hedefMesafe / 1000) * 0.9);
+        let ruzgarMesafeM = Math.round(mesafeBilesen * ruzgarHizi * (hedefMesafe / 1000) * 0.5);
+        let tempDelta = havaSicaklik - 15;
+        let pressDelta = 1013 - havaBasinc;
+        let tempPressM = Math.round((tempDelta * 0.001 + pressDelta * 0.0001) * hedefMesafe);
+        let humidDelta = nemOrani - 60;
+        let humidM = Math.round(humidDelta * 0.0002 * hedefMesafe);
+        let totalRangeM = ruzgarMesafeM + tempPressM + humidM;
+        return { yanMils, rangeMeters: totalRangeM };
+    }
+    function applyMetro() {
+        let mGrid = document.getElementById('mevziGrid').value;
+        let hGrid = document.getElementById('hedefGrid').value;
+        let rawRange = distanceMgrs(mGrid, hGrid);
+        if (!rawRange) { alert('Önce hedef gridini kontrol edin'); return; }
+        let havIaDeg = azimuthDegrees(mGrid, hGrid);
+        let metro = calculateManualMetro(havIaDeg, rawRange);
+        activeMetro = metro;
+        document.getElementById('metroCorrectionDisplay').style.display = 'flex';
+        document.getElementById('metroCorrectionDisplay').innerHTML = `<span>🌬️ Yan Düzeltme: ${metro.yanMils} milyem</span><span>📏 Mesafe Düzeltmesi: ${metro.rangeMeters >= 0 ? '+' : ''}${metro.rangeMeters} m</span>`;
+        hesaplaTekHedef();
+    }
+    function hesaplaTekHedef() {
+        let mGrid = document.getElementById('mevziGrid').value;
+        let hGrid = document.getElementById('hedefGrid').value;
+        let mRak = parseFloat(document.getElementById('mevziRakim').value) || 0;
+        let hRak = parseFloat(document.getElementById('hedefRakim').value) || 0;
+        let dtnIaMils = parseFloat(document.getElementById('dtnAzimuth').value) || 0;
+        let dtnYan = parseFloat(document.getElementById('dtnYan').value) || 2800;
+        let yCorrDir = document.getElementById('yanCorrDir').value;
+        let yCorrM = parseFloat(document.getElementById('yanCorrMeters').value) || 0;
+        let rCorrDir = document.getElementById('rangeCorrDir').value;
+        let rCorrM = parseFloat(document.getElementById('rangeCorrMeters').value) || 0;
+        let hCorrDir = document.getElementById('heightCorrDir').value;
+        let hCorrVal = parseFloat(document.getElementById('heightCorrValue').value) || 0;
+        let paralanma = (hCorrDir === 'kaldir' ? hCorrVal : (hCorrDir === 'indir' ? -hCorrVal : 0));
+        try {
+            let sonuc = calculateTargetSimpleWithYanCorrection(hGrid, hRak, mGrid, mRak, dtnIaMils, dtnYan, rCorrDir, rCorrM, yCorrDir, yCorrM, paralanma);
+            let tacBilgi = '<span class="info-chip">📐 TAÇ Otomatik</span>';
+            let bhBilgi = currentCaliber === '120' && !bhAuto120 ? `<span class="info-chip">MANUEL ${document.getElementById('bh120Manual').value}</span>` : '';
+            const yuksNote = currentCaliber === '106' ? '<span class="result-unit">mil / ilaveli 900</span>' : '<span class="result-unit">milyem</span>';
+            let html = `<div class="info-bar">
+                <span style="color:var(--text-sec);font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:0.72rem;">${sonuc.mühimmat}</span>
+                ${tacBilgi}${bhBilgi}
+            </div>
+            <div class="result-grid">
+                <div class="result-card highlight">
+                    <div class="result-label">Hedef Yanı</div>
+                    <div class="result-value big">${sonuc.yan}<span class="result-unit">mil</span></div>
+                </div>
+                <div class="result-card highlight">
+                    <div class="result-label">Yükseliş</div>
+                    <div class="result-value big">${sonuc.yukselis}${yuksNote}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Mesafe</div>
+                    <div class="result-value">${sonuc.mesafe}<span class="result-unit">m</span></div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Barut Hakkı</div>
+                    <div class="result-value">${sonuc.bh}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">İstikamet</div>
+                    <div class="result-value">${sonuc.havIaMils}<span class="result-unit">mil</span></div>
+                    <div class="result-meta">${Math.round(sonuc.havIaDeg)}°</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Rakım Farkı</div>
+                    <div class="result-value" style="color:${sonuc.altFark > 0 ? 'var(--green)' : sonuc.altFark < 0 ? 'var(--red)' : 'var(--text-sec)'}">${sonuc.altFark > 0 ? '+' : ''}${sonuc.altFark}<span class="result-unit">m</span></div>
+                </div>`;
+            if (sonuc.ucusSuresi !== null && sonuc.ucusSuresi !== '') {
+                html += `<div class="result-card">
+                    <div class="result-label">Uçuş Süresi</div>
+                    <div class="result-value">${sonuc.ucusSuresi}<span class="result-unit">sn</span></div>
+                </div>`;
+            }
+            if (sonuc.tapaSaniyesi !== null && sonuc.tapaSaniyesi !== undefined) {
+                html += `<div class="result-card" style="border-color:#f97316;border-width:2px;">
+                    <div class="result-label" style="color:#f97316;">🕐 Tapa Saniyesi</div>
+                    <div class="result-value" style="color:#f97316;">${sonuc.tapaSaniyesi}<span class="result-unit">sn</span></div>
+                    <div style="font-size:.62rem;color:#f97316;margin-top:2px;">${sonuc.mühimmat && sonuc.mühimmat.includes('236') ? 'MOD 236 · 600m paralanma' : 'M84A1E · 381m paralanma'}</div>
+                </div>`;
+            }
+            html += `</div><hr class="result-divider">`;
+            document.getElementById('sonucAlan').innerHTML = html;
 
-    setTimeout(() => renderBilgi(0), 100);
-    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
-    var optM301init = document.getElementById('ammoOpt_m301a2');
-    if (optM301init) optM301init.style.display = '';
+            // Çevre analizi - hedef etrafındaki OSM verileri
+            if (sonuc && sonuc.mesafe) {
+                fetchCevreAnalizi(document.getElementById('hedefGrid').value);
+            }
 
-
-
-    // ======================== 81 ve 106 TABLOLARI (Aynen) ========================
-    const flightTime81 = {
-        mke214: null, // mke214 için uçuş süresi sight_MKE214 tablosundan alınır
-        m64: { 1: [[250,22.7],[1700,8.9]], 2: [[400,29.6],[2200,18.4]], 3: [[600,29.7],[3000,24.9]], 4: [[800,40.8],[3550,30.2]], 5: [[950,45.7],[4500,13.3]], 6: [[1100,49.8],[7000,10.1]], 7: [[1300,54.0],[7000,18.9]], 8: [[1400,57.2],[7000,18.9]] },
-        m56a1: { 1: [[200,20.3],[850,16.2]], 2: [[450,25.9],[1450,19.3]], 3: [[500,30.4],[1850,23.2]], 4: [[600,34.1],[3000,19.1]] },
-        m57: { 1: [[350,20.5],[850,15.5]], 2: [[450,25.4],[1300,18.9]], 3: [[600,29.8],[1800,22.9]], 4: [[700,33.2],[2250,25.2]] },
-        m43a1b1: { 1: [[250,21.3],[1100,15.9]], 2: [[300,26.8],[1600,20.5]], 3: [[400,29.6],[2150,23.0]], 4: [[450,35.3],[2550,24.6]], 5: [[500,35.1],[2950,28.6]], 6: [[700,37.8],[3400,29.6]] }
-    };
-
-    // ======================== GİRİŞ KONTROLÜ ========================
-    document.getElementById('loginBtn').addEventListener('click', async function() {
-        let username = document.getElementById('username').value.trim();
-        let password = document.getElementById('password').value.trim();
-        async function hashPwd(p) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
-            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        } catch(e) {
+            document.getElementById('sonucAlan').innerHTML = `<div class="danger-box">${e.message}</div>`;
         }
-        const pwdHash = await hashPwd(password);
-        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
-        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
-        } else {
-            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
+    }
+    function ileriGozetleyiciDuzeltme() {
+        let mevziGrid = document.getElementById('mevziGrid').value;
+        let gozlemciGrid = document.getElementById('gozlemciGrid').value;
+        let hedefGrid = document.getElementById('hedefGrid').value;
+        let gozIstikametMils = parseFloat(document.getElementById('gozIstikametMils').value);
+        let sagaMetre = parseFloat(document.getElementById('sagaMetre').value) || 0;
+        let uzatMetre = parseFloat(document.getElementById('uzatMetre').value) || 0;
+
+        let gozIstikametDeg = gozIstikametMils * 360 / 6400;
+        let batarya = mgrsToMeters(mevziGrid);
+        let gozlemci = mgrsToMeters(gozlemciGrid);
+        let hedef = mgrsToMeters(hedefGrid);
+        if (!batarya || !gozlemci || !hedef) {
+            alert('MGRS dönüşüm hatası! Gridleri kontrol edin.');
+            return;
         }
-    });
-    document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    });
 
-    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
-    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
-    // Kaynak: NGA.STND.0037 MGRS standardı
+        let rad = gozIstikametDeg * Math.PI / 180;
+        let u = { x: Math.sin(rad), y: Math.cos(rad) };
+        let sag = { x: Math.cos(rad), y: -Math.sin(rad) };
+        let dx = sagaMetre * sag.x + uzatMetre * u.x;
+        let dy = sagaMetre * sag.y + uzatMetre * u.y;
+        let yeniHedef = { x: hedef.x + dx, y: hedef.y + dy };
 
-    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
+        // Doğru MGRS dönüşümü: mgrsAddOffset kullan
+        let yeniGrid = mgrsAddOffset(hedefGrid, dx, dy);
 
-    // ======================== 120 MM HAVAN - YENİ MOTOR ========================
-    // ----- YENİ EVRENSEL FONKSİYONLAR -----
+        document.getElementById('hedefGrid').value = yeniGrid;
+        hesaplaTekHedef();
+        alert(`İleri gözetleyici düzeltmesi uygulandı.\nYeni hedef grid: ${yeniGrid}`);
+    }
+    function toggleAccordion(id,cid) {
+        document.getElementById(id).addEventListener('click', () => {
+            document.getElementById(cid).classList.toggle('show');
+            document.getElementById(id).classList.toggle('open');
+        });
+    }
+    function setCaliber(cal) {
+        // M-301 A2 sadece 81mm'de görünür
+        var optM301 = document.getElementById('ammoOpt_m301a2');
+        if (optM301) optM301.style.display = (cal === '81') ? '' : 'none';
+        // 81mm dışında m301a2 seçiliyse ilk geçerli mühimmata dön
+        if (cal !== '81' && currentAmmo81 === 'm301a2') {
+            currentAmmo81 = 'mke214';
+            document.querySelectorAll('.ammo-option').forEach(b => {
+                b.classList.toggle('selected', b.dataset.ammo === 'mke214');
+            });
+        }
+        currentCaliber = cal;
+        document.querySelectorAll('.caliber-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn${cal}mm`).classList.add('active');
+        document.getElementById('ammoSelector81').style.display = cal === '81' ? 'flex' : 'none';
+        document.getElementById('ammoSelector106').style.display = cal === '106' ? 'flex' : 'none';
+        document.getElementById('ammoSelector120').style.display = cal === '120' ? 'flex' : 'none';
+        document.getElementById('weightGroupDiv').style.display = cal === '120' ? 'flex' : 'none';
+        document.getElementById('bh120Row').style.display = (cal === '120' && !bhAuto120) ? 'flex' : 'none';
+        document.getElementById('bh120ModeRow').style.display = cal === '120' ? 'flex' : 'none';
+        // TAÇ her zaman aktif - otomatik
+        let maxR = cal === '81' ? ammo81[currentAmmo81].maxRange : (cal === '106' ? 5480 : 8200);
+        let muhName = cal === '81' ? ammo81[currentAmmo81].name : (cal === '106' ? (currentAmmo106 === 'm329' ? 'M329A1 HE' : 'M328A1 Sis') : (currentAmmo120 === 'tahrip' ? 'Mod 209' : 'Mod 226'));
+        document.getElementById('maxRangeDisplay').innerText = `🎯 ${muhName}  ·  Azami ${maxR} m`;
+        document.getElementById('maxRangeDisplay').classList.add('active-ammo');
+        hesaplaTekHedef();
+    }
+
+
     function interpolateTable(table, x) {
         if (!table || table.length === 0) return 0;
         if (x <= table[0][0]) return table[0][1];
@@ -2914,162 +3241,19 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // ============================================================
-    // 120 mm CETVEL-F: AAC 120-C-3 MOD-209 Tipi Mühimmat
-    // Kaynak: HY-12/HY-12D1 Havanlar, 1994 basımı
-    // Her BH: [mesafe(m), nişangah(mil), uçuşSüresi(s), tabiiYan(sol-mil)]
-    // ============================================================
-    const cetvelF_120 = {
-        1: [ // İlk Hız: 162 m/s
-            [1500,1166,31.0,53],[1550,1152,30.7,51],[1600,1138,30.4,49],[1650,1124,30.1,47],
-            [1700,1108,29.8,45],[1750,1091,29.5,44],[1800,1075,29.2,42],[1850,1058,28.8,41],
-            [1900,1039,28.5,39],[1950,1016,28.0,37],[2000,990,27.5,35],[2050,960,27.0,33],
-            [2100,920,26.2,30],[2150,820,24.3,24]
-        ],
-        2: [ // İlk Hız: 180 m/s
-            [1750,1192,35.6,53],[1800,1182,35.3,52],[1850,1171,35.0,51],[1900,1160,34.7,49],
-            [1950,1149,34.4,48],[2000,1138,34.0,46],[2050,1125,33.7,45],[2100,1112,33.4,44],
-            [2150,1100,33.0,42],[2200,1085,32.7,41],[2250,1074,32.4,40],[2300,1060,32.0,39],
-            [2350,1045,31.6,38],[2400,1030,31.2,37],[2450,1018,30.9,36],[2500,1000,30.4,35],
-            [2550,980,29.9,34],[2600,950,29.1,32],[2650,920,28.4,30],[2700,820,25.8,25]
-        ],
-        3: [ // İlk Hız: 193 m/s
-            [2050,1172,38.0,51],[2100,1164,37.8,50],[2150,1156,37.6,49],[2200,1146,37.4,48],
-            [2250,1138,37.2,47],[2300,1128,36.9,46],[2350,1118,36.6,45],[2400,1108,36.3,44],
-            [2450,1098,36.0,43],[2500,1087,35.7,42],[2550,1076,35.4,41],[2600,1065,35.1,40],
-            [2650,1054,34.8,39],[2700,1040,34.5,38],[2750,1028,34.2,37],[2800,1014,33.8,36],
-            [2850,1000,33.4,35],[2900,980,33.0,34],[2950,960,32.4,33],[3000,940,31.9,31],
-            [3050,910,31.1,30],[3100,830,29.0,26]
-        ],
-        4: [ // İlk Hız: 208 m/s
-            [2450,1162,40.1,51],[2500,1154,39.9,50],[2550,1146,39.6,49],[2600,1139,39.4,48],
-            [2650,1130,39.2,47],[2700,1122,38.9,46],[2750,1114,38.7,45],[2800,1104,38.4,44],
-            [2850,1095,38.1,44],[2900,1086,38.0,43],[2950,1076,37.6,42],[3000,1066,37.3,41],
-            [3050,1054,36.9,40],[3100,1044,36.7,39],[3150,1033,36.4,38],[3200,1022,36.0,37],
-            [3250,1008,35.6,36],[3300,995,35.3,35],[3350,980,34.8,34],[3400,960,34.2,33],
-            [3450,940,33.7,32],[3500,916,32.9,30],[3550,870,31.6,27],[3565,840,30.8,26]
-        ],
-        5: [ // İlk Hız: 232 m/s
-            [2700,1182,43.4,54],[2800,1170,43.0,52],[2900,1158,42.6,50],[3000,1146,42.3,48],
-            [3100,1134,41.9,46],[3200,1121,41.5,45],[3300,1108,40.7,44],[3400,1094,40.2,43],
-            [3500,1078,39.7,41],[3600,1063,39.2,39],[3700,1047,38.7,38],[3800,1029,38.0,37],
-            [3900,1010,37.3,35],[4000,988,36.6,34],[4100,963,35.5,32],[4200,932,33.0,27],
-            [4300,860,32.2,25],[4320,820,31.7,24]
-        ],
-        6: [ // İlk Hız: 262 m/s
-            [3600,1162,48.2,53],[3700,1151,47.9,51],[3800,1140,47.6,50],[3900,1128,47.2,49],
-            [4000,1116,46.9,47],[4100,1103,46.6,46],[4200,1090,46.2,45],[4300,1075,45.8,43],
-            [4400,1060,45.4,42],[4500,1046,45.0,40],[4600,1030,44.6,39],[4700,1014,44.2,38],
-            [4800,997,43.7,37],[4900,978,43.2,35],[5000,958,42.7,34],[5100,936,42.1,32],
-            [5200,906,41.3,31],[5285,830,39.3,27]
-        ],
-        7: [ // İlk Hız: 297 m/s
-            [4400,1156,49.9,52],[4500,1148,49.7,51],[4600,1138,49.5,50],[4700,1128,49.2,49],
-            [4800,1118,49.0,48],[4900,1107,48.8,48],[5000,1096,48.6,46],[5100,1086,48.3,45],
-            [5200,1075,48.1,44],[5300,1063,47.8,43],[5400,1050,47.6,42],[5500,1038,47.3,41],
-            [5600,1025,47.0,40],[5700,1012,46.7,39],[5800,997,46.4,38],[5900,983,46.1,37],
-            [6000,968,45.8,36],[6100,952,45.4,34],[6200,928,44.9,33],[6300,884,43.9,30],
-            [6355,820,42.5,27]
-        ],
-        8: [ // İlk Hız: 313 m/s
-            [5100,1124,53.4,50],[5200,1114,53.0,48],[5300,1104,52.7,47],[5400,1094,52.3,46],
-            [5500,1083,51.9,45],[5600,1073,51.6,44],[5700,1062,51.2,43],[5800,1050,50.8,42],
-            [5900,1040,50.5,42],[6000,1028,50.1,41],[6100,1016,49.7,40],[6200,1003,49.2,39],
-            [6300,990,48.8,38],[6400,978,48.4,37],[6500,964,47.4,35],[6600,946,46.8,34],
-            [6700,923,46.8,33],[6800,894,45.9,31],[6890,786,41.9,25]
-        ],
-        9: [ // İlk Hız: 340 m/s
-            [5800,1103,55.6,48],[5900,1098,55.4,47],[6000,1091,55.3,46],[6100,1084,54.9,46],
-            [6200,1077,54.7,45],[6300,1068,54.3,44],[6400,1060,54.0,44],[6500,1051,53.7,43],
-            [6600,1042,53.3,42],[6700,1032,53.0,41],[6800,1022,52.6,40],[6900,1011,52.1,39],
-            [7000,999,51.7,38],[7100,988,51.3,37],[7200,975,50.8,36],[7300,962,50.4,35],
-            [7400,948,49.9,35],[7500,930,49.4,34],[7600,904,48.5,32],[7705,800,44.4,26]
-        ],
-        10: [ // İlk Hız: 365 m/s
-            [6300,1095,57.4,48],[6400,1089,56.9,47],[6500,1083,56.5,46],[6600,1076,56.2,45],
-            [6700,1069,55.9,45],[6800,1062,55.6,44],[6900,1054,55.3,43],[7000,1045,55.0,42],
-            [7100,1036,54.7,41],[7200,1027,54.4,40],[7300,1017,54.1,39],[7400,1007,53.7,38],
-            [7500,995,53.4,38],[7600,983,53.0,37],[7700,970,52.5,36],[7800,956,52.1,35],
-            [7900,940,51.6,34],[8000,918,50.3,32],[8100,884,48.3,30],[8180,820,46.6,27]
-        ]
-    };
-    // Integer key ile indeksleme
-    const elev120_Tahrip = {}, tabiiYan120_Tahrip = {}, flightTime120_Tahrip = {};
-    for (const [k, t] of Object.entries(cetvelF_120)) {
-        const bk = parseInt(k);
-        elev120_Tahrip[bk]       = t.map(r => [r[0], r[1]]);
-        tabiiYan120_Tahrip[bk]   = t.map(r => [r[0], r[3]]);
-        flightTime120_Tahrip[bk] = t.map(r => [r[0], r[2]]);
-    }
-
-    // 120 mm Sis mühimmatı tabloları (eski haliyle kalıyor, TAÇ için uyumlu)
-    const range120 = [[1000,1510],[1500,1480],[2000,1450],[2500,1410],[3000,1370],[3500,1320],[4000,1270],[4500,1210],[5000,1150],[5500,1090],[6000,1030],[6500,970],[7000,910],[7500,850],[8000,790],[8200,760]];
-    const tabii120 = [[1000,12],[1500,14],[2000,16],[2500,18],[3000,20],[3500,22],[4000,24],[4500,26],[5000,28],[5500,30],[6000,32],[6500,34],[7000,36],[7500,38],[8000,40],[8200,42]];
     function get120Elevation(r, w){
         let e = interpolateTable(range120, r);
         let weightCorr = (parseInt(w)-3) * 0.5;
         return Math.round(e + weightCorr);
     }
+
     function get120TabiiYan(r){
         return interpolateTable(tabii120, r);
     }
+
     function get120SmokeFlightTime(r) {
         return Math.round(r * 0.0075 + 10);
     }
-
-    // TAÇ faktörleri (barut hakkına göre)
-    const tacFaktorByBH = {
-        1: -3.2, 2: -3.5, 3: -3.8, 4: -4.1, 5: -4.4,
-        6: -4.7, 7: -5.0, 8: -5.3, 9: -5.6, 10: -5.9
-    };
-    let tacEnabled = true; // TAÇ her zaman aktif
-
-    // ======================== METRO ========================
-    let activeMetro = { yanMils: 0, rangeMeters: 0 };
-    function calculateManualMetro(atisIaDeg, hedefMesafe) {
-        let ruzgarHizi = parseFloat(document.getElementById('ruzgarHizi').value) || 0;
-        let ruzgarYonuMils = parseFloat(document.getElementById('ruzgarYonu').value) || 0;
-        let havaSicaklik = parseFloat(document.getElementById('havaSicaklik').value) || 15;
-        let havaBasinc = parseFloat(document.getElementById('havaBasinc').value) || 1013;
-        let nemOrani = parseFloat(document.getElementById('nemOrani').value) || 60;
-        let atisIaMils = Math.round(atisIaDeg * 6400 / 360);
-        let ruzgarGidisYonu = (ruzgarYonuMils + 3200) % 6400;
-        let relWind = (ruzgarGidisYonu - atisIaMils + 6400) % 6400;
-        let yanBilesen = Math.sin(relWind * Math.PI / 3200);
-        let mesafeBilesen = Math.cos(relWind * Math.PI / 3200);
-        let yanMils = Math.round(yanBilesen * ruzgarHizi * (hedefMesafe / 1000) * 0.9);
-        let ruzgarMesafeM = Math.round(mesafeBilesen * ruzgarHizi * (hedefMesafe / 1000) * 0.5);
-        let tempDelta = havaSicaklik - 15;
-        let pressDelta = 1013 - havaBasinc;
-        let tempPressM = Math.round((tempDelta * 0.001 + pressDelta * 0.0001) * hedefMesafe);
-        let humidDelta = nemOrani - 60;
-        let humidM = Math.round(humidDelta * 0.0002 * hedefMesafe);
-        let totalRangeM = ruzgarMesafeM + tempPressM + humidM;
-        return { yanMils, rangeMeters: totalRangeM };
-    }
-    
-    function applyMetro() {
-        let mGrid = document.getElementById('mevziGrid').value;
-        let hGrid = document.getElementById('hedefGrid').value;
-        let rawRange = distanceMgrs(mGrid, hGrid);
-        if (!rawRange) { alert('Önce hedef gridini kontrol edin'); return; }
-        let havIaDeg = azimuthDegrees(mGrid, hGrid);
-        let metro = calculateManualMetro(havIaDeg, rawRange);
-        activeMetro = metro;
-        document.getElementById('metroCorrectionDisplay').style.display = 'flex';
-        document.getElementById('metroCorrectionDisplay').innerHTML = `<span>🌬️ Yan Düzeltme: ${metro.yanMils} milyem</span><span>📏 Mesafe Düzeltmesi: ${metro.rangeMeters >= 0 ? '+' : ''}${metro.rangeMeters} m</span>`;
-        hesaplaTekHedef();
-    }
-
-    // ======================== HESAPLAMA MOTORU ========================
-    let currentCaliber = '81';
-    let currentAmmo81 = 'mke214';
-    let currentAmmo106 = 'm329';
-    // MOD 236 Aydınlatma tapa faktörleri (AAC 120-C-3, Sayfa 77)
-    const mod236TapaFaktor = {1:5.5,2:5.5,3:4.5,4:4.5,5:3.5,6:3.5,7:3.5,8:3.5,9:3.0,10:3.0};
-    // MOD 236 rakım farkı dahil tapa saniyesi
-    // AAC 120-C-3 Sayfa 77: her BH için paralanma yüksekliği ±50m = tapa değişimi
-    const mod236DtacPerBH = {1:0.6,2:0.6,3:0.5,4:0.5,5:0.4,6:0.4,7:0.4,8:0.4,9:0.3,10:0.3};
 
     function getMod236Tapa(bh, ucus, altFark) {
         if (!ucus || !bh) return null;
@@ -3083,8 +3267,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         return t > 0 ? Math.round(t*10)/10 : null;
     }
-    let currentAmmo120 = 'tahrip';
-    let bhAuto120 = true;
 
     function calculateTargetSimpleWithYanCorrection(hGrid, hRak, mGrid, mRak, dtnIaMils, dtnYan, rCorrDir, rCorrM, yCorrDir, yCorrM, paralanma) {
         let rawRange = distanceMgrs(mGrid, hGrid);
@@ -3219,114 +3401,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return sonuc;
     }
 
-    function hesaplaTekHedef() {
-        let mGrid = document.getElementById('mevziGrid').value;
-        let hGrid = document.getElementById('hedefGrid').value;
-        let mRak = parseFloat(document.getElementById('mevziRakim').value) || 0;
-        let hRak = parseFloat(document.getElementById('hedefRakim').value) || 0;
-        let dtnIaMils = parseFloat(document.getElementById('dtnAzimuth').value) || 0;
-        let dtnYan = parseFloat(document.getElementById('dtnYan').value) || 2800;
-        let yCorrDir = document.getElementById('yanCorrDir').value;
-        let yCorrM = parseFloat(document.getElementById('yanCorrMeters').value) || 0;
-        let rCorrDir = document.getElementById('rangeCorrDir').value;
-        let rCorrM = parseFloat(document.getElementById('rangeCorrMeters').value) || 0;
-        let hCorrDir = document.getElementById('heightCorrDir').value;
-        let hCorrVal = parseFloat(document.getElementById('heightCorrValue').value) || 0;
-        let paralanma = (hCorrDir === 'kaldir' ? hCorrVal : (hCorrDir === 'indir' ? -hCorrVal : 0));
-        try {
-            let sonuc = calculateTargetSimpleWithYanCorrection(hGrid, hRak, mGrid, mRak, dtnIaMils, dtnYan, rCorrDir, rCorrM, yCorrDir, yCorrM, paralanma);
-            let tacBilgi = '<span class="info-chip">📐 TAÇ Otomatik</span>';
-            let bhBilgi = currentCaliber === '120' && !bhAuto120 ? `<span class="info-chip">MANUEL ${document.getElementById('bh120Manual').value}</span>` : '';
-            const yuksNote = currentCaliber === '106' ? '<span class="result-unit">mil / ilaveli 900</span>' : '<span class="result-unit">milyem</span>';
-            let html = `<div class="info-bar">
-                <span style="color:var(--text-sec);font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:0.72rem;">${sonuc.mühimmat}</span>
-                ${tacBilgi}${bhBilgi}
-            </div>
-            <div class="result-grid">
-                <div class="result-card highlight">
-                    <div class="result-label">Hedef Yanı</div>
-                    <div class="result-value big">${sonuc.yan}<span class="result-unit">mil</span></div>
-                </div>
-                <div class="result-card highlight">
-                    <div class="result-label">Yükseliş</div>
-                    <div class="result-value big">${sonuc.yukselis}${yuksNote}</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Mesafe</div>
-                    <div class="result-value">${sonuc.mesafe}<span class="result-unit">m</span></div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Barut Hakkı</div>
-                    <div class="result-value">${sonuc.bh}</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">İstikamet</div>
-                    <div class="result-value">${sonuc.havIaMils}<span class="result-unit">mil</span></div>
-                    <div class="result-meta">${Math.round(sonuc.havIaDeg)}°</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">Rakım Farkı</div>
-                    <div class="result-value" style="color:${sonuc.altFark > 0 ? 'var(--green)' : sonuc.altFark < 0 ? 'var(--red)' : 'var(--text-sec)'}">${sonuc.altFark > 0 ? '+' : ''}${sonuc.altFark}<span class="result-unit">m</span></div>
-                </div>`;
-            if (sonuc.ucusSuresi !== null && sonuc.ucusSuresi !== '') {
-                html += `<div class="result-card">
-                    <div class="result-label">Uçuş Süresi</div>
-                    <div class="result-value">${sonuc.ucusSuresi}<span class="result-unit">sn</span></div>
-                </div>`;
-            }
-            if (sonuc.tapaSaniyesi !== null && sonuc.tapaSaniyesi !== undefined) {
-                html += `<div class="result-card" style="border-color:#f97316;border-width:2px;">
-                    <div class="result-label" style="color:#f97316;">🕐 Tapa Saniyesi</div>
-                    <div class="result-value" style="color:#f97316;">${sonuc.tapaSaniyesi}<span class="result-unit">sn</span></div>
-                    <div style="font-size:.62rem;color:#f97316;margin-top:2px;">${sonuc.mühimmat && sonuc.mühimmat.includes('236') ? 'MOD 236 · 600m paralanma' : 'M84A1E · 381m paralanma'}</div>
-                </div>`;
-            }
-            html += `</div><hr class="result-divider">`;
-            document.getElementById('sonucAlan').innerHTML = html;
-        } catch(e) {
-            document.getElementById('sonucAlan').innerHTML = `<div class="danger-box">${e.message}</div>`;
-        }
-    }
-
-    // ======================== TAÇ BUTONU ========================
-    // TAÇ her zaman aktif - toggle kaldırıldı
-
-    // ======================== DİĞER FONKSİYONLAR (Aynen) ========================
-    function ileriGozetleyiciDuzeltme() {
-        let mevziGrid = document.getElementById('mevziGrid').value;
-        let gozlemciGrid = document.getElementById('gozlemciGrid').value;
-        let hedefGrid = document.getElementById('hedefGrid').value;
-        let gozIstikametMils = parseFloat(document.getElementById('gozIstikametMils').value);
-        let sagaMetre = parseFloat(document.getElementById('sagaMetre').value) || 0;
-        let uzatMetre = parseFloat(document.getElementById('uzatMetre').value) || 0;
-
-        let gozIstikametDeg = gozIstikametMils * 360 / 6400;
-        let batarya = mgrsToMeters(mevziGrid);
-        let gozlemci = mgrsToMeters(gozlemciGrid);
-        let hedef = mgrsToMeters(hedefGrid);
-        if (!batarya || !gozlemci || !hedef) {
-            alert('MGRS dönüşüm hatası! Gridleri kontrol edin.');
-            return;
-        }
-
-        let rad = gozIstikametDeg * Math.PI / 180;
-        let u = { x: Math.sin(rad), y: Math.cos(rad) };
-        let sag = { x: Math.cos(rad), y: -Math.sin(rad) };
-        let dx = sagaMetre * sag.x + uzatMetre * u.x;
-        let dy = sagaMetre * sag.y + uzatMetre * u.y;
-        let yeniHedef = { x: hedef.x + dx, y: hedef.y + dy };
-
-        // Doğru MGRS dönüşümü: mgrsAddOffset kullan
-        let yeniGrid = mgrsAddOffset(hedefGrid, dx, dy);
-
-        document.getElementById('hedefGrid').value = yeniGrid;
-        hesaplaTekHedef();
-        alert(`İleri gözetleyici düzeltmesi uygulandı.\nYeni hedef grid: ${yeniGrid}`);
-    }
-
-
-    // ── RAKİM OTOMATİK ÇEKME (Open-Elevation API) ──────────────────────────────
-    // MGRS → UTM → WGS84 lat/lng → elevation
     function utmToLatLng(zone, easting, northing, isSouth) {
         // WGS84 parametreleri
         const a = 6378137.0, f = 1/298.257223563;
@@ -3357,38 +3431,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return { lat: lat*180/Math.PI, lng: lng*180/Math.PI };
     }
 
-    async function fetchElevation(gridStr, rakimInputId) {
-        const u = mgrsToUtm(gridStr);
-        if (!u) return;
-        const isSouth = 'CDEFGHJKLM'.includes(u.latBand);
-        const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
-        const input = document.getElementById(rakimInputId);
-        if (!input) return;
-        input.style.opacity = '0.5';
-        input.placeholder = 'Çekiliyor...';
-        const statusEl = document.getElementById(rakimInputId + 'Status');
-        if (statusEl) statusEl.textContent = '⟳ GPS...';
-        try {
-            const r = await fetch(
-                `https://api.open-elevation.com/api/v1/lookup?locations=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}`,
-                { signal: AbortSignal.timeout(8000) }
-            );
-            const d = await r.json();
-            const elev = d.results?.[0]?.elevation;
-            if (elev !== undefined && elev !== null) {
-                input.value = Math.round(elev);
-                if (statusEl) { statusEl.textContent = '✓ Otomatik'; statusEl.style.color='#027a48'; setTimeout(()=>{ statusEl.textContent=''; }, 3000); }
-            }
-        } catch(e) {
-            // API erişilemez veya timeout - kullanıcı manuel girer
-            if (statusEl) statusEl.textContent = '';
-        } finally {
-            input.style.opacity = '1';
-            input.placeholder = '';
-            if (statusEl) { if(!statusEl.textContent.includes('✓')) statusEl.textContent = ''; }
-        }
-    }
-
     function onGridChange(gridInputId, rakimInputId) {
         const val = document.getElementById(gridInputId).value.trim().toUpperCase();
         // Geçerli MGRS formatı kontrolü (örn: "37S CB 50000 50000")
@@ -3404,7 +3446,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const dy = Math.round(Math.sin(perpRad) * distanceMeters);
         return mgrsAddOffset(gridStr, dx, dy);
     }
-    
+
     function hesaplaDemet() {
         let tip = document.getElementById('demetTipi').value;
         let esasGrid = document.getElementById('hedefGrid').value;
@@ -3530,7 +3572,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('heightCorrDir').value='0'; document.getElementById('heightCorrValue').value='0';
         hesaplaTekHedef();
     }
-    
+
     function copyResults() {
         let txt = document.getElementById('sonucAlan').innerText;
         if(txt && !txt.includes("Hesapla'ya basın")) {
@@ -3539,188 +3581,28 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Kopyalanacak geçerli bir sonuç bulunmuyor.');
         }
     }
-    
+
     function updateDemetUI() {
         let tip = document.getElementById('demetTipi').value;
         document.getElementById('kapaliNoktaSatir').style.display = 'none'; // Kapalı demet ana hedef koordinatını kullanır
         document.getElementById('ozelDemetPanel').style.display = tip==='ozel' ? 'block' : 'none';
     }
-    
-    function toggleAccordion(id,cid) {
-        document.getElementById(id).addEventListener('click', () => {
-            document.getElementById(cid).classList.toggle('show');
-            document.getElementById(id).classList.toggle('open');
-        });
-    }
-    
+
     function createUcHedefUI() {
         let c = document.getElementById('ucHedefContainer');
         c.innerHTML = `<div class="hedef-girdi"><div class="hedef-baslik">1. Hedef</div><div class="param-row"><label>Grid</label><input type="text" id="hedef1Grid" value="37S CB 53000 52000"></div><div class="param-row"><label>Rakım</label><input type="number" id="hedef1Rakim" value="720"></div></div>
                        <div class="hedef-girdi"><div class="hedef-baslik">2. Hedef</div><div class="param-row"><label>Grid</label><input type="text" id="hedef2Grid" value="37S CB 55000 54000"></div><div class="param-row"><label>Rakım</label><input type="number" id="hedef2Rakim" value="700"></div></div>
                        <div class="hedef-girdi"><div class="hedef-baslik">3. Hedef</div><div class="param-row"><label>Grid</label><input type="text" id="hedef3Grid" value="37S CB 58000 56000"></div><div class="param-row"><label>Rakım</label><input type="number" id="hedef3Rakim" value="680"></div></div>`;
     }
-    
-    function setCaliber(cal) {
-        // M-301 A2 sadece 81mm'de görünür
-        var optM301 = document.getElementById('ammoOpt_m301a2');
-        if (optM301) optM301.style.display = (cal === '81') ? '' : 'none';
-        // 81mm dışında m301a2 seçiliyse ilk geçerli mühimmata dön
-        if (cal !== '81' && currentAmmo81 === 'm301a2') {
-            currentAmmo81 = 'mke214';
-            document.querySelectorAll('.ammo-option').forEach(b => {
-                b.classList.toggle('selected', b.dataset.ammo === 'mke214');
-            });
-        }
-        currentCaliber = cal;
-        document.querySelectorAll('.caliber-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn${cal}mm`).classList.add('active');
-        document.getElementById('ammoSelector81').style.display = cal === '81' ? 'flex' : 'none';
-        document.getElementById('ammoSelector106').style.display = cal === '106' ? 'flex' : 'none';
-        document.getElementById('ammoSelector120').style.display = cal === '120' ? 'flex' : 'none';
-        document.getElementById('weightGroupDiv').style.display = cal === '120' ? 'flex' : 'none';
-        document.getElementById('bh120Row').style.display = (cal === '120' && !bhAuto120) ? 'flex' : 'none';
-        document.getElementById('bh120ModeRow').style.display = cal === '120' ? 'flex' : 'none';
-        // TAÇ her zaman aktif - otomatik
-        let maxR = cal === '81' ? ammo81[currentAmmo81].maxRange : (cal === '106' ? 5480 : 8200);
-        let muhName = cal === '81' ? ammo81[currentAmmo81].name : (cal === '106' ? (currentAmmo106 === 'm329' ? 'M329A1 HE' : 'M328A1 Sis') : (currentAmmo120 === 'tahrip' ? 'Mod 209' : 'Mod 226'));
-        document.getElementById('maxRangeDisplay').innerText = `🎯 ${muhName}  ·  Azami ${maxR} m`;
-        document.getElementById('maxRangeDisplay').classList.add('active-ammo');
-        hesaplaTekHedef();
-    }
-    
+
     function update81(ammoId) { currentAmmo81 = ammoId; document.querySelectorAll('#ammoSelector81 .ammo-option').forEach(el => el.classList.remove('selected')); document.querySelector(`#ammoSelector81 .ammo-option[data-ammo="${ammoId}"]`).classList.add('selected'); setCaliber('81'); }
+
     function update106(ammoId) { currentAmmo106 = ammoId; document.querySelectorAll('#ammoSelector106 .ammo-option').forEach(el => el.classList.remove('selected')); document.querySelector(`#ammoSelector106 .ammo-option[data-ammo106="${ammoId}"]`).classList.add('selected'); setCaliber('106'); }
+
     function update120(ammoId) { currentAmmo120 = ammoId; document.querySelectorAll('#ammoSelector120 .ammo-option').forEach(el => el.classList.remove('selected')); document.querySelector(`#ammoSelector120 .ammo-option[data-ammo120="${ammoId}"]`).classList.add('selected'); setCaliber('120'); }
+
     function toggleBH120() { bhAuto120 = !bhAuto120; document.getElementById('bh120Row').style.display = (currentCaliber === '120' && !bhAuto120) ? 'flex' : 'none'; document.getElementById('toggleBhMode120').innerHTML = bhAuto120 ? '🔄 Otomatik BH (Aktif)' : '🔧 Manuel BH'; hesaplaTekHedef(); }
 
-    // EVENT LİSTENER'LAR
-    document.getElementById('btn81mm').addEventListener('click', () => setCaliber('81'));
-    document.getElementById('btn106mm').addEventListener('click', () => setCaliber('106'));
-    document.getElementById('btn120mm').addEventListener('click', () => setCaliber('120'));
-    document.getElementById('toggleBhMode120').addEventListener('click', toggleBH120);
-
-    document.querySelectorAll('#ammoSelector81 .ammo-option').forEach(el => el.addEventListener('click', () => update81(el.getAttribute('data-ammo'))));
-    document.querySelectorAll('#ammoSelector106 .ammo-option').forEach(el => el.addEventListener('click', () => update106(el.getAttribute('data-ammo106'))));
-    document.querySelectorAll('#ammoSelector120 .ammo-option').forEach(el => el.addEventListener('click', () => update120(el.getAttribute('data-ammo120'))));
-
-        document.getElementById('hesaplaBtn').addEventListener('click', function() {
-        hesaplaTekHedef();
-        // Hedef koordinatını lat/lng çevir
-        setTimeout(async () => {
-            try {
-                const hGrid = document.getElementById('hedefGrid').value;
-                const u = mgrsToUtm(hGrid);
-                if (u) {
-                    const isSouthH = 'CDEFGHJKLM'.includes((u.latBand||'S'));
-                    const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouthH);
-                    sonHesapLat = ll.lat;
-                    sonHesapLng = ll.lng;
-                }
-            } catch(e) {}
-            if (sonHesapLat && sonHesapLng) {
-                haritaGoster(sonHesapLat, sonHesapLng);
-                cevreAnalizi(sonHesapLat, sonHesapLng);
-                // Open-Meteo'dan metro verisi çek
-                try {
-                    const mLat = sonHesapLat || 37.0;
-                    const mLng = sonHesapLng || 36.0;
-                    const mUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + mLat.toFixed(4)
-                        + '&longitude=' + mLng.toFixed(4)
-                        + '&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_direction_10m'
-                        + '&wind_speed_unit=kmh&timezone=auto';
-                    const mr = await fetch(mUrl, {signal: AbortSignal.timeout(8000)});
-                    const md = await mr.json();
-                    const cur = md.current;
-                    const WIND_DIR = ['K','KKD','KD','DKD','D','DGD','GD','GGD','G','GGB','GB','BGB','B','BKB','KB','KKB'];
-                    const wd = cur.wind_direction_10m;
-                    const rho = (cur.surface_pressure * 100) / (287.058 * (cur.temperature_2m + 273.15));
-                    window._metroData = {
-                        temp: cur.temperature_2m,
-                        wind: cur.wind_speed_10m.toFixed(1),
-                        windDir: Math.round(wd),
-                        windDirName: WIND_DIR[Math.round(wd/22.5)%16],
-                        pressure: Math.round(cur.surface_pressure),
-                        humidity: cur.relative_humidity_2m,
-                        density: rho
-                    };
-                    // Metro alanlarını otomatik doldur
-                    const windKnot = (cur.wind_speed_10m / 1.852).toFixed(1);
-                    const windMils = Math.round(wd * 6400 / 360);
-                    document.getElementById('ruzgarHizi').value = Math.round(windKnot);
-                    document.getElementById('ruzgarYonu').value = windMils;
-                    document.getElementById('havaSicaklik').value = Math.round(cur.temperature_2m);
-                    document.getElementById('havaBasinc').value = Math.round(cur.surface_pressure);
-                    document.getElementById('nemOrani').value = cur.relative_humidity_2m;
-                } catch(e) {}
-            }
-        }, 400);
-    });
-
-
-    document.getElementById('mevziGrid').addEventListener('change', () => onGridChange('mevziGrid','mevziRakim'));
-    document.getElementById('mevziGrid').addEventListener('blur',   () => onGridChange('mevziGrid','mevziRakim'));
-    document.getElementById('hedefGrid').addEventListener('change', () => onGridChange('hedefGrid','hedefRakim'));
-    document.getElementById('hedefGrid').addEventListener('blur',   () => onGridChange('hedefGrid','hedefRakim'));
-    document.getElementById('bh120Manual').addEventListener('change', hesaplaTekHedef);
-    document.getElementById('gozetleyiciBtn').addEventListener('click', ileriGozetleyiciDuzeltme);
-    document.getElementById('resetCorrBtn').addEventListener('click', resetCorr);
-    document.getElementById('copyResultsBtn').addEventListener('click', copyResults);
-    document.getElementById('demetUygulaBtn').addEventListener('click', hesaplaDemet);
-    document.getElementById('demetTipi').addEventListener('change', updateDemetUI);
-    document.getElementById('ucFarkliHedefBtn').addEventListener('click', ucFarkliHedefHesapla);
-    document.getElementById('applyMetroBtn').addEventListener('click', applyMetro);
-
-    toggleAccordion('demetToggle','demetContent');
-    toggleAccordion('corrToggle','corrContent');
-    toggleAccordion('metroToggle','metroContent');
-    toggleAccordion('ucHedefToggle','ucHedefContent');
-    toggleAccordion('gozetPanelToggle','gozetPanelContent');
-    toggleAccordion('konvoyToggle','konvoyContent');
-    createUcHedefUI();
-    updateDemetUI();
-    setCaliber('81');
-    // Init bilgi modal
-    document.getElementById('bilgiModal').addEventListener('click', function(e) {
-      if (e.target === this) this.style.display = 'none';
-    });
-
-
-    // ── YAPAY ZEKA ASİSTANI (Groq / Llama-3.3-70B) ─────────────────────────
-    // API anahtarı Cloudflare Worker'da gizli — buraya sadece Worker URL'i yazılır
-    // Cloudflare Worker kurulduktan sonra aşağıdaki URL'i güncelleyin
-    const GROQ_PROXY_URL = 'https://WORKER_ADINIZ.workers.dev/groq';  // ← Cloudflare Worker URL
-    const GROQ_MODEL   = 'llama-3.3-70b-versatile';
-    const GROQ_URL = GROQ_PROXY_URL; // Worker proxy kullanılıyor
-
-    const _WIND_DIRS_AI = ['Kuzey','Kuzeydoğu','Doğu','Güneydoğu','Güney','Güneybatı','Batı','Kuzeybatı'];
-    let aiHistory = [];   // Konuşma geçmişi
-    let lastWeatherData = null;
-
-    // ── Hava durumu çek ──────────────────────────────────────────────────────
-    async function fetchWeatherForAI(lat, lon) {
-        try {
-            const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(5)
-                + '&longitude=' + lon.toFixed(5)
-                + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,pressure_msl&timezone=auto';
-            const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-            if (!r.ok) return null;
-            const data = await r.json();
-            if (!data.current) return null;
-            const c = data.current;
-            const wDir = c.wind_direction_10m || 0;
-            return {
-                temp:        c.temperature_2m,
-                feelsLike:   c.apparent_temperature,
-                humidity:    c.relative_humidity_2m,
-                windSpeed:   c.wind_speed_10m,
-                windDirDeg:  wDir,
-                windDirName: _WIND_DIRS_AI[Math.round(((wDir+22.5)%360)/45)%8],
-                pressure:    c.pressure_msl
-            };
-        } catch(e) { return null; }
-    }
-
-    // ── Metro hesapla (koddaki formülle) ─────────────────────────────────────
     function calcMetroAI(weather, havIaDeg, mesafe) {
         if (!weather || !mesafe) return null;
 
@@ -3762,7 +3644,6 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // ── Sistem bağlamını topla ────────────────────────────────────────────────
     function buildSystemPrompt(weather, metro) {
         const sonuc = document.getElementById('sonucAlan')?.innerText?.replace(/\s+/g,' ').trim() || 'Hesaplama yapilmadi.';
         const mevzi = document.getElementById('mevziGrid')?.value || '';
@@ -3801,9 +3682,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return ctx;
     }
 
-    // ── UI helpers ───────────────────────────────────────────────────────────
-    const aiChatEl = document.getElementById('aiChat');
-
     function aiAddMsg(role, text) {
         const div = document.createElement('div');
         div.className = role === 'user' ? 'ai-msg-user' : 'ai-msg-ai';
@@ -3820,108 +3698,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (span) span.textContent = text;
     }
 
-    // ── Ana gönder fonksiyonu ─────────────────────────────────────────────────
-    async function aiSend(question) {
-        if (!question.trim()) return;
-        aiAddMsg('user', question);
-        document.getElementById('aiInput').value = '';
-        setAiStatus('Düşünüyor...', true);
-
-        // Loading göster
-        const loadDiv = document.createElement('div');
-        loadDiv.className = 'ai-loading';
-        loadDiv.textContent = '⟳ Yanıt hazırlanıyor...';
-        aiChatEl.appendChild(loadDiv);
-        aiChatEl.scrollTop = aiChatEl.scrollHeight;
-
-        // Hava durumu otomatik çek (ilk soru veya hesapla basıldıktan sonra)
-        if (!lastWeatherData) {
-            try {
-                const hedefGrid = document.getElementById('hedefGrid').value;
-                const u = mgrsToUtm(hedefGrid);
-                if (u) {
-                    const isSouth = 'CDEFGHJKLM'.includes(u.latBand);
-                    const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
-                    if (ll && !isNaN(ll.lat)) {
-                        lastWeatherData = await fetchWeatherForAI(ll.lat, ll.lng);
-                    }
-                }
-            } catch(e) {}
-        }
-
-        // Metro hesapla
-        let metro = null;
-        if (lastWeatherData) {
-            const sonucEl = document.getElementById('sonucAlan');
-            const mesajMatch = sonucEl ? sonucEl.innerText.match(/(\d{3,5})\s*m/) : null;
-            const mesafe = mesajMatch ? parseInt(mesajMatch[1]) : 3000;
-            const havIA  = parseFloat(document.getElementById('dtnAzimuth')?.value || 0);
-            metro = calcMetroAI(lastWeatherData, havIA, mesafe);
-        }
-
-        // Sistem promptu ve geçmiş
-        const sysPrompt = buildSystemPrompt(lastWeatherData, metro);
-        aiHistory.push({ role: 'user', content: question });
-        if (aiHistory.length > 20) aiHistory = aiHistory.slice(-20);
-
-        try {
-            const resp = await fetch(GROQ_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // Authorization Worker tarafında ekleniyor
-                },
-                body: JSON.stringify({
-                    model: GROQ_MODEL,
-                    messages: [
-                        { role: 'system', content: sysPrompt },
-                        ...aiHistory
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 1024,
-                    stream: false
-                })
-            });
-
-            const data = await resp.json();
-            loadDiv.remove();
-
-            if (data.error) {
-                aiAddMsg('ai', '⚠️ Hata: ' + (data.error.message || JSON.stringify(data.error)));
-                setAiStatus('Hata', false);
-                return;
-            }
-
-            const answer = data.choices?.[0]?.message?.content || 'Yanıt alınamadı.';
-            aiHistory.push({ role: 'assistant', content: answer });
-            aiAddMsg('ai', answer);
-            setAiStatus('Hazır', false);
-
-        } catch(e) {
-            loadDiv.remove();
-            aiAddMsg('ai', '⚠️ Bağlantı hatası: ' + e.message + '<br>İnternet bağlantınızı kontrol edin.');
-            setAiStatus('Bağlantı hatası', false);
-        }
-    }
-
-    // ── Event listeners ──────────────────────────────────────────────────────
-    window.aiSend = aiSend; // Global scope için
-    document.getElementById('aiSendBtn').addEventListener('click', () => aiSend(document.getElementById('aiInput').value));
-    document.getElementById('aiInput').addEventListener('keydown', e => { if (e.key==='Enter') aiSend(e.target.value); });
-    document.querySelectorAll('.ai-quick-btn').forEach(btn => btn.addEventListener('click', () => aiSend(btn.dataset.q)));
-    document.getElementById('hesaplaBtn').addEventListener('click', () => { lastWeatherData = null; }, true);
-
-    // ── Hoşgeldin mesajı ──────────────────────────────────────────────────────
-    aiAddMsg('ai', 'Merhaba! 🎯 Ateş idare asistanınım.<br>'
-        + 'Hesaplama yaptıktan sonra soru sor — <b>hava durumunu otomatik çeker</b> ve metro düzeltmesini hesaplarım.<br>'
-        + 'Koordinat analizi, BH kontrolü, emniyet değerlendirmesi için buradayım.');
-
-    // AI modal backdrop close
-    document.getElementById('aiModalOverlay').addEventListener('click', function(e) {
-        if (e.target === this) this.style.display = 'none';
-    });
-
-    // AI tab in bilgi modal - proxy to main aiSend + sync
     function aiBilgiSend(q) {
         if (!q || !q.trim()) return;
         const input = document.getElementById('bilgiAiInput');
@@ -3932,13 +3708,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if (mainChat && bilgiChat) bilgiChat.innerHTML = mainChat.innerHTML;
         });
     }
-
-
-    // ── UYDU HARİTASI (Leaflet + Esri) ─────────────────────────────────────
-    var _map = null;
-    var _mevziMarker = null;
-    var _hedefMarker = null;
-    var _hatLat = null;
 
     function initMap() {
         if (_map) return;
@@ -4203,22 +3972,6 @@ document.addEventListener("DOMContentLoaded", function() {
         else if (pts.length === 1) _map.setView(pts[0], 13);
     }
 
-    // Hesapla sonrası otomatik güncelle
-    document.getElementById('hesaplaBtn').addEventListener('click', function() {
-        setTimeout(function() {
-            if (_map) { mapShowMevzi(); mapShowHedef(); }
-        }, 400);
-    });
-
-    // Buton listeners
-    document.getElementById('mapMevziBtn').addEventListener('click', mapShowMevzi);
-    document.getElementById('mapHedefBtn').addEventListener('click', mapShowHedef);
-    document.getElementById('mapFitBtn').addEventListener('click', function() { initMap(); mapFit(); });
-
-    // Sayfa açılınca haritayı lazy init
-    setTimeout(initMap, 800);
-
-    // Harita için hızlı hesaplama (popup'ta sonuç göstermek için)
     function calculateTargetSimple(hedefGridVal) {
         try {
             var mevziVal = document.getElementById('mevziGrid').value.trim();
@@ -4260,7 +4013,6 @@ document.addEventListener("DOMContentLoaded", function() {
         } catch(e) { return null; }
     }
 
-    // Harita → Ana sistem aktarım + hesapla
     function mapSonuclaraGit() {
         if (_hedefMarker) _hedefMarker.closePopup();
 
@@ -4323,34 +4075,6 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('hesaplaBtn').click();
         }, 300);
     }
-
-    // ResizeObserver - container boyutu değişince invalidateSize
-    if (typeof ResizeObserver !== 'undefined') {
-        var mapObs = new ResizeObserver(function() {
-            if (_map) setTimeout(function(){ _map.invalidateSize(true); }, 50);
-        });
-        var mapEl2 = document.getElementById('mapDiv');
-        if (mapEl2) mapObs.observe(mapEl2);
-    }
-
-    // Scroll veya visibility değişince de düzelt
-    window.addEventListener('resize', function() {
-        if (_map) _map.invalidateSize(true);
-    });
-
-    // ── GERÇEK ZAMANLI KONUM (GPS) ────────────────────────────────────────────
-    var _gpsActive    = false;
-    var _gpsWatchId   = null;
-    var _gpsMarker    = null;
-    var _gpsCircle    = null;
-
-    document.getElementById('mapGpsBtn').addEventListener('click', function() {
-        if (!_gpsActive) {
-            gpsBaslat();
-        } else {
-            gpsDurdur();
-        }
-    });
 
     function gpsBaslat() {
         if (!navigator.geolocation) {
@@ -4454,6 +4178,707 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('mapStatus').textContent = 'Konum izleme durduruldu.';
     }
 
+
+    let tacEnabled = true; // TAÇ her zaman aktif
+
+    let activeMetro = { yanMils: 0, rangeMeters: 0 };
+
+    let currentCaliber = '81';
+
+    let currentAmmo81 = 'mke214';
+
+    let currentAmmo106 = 'm329';
+
+    let currentAmmo120 = 'tahrip';
+
+    let bhAuto120 = true;
+
+    const GROQ_PROXY_URL = 'https://WORKER_ADINIZ.workers.dev/groq';  // ← Cloudflare Worker URL
+
+    const GROQ_MODEL   = 'llama-3.3-70b-versatile';
+
+    const GROQ_URL = GROQ_PROXY_URL; // Worker proxy kullanılıyor
+
+    const _WIND_DIRS_AI = ['Kuzey','Kuzeydoğu','Doğu','Güneydoğu','Güney','Güneybatı','Batı','Kuzeybatı'];
+
+    let aiHistory = [];   // Konuşma geçmişi
+
+    let lastWeatherData = null;
+
+    var _map = null;
+
+    var _mevziMarker = null;
+
+    var _hedefMarker = null;
+
+    var _hatLat = null;
+
+    var _gpsActive    = false;
+
+    var _gpsWatchId   = null;
+
+    var _gpsMarker    = null;
+
+    var _gpsCircle    = null;
+
+    var optM301init = document.getElementById('ammoOpt_m301a2');
+
+    const flightTime81 = {
+        mke214: null, // mke214 için uçuş süresi sight_MKE214 tablosundan alınır
+        m64: { 1: [[250,22.7],[1700,8.9]], 2: [[400,29.6],[2200,18.4]], 3: [[600,29.7],[3000,24.9]], 4: [[800,40.8],[3550,30.2]], 5: [[950,45.7],[4500,13.3]], 6: [[1100,49.8],[7000,10.1]], 7: [[1300,54.0],[7000,18.9]], 8: [[1400,57.2],[7000,18.9]] },
+        m56a1: { 1: [[200,20.3],[850,16.2]], 2: [[450,25.9],[1450,19.3]], 3: [[500,30.4],[1850,23.2]], 4: [[600,34.1],[3000,19.1]] },
+        m57: { 1: [[350,20.5],[850,15.5]], 2: [[450,25.4],[1300,18.9]], 3: [[600,29.8],[1800,22.9]], 4: [[700,33.2],[2250,25.2]] },
+        m43a1b1: { 1: [[250,21.3],[1100,15.9]], 2: [[300,26.8],[1600,20.5]], 3: [[400,29.6],[2150,23.0]], 4: [[450,35.3],[2550,24.6]], 5: [[500,35.1],[2950,28.6]], 6: [[700,37.8],[3400,29.6]] }
+    };
+
+    const cetvelF_120 = {
+        1: [ // İlk Hız: 162 m/s
+            [1500,1166,31.0,53],[1550,1152,30.7,51],[1600,1138,30.4,49],[1650,1124,30.1,47],
+            [1700,1108,29.8,45],[1750,1091,29.5,44],[1800,1075,29.2,42],[1850,1058,28.8,41],
+            [1900,1039,28.5,39],[1950,1016,28.0,37],[2000,990,27.5,35],[2050,960,27.0,33],
+            [2100,920,26.2,30],[2150,820,24.3,24]
+        ],
+        2: [ // İlk Hız: 180 m/s
+            [1750,1192,35.6,53],[1800,1182,35.3,52],[1850,1171,35.0,51],[1900,1160,34.7,49],
+            [1950,1149,34.4,48],[2000,1138,34.0,46],[2050,1125,33.7,45],[2100,1112,33.4,44],
+            [2150,1100,33.0,42],[2200,1085,32.7,41],[2250,1074,32.4,40],[2300,1060,32.0,39],
+            [2350,1045,31.6,38],[2400,1030,31.2,37],[2450,1018,30.9,36],[2500,1000,30.4,35],
+            [2550,980,29.9,34],[2600,950,29.1,32],[2650,920,28.4,30],[2700,820,25.8,25]
+        ],
+        3: [ // İlk Hız: 193 m/s
+            [2050,1172,38.0,51],[2100,1164,37.8,50],[2150,1156,37.6,49],[2200,1146,37.4,48],
+            [2250,1138,37.2,47],[2300,1128,36.9,46],[2350,1118,36.6,45],[2400,1108,36.3,44],
+            [2450,1098,36.0,43],[2500,1087,35.7,42],[2550,1076,35.4,41],[2600,1065,35.1,40],
+            [2650,1054,34.8,39],[2700,1040,34.5,38],[2750,1028,34.2,37],[2800,1014,33.8,36],
+            [2850,1000,33.4,35],[2900,980,33.0,34],[2950,960,32.4,33],[3000,940,31.9,31],
+            [3050,910,31.1,30],[3100,830,29.0,26]
+        ],
+        4: [ // İlk Hız: 208 m/s
+            [2450,1162,40.1,51],[2500,1154,39.9,50],[2550,1146,39.6,49],[2600,1139,39.4,48],
+            [2650,1130,39.2,47],[2700,1122,38.9,46],[2750,1114,38.7,45],[2800,1104,38.4,44],
+            [2850,1095,38.1,44],[2900,1086,38.0,43],[2950,1076,37.6,42],[3000,1066,37.3,41],
+            [3050,1054,36.9,40],[3100,1044,36.7,39],[3150,1033,36.4,38],[3200,1022,36.0,37],
+            [3250,1008,35.6,36],[3300,995,35.3,35],[3350,980,34.8,34],[3400,960,34.2,33],
+            [3450,940,33.7,32],[3500,916,32.9,30],[3550,870,31.6,27],[3565,840,30.8,26]
+        ],
+        5: [ // İlk Hız: 232 m/s
+            [2700,1182,43.4,54],[2800,1170,43.0,52],[2900,1158,42.6,50],[3000,1146,42.3,48],
+            [3100,1134,41.9,46],[3200,1121,41.5,45],[3300,1108,40.7,44],[3400,1094,40.2,43],
+            [3500,1078,39.7,41],[3600,1063,39.2,39],[3700,1047,38.7,38],[3800,1029,38.0,37],
+            [3900,1010,37.3,35],[4000,988,36.6,34],[4100,963,35.5,32],[4200,932,33.0,27],
+            [4300,860,32.2,25],[4320,820,31.7,24]
+        ],
+        6: [ // İlk Hız: 262 m/s
+            [3600,1162,48.2,53],[3700,1151,47.9,51],[3800,1140,47.6,50],[3900,1128,47.2,49],
+            [4000,1116,46.9,47],[4100,1103,46.6,46],[4200,1090,46.2,45],[4300,1075,45.8,43],
+            [4400,1060,45.4,42],[4500,1046,45.0,40],[4600,1030,44.6,39],[4700,1014,44.2,38],
+            [4800,997,43.7,37],[4900,978,43.2,35],[5000,958,42.7,34],[5100,936,42.1,32],
+            [5200,906,41.3,31],[5285,830,39.3,27]
+        ],
+        7: [ // İlk Hız: 297 m/s
+            [4400,1156,49.9,52],[4500,1148,49.7,51],[4600,1138,49.5,50],[4700,1128,49.2,49],
+            [4800,1118,49.0,48],[4900,1107,48.8,48],[5000,1096,48.6,46],[5100,1086,48.3,45],
+            [5200,1075,48.1,44],[5300,1063,47.8,43],[5400,1050,47.6,42],[5500,1038,47.3,41],
+            [5600,1025,47.0,40],[5700,1012,46.7,39],[5800,997,46.4,38],[5900,983,46.1,37],
+            [6000,968,45.8,36],[6100,952,45.4,34],[6200,928,44.9,33],[6300,884,43.9,30],
+            [6355,820,42.5,27]
+        ],
+        8: [ // İlk Hız: 313 m/s
+            [5100,1124,53.4,50],[5200,1114,53.0,48],[5300,1104,52.7,47],[5400,1094,52.3,46],
+            [5500,1083,51.9,45],[5600,1073,51.6,44],[5700,1062,51.2,43],[5800,1050,50.8,42],
+            [5900,1040,50.5,42],[6000,1028,50.1,41],[6100,1016,49.7,40],[6200,1003,49.2,39],
+            [6300,990,48.8,38],[6400,978,48.4,37],[6500,964,47.4,35],[6600,946,46.8,34],
+            [6700,923,46.8,33],[6800,894,45.9,31],[6890,786,41.9,25]
+        ],
+        9: [ // İlk Hız: 340 m/s
+            [5800,1103,55.6,48],[5900,1098,55.4,47],[6000,1091,55.3,46],[6100,1084,54.9,46],
+            [6200,1077,54.7,45],[6300,1068,54.3,44],[6400,1060,54.0,44],[6500,1051,53.7,43],
+            [6600,1042,53.3,42],[6700,1032,53.0,41],[6800,1022,52.6,40],[6900,1011,52.1,39],
+            [7000,999,51.7,38],[7100,988,51.3,37],[7200,975,50.8,36],[7300,962,50.4,35],
+            [7400,948,49.9,35],[7500,930,49.4,34],[7600,904,48.5,32],[7705,800,44.4,26]
+        ],
+        10: [ // İlk Hız: 365 m/s
+            [6300,1095,57.4,48],[6400,1089,56.9,47],[6500,1083,56.5,46],[6600,1076,56.2,45],
+            [6700,1069,55.9,45],[6800,1062,55.6,44],[6900,1054,55.3,43],[7000,1045,55.0,42],
+            [7100,1036,54.7,41],[7200,1027,54.4,40],[7300,1017,54.1,39],[7400,1007,53.7,38],
+            [7500,995,53.4,38],[7600,983,53.0,37],[7700,970,52.5,36],[7800,956,52.1,35],
+            [7900,940,51.6,34],[8000,918,50.3,32],[8100,884,48.3,30],[8180,820,46.6,27]
+        ]
+    };
+
+    const elev120_Tahrip = {}, tabiiYan120_Tahrip = {}, flightTime120_Tahrip = {};
+
+    const range120 = [[1000,1510],[1500,1480],[2000,1450],[2500,1410],[3000,1370],[3500,1320],[4000,1270],[4500,1210],[5000,1150],[5500,1090],[6000,1030],[6500,970],[7000,910],[7500,850],[8000,790],[8200,760]];
+
+    const tabii120 = [[1000,12],[1500,14],[2000,16],[2500,18],[3000,20],[3500,22],[4000,24],[4500,26],[5000,28],[5500,30],[6000,32],[6500,34],[7000,36],[7500,38],[8000,40],[8200,42]];
+
+    const tacFaktorByBH = {
+        1: -3.2, 2: -3.5, 3: -3.8, 4: -4.1, 5: -4.4,
+        6: -4.7, 7: -5.0, 8: -5.3, 9: -5.6, 10: -5.9
+    };
+
+    const mod236TapaFaktor = {1:5.5,2:5.5,3:4.5,4:4.5,5:3.5,6:3.5,7:3.5,8:3.5,9:3.0,10:3.0};
+
+    const mod236DtacPerBH = {1:0.6,2:0.6,3:0.5,4:0.5,5:0.4,6:0.4,7:0.4,8:0.4,9:0.3,10:0.3};
+
+    let aiChatEl = null; // initialized after DOM ready
+
+    async function fetchElevation(gridStr, rakimInputId) {
+        const u = mgrsToUtm(gridStr);
+        if (!u) return;
+        const isSouth = 'CDEFGHJKLM'.includes(u.latBand);
+        const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
+        const input = document.getElementById(rakimInputId);
+        if (!input) return;
+        input.style.opacity = '0.5';
+        input.placeholder = 'Çekiliyor...';
+        const statusEl = document.getElementById(rakimInputId + 'Status');
+        if (statusEl) statusEl.textContent = '⟳ GPS...';
+        try {
+            const r = await fetch(
+                `https://api.open-elevation.com/api/v1/lookup?locations=${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}`,
+                { signal: AbortSignal.timeout(8000) }
+            );
+            const d = await r.json();
+            const elev = d.results?.[0]?.elevation;
+            if (elev !== undefined && elev !== null) {
+                input.value = Math.round(elev);
+                if (statusEl) { statusEl.textContent = '✓ Otomatik'; statusEl.style.color='#027a48'; setTimeout(()=>{ statusEl.textContent=''; }, 3000); }
+            }
+        } catch(e) {
+            // API erişilemez veya timeout - kullanıcı manuel girer
+            if (statusEl) statusEl.textContent = '';
+        } finally {
+            input.style.opacity = '1';
+            input.placeholder = '';
+            if (statusEl) { if(!statusEl.textContent.includes('✓')) statusEl.textContent = ''; }
+        }
+    }
+
+    async function fetchWeatherForAI(lat, lon) {
+        try {
+            const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat.toFixed(5)
+                + '&longitude=' + lon.toFixed(5)
+                + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,pressure_msl&timezone=auto';
+            const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+            if (!r.ok) return null;
+            const data = await r.json();
+            if (!data.current) return null;
+            const c = data.current;
+            const wDir = c.wind_direction_10m || 0;
+            return {
+                temp:        c.temperature_2m,
+                feelsLike:   c.apparent_temperature,
+                humidity:    c.relative_humidity_2m,
+                windSpeed:   c.wind_speed_10m,
+                windDirDeg:  wDir,
+                windDirName: _WIND_DIRS_AI[Math.round(((wDir+22.5)%360)/45)%8],
+                pressure:    c.pressure_msl
+            };
+        } catch(e) { return null; }
+    }
+
+    async function aiSend(question) {
+        if (!question.trim()) return;
+        aiAddMsg('user', question);
+        document.getElementById('aiInput').value = '';
+        setAiStatus('Düşünüyor...', true);
+
+        // Loading göster
+        const loadDiv = document.createElement('div');
+        loadDiv.className = 'ai-loading';
+        loadDiv.textContent = '⟳ Yanıt hazırlanıyor...';
+        aiChatEl.appendChild(loadDiv);
+        aiChatEl.scrollTop = aiChatEl.scrollHeight;
+
+        // Hava durumu otomatik çek (ilk soru veya hesapla basıldıktan sonra)
+        if (!lastWeatherData) {
+            try {
+                const hedefGrid = document.getElementById('hedefGrid').value;
+                const u = mgrsToUtm(hedefGrid);
+                if (u) {
+                    const isSouth = 'CDEFGHJKLM'.includes(u.latBand);
+                    const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
+                    if (ll && !isNaN(ll.lat)) {
+                        lastWeatherData = await fetchWeatherForAI(ll.lat, ll.lng);
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // Metro hesapla
+        let metro = null;
+        if (lastWeatherData) {
+            const sonucEl = document.getElementById('sonucAlan');
+            const mesajMatch = sonucEl ? sonucEl.innerText.match(/(\d{3,5})\s*m/) : null;
+            const mesafe = mesajMatch ? parseInt(mesajMatch[1]) : 3000;
+            const havIA  = parseFloat(document.getElementById('dtnAzimuth')?.value || 0);
+            metro = calcMetroAI(lastWeatherData, havIA, mesafe);
+        }
+
+        // Sistem promptu ve geçmiş
+        const sysPrompt = buildSystemPrompt(lastWeatherData, metro);
+        aiHistory.push({ role: 'user', content: question });
+        if (aiHistory.length > 20) aiHistory = aiHistory.slice(-20);
+
+        try {
+            const resp = await fetch(GROQ_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // Authorization Worker tarafında ekleniyor
+                },
+                body: JSON.stringify({
+                    model: GROQ_MODEL,
+                    messages: [
+                        { role: 'system', content: sysPrompt },
+                        ...aiHistory
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1024,
+                    stream: false
+                })
+            });
+
+            const data = await resp.json();
+            loadDiv.remove();
+
+            if (data.error) {
+                aiAddMsg('ai', '⚠️ Hata: ' + (data.error.message || JSON.stringify(data.error)));
+                setAiStatus('Hata', false);
+                return;
+            }
+
+            const answer = data.choices?.[0]?.message?.content || 'Yanıt alınamadı.';
+            aiHistory.push({ role: 'assistant', content: answer });
+            aiAddMsg('ai', answer);
+            setAiStatus('Hazır', false);
+
+        } catch(e) {
+            loadDiv.remove();
+            aiAddMsg('ai', '⚠️ Bağlantı hatası: ' + e.message + '<br>İnternet bağlantınızı kontrol edin.');
+            setAiStatus('Bağlantı hatası', false);
+        }
+    }
+
+    async function fetchCevreAnalizi(hedefGrid) {
+        const panel = document.getElementById('cevreAnaliziPanel');
+        const icerik = document.getElementById('cevreAnaliziIcerik');
+        if (!panel || !icerik) return;
+
+        panel.style.display = 'block';
+        icerik.textContent = 'Analiz ediliyor...';
+
+        try {
+            // MGRS → lat/lng
+            const u = mgrsToUtm(hedefGrid);
+            if (!u) { panel.style.display = 'none'; return; }
+            const isSouth = 'CDEFGHJKLM'.includes((u.latBand || 'S').toUpperCase());
+            const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouth);
+            if (!ll || isNaN(ll.lat)) { panel.style.display = 'none'; return; }
+
+            const lat = ll.lat, lon = ll.lng, r = 500;
+
+            // Overpass API sorgusu
+            const query = `[out:json][timeout:10];(
+                node["amenity"~"school|hospital|mosque|church|fuel|police"](around:${r},${lat},${lon});
+                way["building"~"residential|commercial|industrial|yes"](around:${r},${lat},${lon});
+                way["highway"~"primary|secondary|tertiary|residential|unclassified|track"](around:${r},${lat},${lon});
+                way["waterway"~"river|stream|canal"](around:${r},${lat},${lon});
+                way["landuse"~"residential|industrial|farmland"](around:${r},${lat},${lon});
+            );out count;`;
+
+            const resp = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: query,
+                signal: AbortSignal.timeout(12000)
+            });
+
+            if (!resp.ok) throw new Error('API hatası');
+            const data = await resp.json();
+
+            // Detaylı sorgu - her kategori ayrı
+            const q2 = `[out:json][timeout:15];
+                (node["amenity"~"school|hospital|mosque|church"](around:${r},${lat},${lon});)->.amenities;
+                (way["building"](around:${r},${lat},${lon});)->.buildings;
+                (way["highway"](around:${r},${lat},${lon});)->.roads;
+                (way["waterway"](around:${r},${lat},${lon});)->.water;
+                .amenities out tags;
+                .buildings out count;
+                .roads out count;
+                .water out count;`;
+
+            const resp2 = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: `[out:json][timeout:15];(
+                    node["amenity"~"school|hospital|mosque|church|fuel|police|fire_station"](around:${r},${lat},${lon});
+                    way["building"](around:${r},${lat},${lon});
+                    way["highway"](around:${r},${lat},${lon});
+                    way["waterway"](around:${r},${lat},${lon});
+                );out tags;`,
+                signal: AbortSignal.timeout(15000)
+            });
+
+            const data2 = await resp2.json();
+            const elements = data2.elements || [];
+
+            // Kategorilere ayır
+            const amenities = {};
+            let binaSayisi = 0;
+            let yolSayisi = 0;
+            let suSayisi = 0;
+            const yolTipleri = new Set();
+
+            elements.forEach(function(el) {
+                const tags = el.tags || {};
+                if (tags.amenity) {
+                    const tip = tags.amenity;
+                    amenities[tip] = (amenities[tip] || 0) + 1;
+                }
+                if (tags.building) binaSayisi++;
+                if (tags.highway) { yolSayisi++; yolTipleri.add(tags.highway); }
+                if (tags.waterway) suSayisi++;
+            });
+
+            // Sonuç metni oluştur
+            const satirlar = [];
+
+            // Kritik tesisler
+            const kritikler = [];
+            if (amenities.school)        kritikler.push('🏫 Okul: ' + amenities.school + ' adet');
+            if (amenities.hospital)      kritikler.push('🏥 Hastane: ' + amenities.hospital + ' adet');
+            if (amenities.mosque)        kritikler.push('🕌 Cami: ' + amenities.mosque + ' adet');
+            if (amenities.church)        kritikler.push('⛪ Kilise: ' + amenities.church + ' adet');
+            if (amenities.fuel)          kritikler.push('⛽ Akaryakıt: ' + amenities.fuel + ' adet');
+            if (amenities.police)        kritikler.push('🚔 Karakol: ' + amenities.police + ' adet');
+            if (amenities.fire_station)  kritikler.push('🚒 İtfaiye: ' + amenities.fire_station + ' adet');
+
+            if (kritikler.length > 0) {
+                satirlar.push('⚠️ Kritik Tesis: ' + kritikler.join(' · '));
+            }
+
+            // Yapı
+            if (binaSayisi > 0) {
+                const yogunluk = binaSayisi > 50 ? 'yoğun yerleşim' : binaSayisi > 15 ? 'orta yoğunluk' : 'seyrek yapılaşma';
+                satirlar.push('🏘️ Yapı: ' + binaSayisi + ' adet (' + yogunluk + ')');
+            } else {
+                satirlar.push('🏘️ Yapı: Tespit edilmedi');
+            }
+
+            // Yol
+            if (yolSayisi > 0) {
+                const yolList = Array.from(yolTipleri).slice(0,3).join(', ');
+                satirlar.push('🛣️ Yol: ' + yolSayisi + ' adet (' + yolList + ')');
+            }
+
+            // Su
+            if (suSayisi > 0) {
+                satirlar.push('💧 Su kaynağı: ' + suSayisi + ' adet');
+            }
+
+            if (satirlar.length === 0) {
+                satirlar.push('Belirgin yapı veya tesis tespit edilmedi.');
+            }
+
+            icerik.innerHTML = satirlar.join('<br>');
+
+            // Kritik tesis varsa panel rengini değiştir
+            if (kritikler.length > 0) {
+                panel.style.borderColor = '#ef4444';
+                panel.style.background = '#fff1f1';
+            } else {
+                panel.style.borderColor = '#fec84b';
+                panel.style.background = '#fff8e6';
+            }
+
+        } catch(e) {
+            panel.style.display = 'none';
+        }
+    }
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    aiChatEl = document.getElementById('aiChat');
+    setTimeout(() => renderBilgi(0), 100);
+    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
+    if (optM301init) optM301init.style.display = '';
+
+
+
+    // ======================== 81 ve 106 TABLOLARI (Aynen) ========================
+
+    // ======================== GİRİŞ KONTROLÜ ========================
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+        let username = document.getElementById('username').value.trim();
+        let password = document.getElementById('password').value.trim();
+        async function hashPwd(p) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        }
+        const pwdHash = await hashPwd(password);
+        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
+        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
+        } else {
+            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
+        }
+    });
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
+    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
+    // Kaynak: NGA.STND.0037 MGRS standardı
+
+    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
+
+    // ======================== 120 MM HAVAN - YENİ MOTOR ========================
+    // ----- YENİ EVRENSEL FONKSİYONLAR -----
+
+
+
+
+    // ============================================================
+    // 120 mm CETVEL-F: AAC 120-C-3 MOD-209 Tipi Mühimmat
+    // Kaynak: HY-12/HY-12D1 Havanlar, 1994 basımı
+    // Her BH: [mesafe(m), nişangah(mil), uçuşSüresi(s), tabiiYan(sol-mil)]
+    // ============================================================
+    // Integer key ile indeksleme
+    for (const [k, t] of Object.entries(cetvelF_120)) {
+        const bk = parseInt(k);
+        elev120_Tahrip[bk]       = t.map(r => [r[0], r[1]]);
+        tabiiYan120_Tahrip[bk]   = t.map(r => [r[0], r[3]]);
+        flightTime120_Tahrip[bk] = t.map(r => [r[0], r[2]]);
+    }
+
+    // 120 mm Sis mühimmatı tabloları (eski haliyle kalıyor, TAÇ için uyumlu)
+
+    // TAÇ faktörleri (barut hakkına göre)
+
+    // ======================== METRO ========================
+
+    
+
+
+    // ======================== HESAPLAMA MOTORU ========================
+    // MOD 236 Aydınlatma tapa faktörleri (AAC 120-C-3, Sayfa 77)
+    // MOD 236 rakım farkı dahil tapa saniyesi
+    // AAC 120-C-3 Sayfa 77: her BH için paralanma yüksekliği ±50m = tapa değişimi
+
+
+
+
+
+    // ======================== TAÇ BUTONU ========================
+    // TAÇ her zaman aktif - toggle kaldırıldı
+
+    // ======================== DİĞER FONKSİYONLAR (Aynen) ========================
+
+
+
+    // ── RAKİM OTOMATİK ÇEKME (Open-Elevation API) ──────────────────────────────
+    // MGRS → UTM → WGS84 lat/lng → elevation
+
+
+
+    
+
+
+    
+    
+    
+
+    
+    
+
+    
+
+    // EVENT LİSTENER'LAR
+    document.getElementById('btn81mm').addEventListener('click', () => setCaliber('81'));
+    document.getElementById('btn106mm').addEventListener('click', () => setCaliber('106'));
+    document.getElementById('btn120mm').addEventListener('click', () => setCaliber('120'));
+    document.getElementById('toggleBhMode120').addEventListener('click', toggleBH120);
+
+    document.querySelectorAll('#ammoSelector81 .ammo-option').forEach(el => el.addEventListener('click', () => update81(el.getAttribute('data-ammo'))));
+    document.querySelectorAll('#ammoSelector106 .ammo-option').forEach(el => el.addEventListener('click', () => update106(el.getAttribute('data-ammo106'))));
+    document.querySelectorAll('#ammoSelector120 .ammo-option').forEach(el => el.addEventListener('click', () => update120(el.getAttribute('data-ammo120'))));
+
+        document.getElementById('hesaplaBtn').addEventListener('click', function() {
+        hesaplaTekHedef();
+        // Hedef koordinatını lat/lng çevir
+        setTimeout(async () => {
+            try {
+                const hGrid = document.getElementById('hedefGrid').value;
+                const u = mgrsToUtm(hGrid);
+                if (u) {
+                    const isSouthH = 'CDEFGHJKLM'.includes((u.latBand||'S'));
+                    const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouthH);
+                    sonHesapLat = ll.lat;
+                    sonHesapLng = ll.lng;
+                }
+            } catch(e) {}
+            if (sonHesapLat && sonHesapLng) {
+                haritaGoster(sonHesapLat, sonHesapLng);
+                cevreAnalizi(sonHesapLat, sonHesapLng);
+                // Open-Meteo'dan metro verisi çek
+                try {
+                    const mLat = sonHesapLat || 37.0;
+                    const mLng = sonHesapLng || 36.0;
+                    const mUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + mLat.toFixed(4)
+                        + '&longitude=' + mLng.toFixed(4)
+                        + '&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_direction_10m'
+                        + '&wind_speed_unit=kmh&timezone=auto';
+                    const mr = await fetch(mUrl, {signal: AbortSignal.timeout(8000)});
+                    const md = await mr.json();
+                    const cur = md.current;
+                    const WIND_DIR = ['K','KKD','KD','DKD','D','DGD','GD','GGD','G','GGB','GB','BGB','B','BKB','KB','KKB'];
+                    const wd = cur.wind_direction_10m;
+                    const rho = (cur.surface_pressure * 100) / (287.058 * (cur.temperature_2m + 273.15));
+                    window._metroData = {
+                        temp: cur.temperature_2m,
+                        wind: cur.wind_speed_10m.toFixed(1),
+                        windDir: Math.round(wd),
+                        windDirName: WIND_DIR[Math.round(wd/22.5)%16],
+                        pressure: Math.round(cur.surface_pressure),
+                        humidity: cur.relative_humidity_2m,
+                        density: rho
+                    };
+                    // Metro alanlarını otomatik doldur
+                    const windKnot = (cur.wind_speed_10m / 1.852).toFixed(1);
+                    const windMils = Math.round(wd * 6400 / 360);
+                    document.getElementById('ruzgarHizi').value = Math.round(windKnot);
+                    document.getElementById('ruzgarYonu').value = windMils;
+                    document.getElementById('havaSicaklik').value = Math.round(cur.temperature_2m);
+                    document.getElementById('havaBasinc').value = Math.round(cur.surface_pressure);
+                    document.getElementById('nemOrani').value = cur.relative_humidity_2m;
+                } catch(e) {}
+            }
+        }, 400);
+    });
+
+
+    document.getElementById('mevziGrid').addEventListener('change', () => onGridChange('mevziGrid','mevziRakim'));
+    document.getElementById('mevziGrid').addEventListener('blur',   () => onGridChange('mevziGrid','mevziRakim'));
+    document.getElementById('hedefGrid').addEventListener('change', () => onGridChange('hedefGrid','hedefRakim'));
+    document.getElementById('hedefGrid').addEventListener('blur',   () => onGridChange('hedefGrid','hedefRakim'));
+    document.getElementById('bh120Manual').addEventListener('change', hesaplaTekHedef);
+    document.getElementById('gozetleyiciBtn').addEventListener('click', ileriGozetleyiciDuzeltme);
+    document.getElementById('resetCorrBtn').addEventListener('click', resetCorr);
+    document.getElementById('copyResultsBtn').addEventListener('click', copyResults);
+    document.getElementById('demetUygulaBtn').addEventListener('click', hesaplaDemet);
+    document.getElementById('demetTipi').addEventListener('change', updateDemetUI);
+    document.getElementById('ucFarkliHedefBtn').addEventListener('click', ucFarkliHedefHesapla);
+    document.getElementById('applyMetroBtn').addEventListener('click', applyMetro);
+
+    toggleAccordion('demetToggle','demetContent');
+    toggleAccordion('corrToggle','corrContent');
+    toggleAccordion('metroToggle','metroContent');
+    toggleAccordion('ucHedefToggle','ucHedefContent');
+    toggleAccordion('gozetPanelToggle','gozetPanelContent');
+    toggleAccordion('konvoyToggle','konvoyContent');
+    createUcHedefUI();
+    updateDemetUI();
+    setCaliber('81');
+    // Init bilgi modal
+    document.getElementById('bilgiModal').addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
+
+
+    // ── YAPAY ZEKA ASİSTANI (Groq / Llama-3.3-70B) ─────────────────────────
+    // API anahtarı Cloudflare Worker'da gizli — buraya sadece Worker URL'i yazılır
+    // Cloudflare Worker kurulduktan sonra aşağıdaki URL'i güncelleyin
+
+
+    // ── Hava durumu çek ──────────────────────────────────────────────────────
+
+    // ── Metro hesapla (koddaki formülle) ─────────────────────────────────────
+
+    // ── Sistem bağlamını topla ────────────────────────────────────────────────
+
+    // ── UI helpers ───────────────────────────────────────────────────────────
+
+
+
+    // ── Ana gönder fonksiyonu ─────────────────────────────────────────────────
+
+    // ── Event listeners ──────────────────────────────────────────────────────
+    window.aiSend = aiSend; // Global scope için
+    document.getElementById('aiSendBtn').addEventListener('click', () => aiSend(document.getElementById('aiInput').value));
+    document.getElementById('aiInput').addEventListener('keydown', e => { if (e.key==='Enter') aiSend(e.target.value); });
+    document.querySelectorAll('.ai-quick-btn').forEach(btn => btn.addEventListener('click', () => aiSend(btn.dataset.q)));
+    document.getElementById('hesaplaBtn').addEventListener('click', () => { lastWeatherData = null; }, true);
+
+    // ── Hoşgeldin mesajı ──────────────────────────────────────────────────────
+    aiAddMsg('ai', 'Merhaba! 🎯 Ateş idare asistanınım.<br>'
+        + 'Hesaplama yaptıktan sonra soru sor — <b>hava durumunu otomatik çeker</b> ve metro düzeltmesini hesaplarım.<br>'
+        + 'Koordinat analizi, BH kontrolü, emniyet değerlendirmesi için buradayım.');
+
+    // AI modal backdrop close
+    document.getElementById('aiModalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+    });
+
+    // AI tab in bilgi modal - proxy to main aiSend + sync
+
+
+    // ── UYDU HARİTASI (Leaflet + Esri) ─────────────────────────────────────
+
+
+
+
+
+
+    // Hesapla sonrası otomatik güncelle
+    document.getElementById('hesaplaBtn').addEventListener('click', function() {
+        setTimeout(function() {
+            if (_map) { mapShowMevzi(); mapShowHedef(); }
+        }, 400);
+    });
+
+    // Buton listeners
+    document.getElementById('mapMevziBtn').addEventListener('click', mapShowMevzi);
+    document.getElementById('mapHedefBtn').addEventListener('click', mapShowHedef);
+    document.getElementById('mapFitBtn').addEventListener('click', function() { initMap(); mapFit(); });
+
+    // Sayfa açılınca haritayı lazy init
+    setTimeout(initMap, 800);
+
+    // Harita için hızlı hesaplama (popup'ta sonuç göstermek için)
+
+    // Harita → Ana sistem aktarım + hesapla
+
+
+    // ResizeObserver - container boyutu değişince invalidateSize
+    if (typeof ResizeObserver !== 'undefined') {
+        var mapObs = new ResizeObserver(function() {
+            if (_map) setTimeout(function(){ _map.invalidateSize(true); }, 50);
+        });
+        var mapEl2 = document.getElementById('mapDiv');
+        if (mapEl2) mapObs.observe(mapEl2);
+    }
+
+    // Scroll veya visibility değişince de düzelt
+    window.addEventListener('resize', function() {
+        if (_map) _map.invalidateSize(true);
+    });
+
+    // ── GERÇEK ZAMANLI KONUM (GPS) ────────────────────────────────────────────
+
+    document.getElementById('mapGpsBtn').addEventListener('click', function() {
+        if (!_gpsActive) {
+            gpsBaslat();
+        } else {
+            gpsDurdur();
+        }
+    });
+
+
+
+
+    // ── ÇEVRE ANALİZİ (OpenStreetMap Overpass API) ───────────────────────────
 
 });
 </script>
