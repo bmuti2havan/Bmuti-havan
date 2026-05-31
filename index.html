@@ -2121,180 +2121,6 @@ self.addEventListener('fetch', e => {
     }
 
 
-    function normalizeMgrs(raw) {
-        var s = raw.trim().toUpperCase().replace(/[-,]+/g,'').replace(/\s+/g,' ').trim();
-        var m;
-        // P1: "37S BV 89059 58179"
-        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
-        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
-        // P2: "37SBV 89059 58179"
-        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
-        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
-        // P3: "37SBV89059 58179"
-        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d{1,5}) (\d{1,5})$/);
-        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
-        // P4: "37S BV8905958179"
-        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2})(\d{8,10})$/);
-        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
-        // P5: "37SBV8905958179"
-        m = s.match(/^(\d{1,2})([A-Z])([A-Z]{2})(\d{8,10})$/);
-        if (m) { var d=m[4],mid=Math.floor(d.length/2); return m[1]+m[2]+' '+m[3]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
-        // P6: "37S DG 3456726899"
-        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{8,10})$/);
-        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
-        return raw; // değiştiremedik, olduğu gibi bırak
-    }
-
-    function mgrsToUtm(gridStr) {
-        // Normalize format first (handle boşluksuz yazım etc.)
-        gridStr = normalizeMgrs(gridStr);
-        const s = gridStr.trim().toUpperCase().replace(/\s+/g, ' ');
-        const parts = s.split(' ');
-        if (parts.length < 4) return null;
-
-        const zone = parseInt(parts[0]);
-        if (isNaN(zone) || zone < 1 || zone > 60) return null;
-
-        const bandStr = parts[1];           // örn. "LG"
-        if (bandStr.length !== 2) return null;
-        const colLetter = bandStr.charAt(0); // 100km sütun
-        const rowLetter = bandStr.charAt(1); // 100km satır
-
-        const eLocal = parseInt(parts[2]);   // 0-99999
-        const nLocal = parseInt(parts[3]);   // 0-99999
-        if (isNaN(eLocal) || isNaN(nLocal)) return null;
-
-        // --- Easting hesabı ---
-        const colSet = _COL_LETTERS[(zone - 1) % 3];
-        const colIdx = colSet.indexOf(colLetter);
-        if (colIdx === -1) return null;
-        const easting = (colIdx + 1) * 100000 + eLocal;  // 100km blok + yerel
-
-        // --- Northing hesabı ---
-        // Zone tek mi çift mi?
-        const rowAlpha = (zone % 2 === 1) ? _ROW_ODD : _ROW_EVEN;
-        const rowIdx = rowAlpha.indexOf(rowLetter);
-        if (rowIdx === -1) return null;
-        let northing = rowIdx * 100000 + nLocal;
-
-        // 2.000.000 m'lik döngüsel satır sistemi → doğru döngüyü bul
-        // Enlem bandına ait tahmini minimum northing'e göre döngüyü ayarla
-        const latBand = parts[0].replace(/[0-9]/g, ''); // fallback - zone string'den
-
-        // Enlem bandını zone string'den değil ayrı parse edelim
-        // Format: "37S LG ..." → zone=37, latBand=S
-        // Ama kullanıcı zone+band birleşik de yazabilir: "37S" vs "37 S LG..."
-        // Mevcut formatta parts[0]="37S" veya parts[0]="37"
-        let latBandChar = '';
-        const zoneStr = parts[0];
-        if (/[A-Z]/.test(zoneStr)) {
-            latBandChar = zoneStr.replace(/[0-9]/g, '');
-        } else {
-            // parts[1] ilk harfi enlem bandı mı? Hayır, parts[1]="LG" 100km kare
-            // Enlem bandını kolona göre tahmin: Türkiye genellikle S veya T
-            latBandChar = 'S'; // default
-        }
-
-        // Enlem bandına göre northing döngüsünü düzelt
-        const minN = _LAT_BAND_MIN_N[latBandChar] || 0;
-        const isSouth = _SOUTH_BANDS.includes(latBandChar);
-
-        // 2.000.000 m periyot - doğru turu bul
-        const period = 2000000;
-        let cycles = Math.floor(minN / period);
-        northing += cycles * period;
-        // Eğer hesaplanan northing minN'den 1.000.000+ küçükse bir tur ekle
-        if (northing < minN - 500000) northing += period;
-
-        // Güney hemisfer için false northing düzelt (UTM false northing = 10.000.000)
-        if (isSouth) northing += 10000000;
-
-        return { zone, latBand: latBandChar, easting, northing };
-    }
-
-    function distanceMgrs(grid1, grid2) {
-        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
-        if (!u1 || !u2) return null;
-        const dx = u2.easting - u1.easting;
-        const dy = u2.northing - u1.northing;
-        return Math.hypot(dx, dy);
-    }
-
-    function azimuthDegrees(grid1, grid2) {
-        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
-        if (!u1 || !u2) return null;
-        const dx = u2.easting - u1.easting;
-        const dy = u2.northing - u1.northing;
-        let rad = Math.atan2(dx, dy);
-        if (rad < 0) rad += 2 * Math.PI;
-        return rad * 180 / Math.PI;
-    }
-
-    function mgrsToMeters(gridStr) {
-        const u = mgrsToUtm(gridStr);
-        if (!u) return null;
-        return { x: u.easting, y: u.northing };
-    }
-
-    function mgrsAddOffset(gridStr, eastMeters, northMeters) {
-        const u = mgrsToUtm(gridStr);
-        if (!u) return gridStr;
-        const newE = u.easting + eastMeters;
-        const newN = u.northing + northMeters;
-        // 100km kare harflerini yeniden hesapla
-        const zone = u.zone;
-        const colSet = _COL_LETTERS[(zone - 1) % 3];
-        const colIdx = Math.floor(newE / 100000) - 1;
-        const colLetter = colSet[((colIdx % 8) + 8) % 8] || 'A';
-        const rowAlpha = (zone % 2 === 1) ? _ROW_ODD : _ROW_EVEN;
-        const rowIdx = Math.floor((newN % 2000000) / 100000);
-        const rowLetter = rowAlpha[rowIdx % 20] || 'A';
-        const eLocal = Math.round(newE % 100000);
-        const nLocal = Math.round(newN % 100000);
-        return `${zone}${u.latBand} ${colLetter}${rowLetter} ${eLocal} ${nLocal}`;
-    }
-
-    // ======================== 81 ve 106 TABLOLARI (Aynen) ========================
-    const flightTime81 = {
-        mke214: null, // mke214 için uçuş süresi sight_MKE214 tablosundan alınır
-        m64: { 1: [[250,22.7],[1700,8.9]], 2: [[400,29.6],[2200,18.4]], 3: [[600,29.7],[3000,24.9]], 4: [[800,40.8],[3550,30.2]], 5: [[950,45.7],[4500,13.3]], 6: [[1100,49.8],[7000,10.1]], 7: [[1300,54.0],[7000,18.9]], 8: [[1400,57.2],[7000,18.9]] },
-        m56a1: { 1: [[200,20.3],[850,16.2]], 2: [[450,25.9],[1450,19.3]], 3: [[500,30.4],[1850,23.2]], 4: [[600,34.1],[3000,19.1]] },
-        m57: { 1: [[350,20.5],[850,15.5]], 2: [[450,25.4],[1300,18.9]], 3: [[600,29.8],[1800,22.9]], 4: [[700,33.2],[2250,25.2]] },
-        m43a1b1: { 1: [[250,21.3],[1100,15.9]], 2: [[300,26.8],[1600,20.5]], 3: [[400,29.6],[2150,23.0]], 4: [[450,35.3],[2550,24.6]], 5: [[500,35.1],[2950,28.6]], 6: [[700,37.8],[3400,29.6]] }
-    };
-document.addEventListener("DOMContentLoaded", function() {
-
-    setTimeout(() => renderBilgi(0), 100);
-    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
-    var optM301init = document.getElementById('ammoOpt_m301a2');
-    if (optM301init) optM301init.style.display = '';
-
-    // ======================== GİRİŞ KONTROLÜ ========================
-    document.getElementById('loginBtn').addEventListener('click', async function() {
-        let username = document.getElementById('username').value.trim();
-        let password = document.getElementById('password').value.trim();
-        async function hashPwd(p) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
-            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-        }
-        const pwdHash = await hashPwd(password);
-        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
-        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
-        } else {
-            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
-        }
-    });
-    document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    });
-
-    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
-    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
-    // Kaynak: NGA.STND.0037 MGRS standardı
-
-    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
     const _COL_LETTERS = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'];
     // 100km satır harfleri: zone çift/tek'e göre iki farklı set
     const _ROW_ODD  = 'ABCDEFGHJKLMNPQRSTUV';  // tek zone
@@ -2855,6 +2681,184 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         return { bh: 41, bhFrac: 0, bhDec: 41, tabiiYan: 33.8, ucusSuresi: 40.8 };
     }
+
+    function normalizeMgrs(raw) {
+        var s = raw.trim().toUpperCase().replace(/[-,]+/g,'').replace(/\s+/g,' ').trim();
+        var m;
+        // P1: "37S BV 89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P2: "37SBV 89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2}) (\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P3: "37SBV89059 58179"
+        m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d{1,5}) (\d{1,5})$/);
+        if (m) return m[1]+' '+m[2]+' '+m[3].padEnd(5,'0').slice(0,5)+' '+m[4].padEnd(5,'0').slice(0,5);
+        // P4: "37S BV8905958179"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2})(\d{8,10})$/);
+        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        // P5: "37SBV8905958179"
+        m = s.match(/^(\d{1,2})([A-Z])([A-Z]{2})(\d{8,10})$/);
+        if (m) { var d=m[4],mid=Math.floor(d.length/2); return m[1]+m[2]+' '+m[3]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        // P6: "37S DG 3456726899"
+        m = s.match(/^(\d{1,2}[A-Z]) ([A-Z]{2}) (\d{8,10})$/);
+        if (m) { var d=m[3],mid=Math.floor(d.length/2); return m[1]+' '+m[2]+' '+d.slice(0,mid).padEnd(5,'0').slice(0,5)+' '+d.slice(mid).padEnd(5,'0').slice(0,5); }
+        return raw; // değiştiremedik, olduğu gibi bırak
+    }
+
+    function mgrsToUtm(gridStr) {
+        // Normalize format first (handle boşluksuz yazım etc.)
+        gridStr = normalizeMgrs(gridStr);
+        const s = gridStr.trim().toUpperCase().replace(/\s+/g, ' ');
+        const parts = s.split(' ');
+        if (parts.length < 4) return null;
+
+        const zone = parseInt(parts[0]);
+        if (isNaN(zone) || zone < 1 || zone > 60) return null;
+
+        const bandStr = parts[1];           // örn. "LG"
+        if (bandStr.length !== 2) return null;
+        const colLetter = bandStr.charAt(0); // 100km sütun
+        const rowLetter = bandStr.charAt(1); // 100km satır
+
+        const eLocal = parseInt(parts[2]);   // 0-99999
+        const nLocal = parseInt(parts[3]);   // 0-99999
+        if (isNaN(eLocal) || isNaN(nLocal)) return null;
+
+        // --- Easting hesabı ---
+        const colSet = _COL_LETTERS[(zone - 1) % 3];
+        const colIdx = colSet.indexOf(colLetter);
+        if (colIdx === -1) return null;
+        const easting = (colIdx + 1) * 100000 + eLocal;  // 100km blok + yerel
+
+        // --- Northing hesabı ---
+        // Zone tek mi çift mi?
+        const rowAlpha = (zone % 2 === 1) ? _ROW_ODD : _ROW_EVEN;
+        const rowIdx = rowAlpha.indexOf(rowLetter);
+        if (rowIdx === -1) return null;
+        let northing = rowIdx * 100000 + nLocal;
+
+        // 2.000.000 m'lik döngüsel satır sistemi → doğru döngüyü bul
+        // Enlem bandına ait tahmini minimum northing'e göre döngüyü ayarla
+        const latBand = parts[0].replace(/[0-9]/g, ''); // fallback - zone string'den
+
+        // Enlem bandını zone string'den değil ayrı parse edelim
+        // Format: "37S LG ..." → zone=37, latBand=S
+        // Ama kullanıcı zone+band birleşik de yazabilir: "37S" vs "37 S LG..."
+        // Mevcut formatta parts[0]="37S" veya parts[0]="37"
+        let latBandChar = '';
+        const zoneStr = parts[0];
+        if (/[A-Z]/.test(zoneStr)) {
+            latBandChar = zoneStr.replace(/[0-9]/g, '');
+        } else {
+            // parts[1] ilk harfi enlem bandı mı? Hayır, parts[1]="LG" 100km kare
+            // Enlem bandını kolona göre tahmin: Türkiye genellikle S veya T
+            latBandChar = 'S'; // default
+        }
+
+        // Enlem bandına göre northing döngüsünü düzelt
+        const minN = _LAT_BAND_MIN_N[latBandChar] || 0;
+        const isSouth = _SOUTH_BANDS.includes(latBandChar);
+
+        // 2.000.000 m periyot - doğru turu bul
+        const period = 2000000;
+        let cycles = Math.floor(minN / period);
+        northing += cycles * period;
+        // Eğer hesaplanan northing minN'den 1.000.000+ küçükse bir tur ekle
+        if (northing < minN - 500000) northing += period;
+
+        // Güney hemisfer için false northing düzelt (UTM false northing = 10.000.000)
+        if (isSouth) northing += 10000000;
+
+        return { zone, latBand: latBandChar, easting, northing };
+    }
+
+    function distanceMgrs(grid1, grid2) {
+        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
+        if (!u1 || !u2) return null;
+        const dx = u2.easting - u1.easting;
+        const dy = u2.northing - u1.northing;
+        return Math.hypot(dx, dy);
+    }
+
+    function azimuthDegrees(grid1, grid2) {
+        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
+        if (!u1 || !u2) return null;
+        const dx = u2.easting - u1.easting;
+        const dy = u2.northing - u1.northing;
+        let rad = Math.atan2(dx, dy);
+        if (rad < 0) rad += 2 * Math.PI;
+        return rad * 180 / Math.PI;
+    }
+
+    function mgrsToMeters(gridStr) {
+        const u = mgrsToUtm(gridStr);
+        if (!u) return null;
+        return { x: u.easting, y: u.northing };
+    }
+
+    function mgrsAddOffset(gridStr, eastMeters, northMeters) {
+        const u = mgrsToUtm(gridStr);
+        if (!u) return gridStr;
+        const newE = u.easting + eastMeters;
+        const newN = u.northing + northMeters;
+        // 100km kare harflerini yeniden hesapla
+        const zone = u.zone;
+        const colSet = _COL_LETTERS[(zone - 1) % 3];
+        const colIdx = Math.floor(newE / 100000) - 1;
+        const colLetter = colSet[((colIdx % 8) + 8) % 8] || 'A';
+        const rowAlpha = (zone % 2 === 1) ? _ROW_ODD : _ROW_EVEN;
+        const rowIdx = Math.floor((newN % 2000000) / 100000);
+        const rowLetter = rowAlpha[rowIdx % 20] || 'A';
+        const eLocal = Math.round(newE % 100000);
+        const nLocal = Math.round(newN % 100000);
+        return `${zone}${u.latBand} ${colLetter}${rowLetter} ${eLocal} ${nLocal}`;
+    }
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    setTimeout(() => renderBilgi(0), 100);
+    // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
+    var optM301init = document.getElementById('ammoOpt_m301a2');
+    if (optM301init) optM301init.style.display = '';
+
+
+
+    // ======================== 81 ve 106 TABLOLARI (Aynen) ========================
+    const flightTime81 = {
+        mke214: null, // mke214 için uçuş süresi sight_MKE214 tablosundan alınır
+        m64: { 1: [[250,22.7],[1700,8.9]], 2: [[400,29.6],[2200,18.4]], 3: [[600,29.7],[3000,24.9]], 4: [[800,40.8],[3550,30.2]], 5: [[950,45.7],[4500,13.3]], 6: [[1100,49.8],[7000,10.1]], 7: [[1300,54.0],[7000,18.9]], 8: [[1400,57.2],[7000,18.9]] },
+        m56a1: { 1: [[200,20.3],[850,16.2]], 2: [[450,25.9],[1450,19.3]], 3: [[500,30.4],[1850,23.2]], 4: [[600,34.1],[3000,19.1]] },
+        m57: { 1: [[350,20.5],[850,15.5]], 2: [[450,25.4],[1300,18.9]], 3: [[600,29.8],[1800,22.9]], 4: [[700,33.2],[2250,25.2]] },
+        m43a1b1: { 1: [[250,21.3],[1100,15.9]], 2: [[300,26.8],[1600,20.5]], 3: [[400,29.6],[2150,23.0]], 4: [[450,35.3],[2550,24.6]], 5: [[500,35.1],[2950,28.6]], 6: [[700,37.8],[3400,29.6]] }
+    };
+
+    // ======================== GİRİŞ KONTROLÜ ========================
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+        let username = document.getElementById('username').value.trim();
+        let password = document.getElementById('password').value.trim();
+        async function hashPwd(p) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        }
+        const pwdHash = await hashPwd(password);
+        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
+        if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
+        } else {
+            document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
+        }
+    });
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    // ======================== MGRS → UTM DÖNÜŞÜM (Tam Algoritma) ========================
+    // MGRS format: "37S LG 34560 24570" → zone=37, latBand=S, col100=L, row100=G, e=34560, n=24570
+    // Kaynak: NGA.STND.0037 MGRS standardı
+
+    // 100km sütun harfleri: zone'a göre döngüsel (A-H, J-R, S-Z tekrar eder)
 
     // ======================== 120 MM HAVAN - YENİ MOTOR ========================
     // ----- YENİ EVRENSEL FONKSİYONLAR -----
