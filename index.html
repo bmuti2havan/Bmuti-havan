@@ -901,8 +901,9 @@ tr:nth-child(even) td { background: var(--c-bg); }
               const hGrid=document.getElementById('hedefGrid').value;
               try{
                 const u=mgrsToUtm(hGrid);
-                if(!u) throw new Error();
-                const ll=utmToLatLng(u.zone,u.easting,u.northing);
+                if(!u) throw new Error('Hedef grid boş veya hatalı');
+                const isSouth='CDEFGHJKLM'.includes(u.latBand||'S');
+                const ll=utmToLatLng(u.zone,u.easting,u.northing,isSouth);
                 const url='https://api.open-meteo.com/v1/forecast?latitude='+ll.lat.toFixed(4)+'&longitude='+ll.lng.toFixed(4)+'&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto';
                 this.textContent='⟳ Çekiliyor...';
                 const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
@@ -1648,7 +1649,8 @@ tr:nth-child(even) td { background: var(--c-bg); }
     let sonHesapLng   = null;
 
     // UTM → Lat/Lng
-    function utmToLatLng(zone, easting, northing) {
+    function utmToLatLng(zone, easting, northing, isSouth) {
+        if (isSouth === undefined) isSouth = false; // default north hemisphere
         const a=6378137, f=1/298.257223563, b=a*(1-f);
         const e2=1-(b/a)**2, ep2=e2/(1-e2), k0=0.9996;
         const lon0=(zone-1)*6-180+3;
@@ -3591,7 +3593,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 const hGrid = document.getElementById('hedefGrid').value;
                 const u = mgrsToUtm(hGrid);
                 if (u) {
-                    const ll = utmToLatLng(u.zone, u.easting, u.northing);
+                    const isSouthH = 'CDEFGHJKLM'.includes((u.latBand||'S'));
+                    const ll = utmToLatLng(u.zone, u.easting, u.northing, isSouthH);
                     sonHesapLat = ll.lat;
                     sonHesapLng = ll.lng;
                 }
