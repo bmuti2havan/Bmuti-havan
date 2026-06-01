@@ -18,11 +18,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Kurumsal Renk Paleti */
-  --c-bg:       #f0f2f5;
+  --c-bg:       #f1f4f8;
   --c-surface:  #ffffff;
-  --c-border:   #dde1e9;
-  --c-border2:  #c4cad6;
+  --c-border:   #e2e7ef;
+  --c-border2:  #c8d0de;
   --c-text:     #0f172a;
   --c-muted:    #64748b;
   --c-faint:    #94a3b8;
@@ -31,14 +30,8 @@
   --c-blue:     #1e40af;
   --c-red:      #dc2626;
   --c-green:    #047857;
-
-  /* Tasarım Sistemi */
-  --r:          8px;
-  --r-sm:       5px;
-  --r-lg:       12px;
-  --shadow-sm:  0 1px 3px rgba(15,37,84,.08), 0 1px 2px rgba(15,37,84,.06);
-  --shadow-md:  0 4px 12px rgba(15,37,84,.1), 0 2px 4px rgba(15,37,84,.06);
-  --shadow-lg:  0 10px 30px rgba(15,37,84,.12), 0 4px 8px rgba(15,37,84,.08);
+  --shadow-sm: 0 1px 3px rgba(15,37,84,.07);
+  --shadow-md: 0 4px 12px rgba(15,37,84,.09);
 }
 
 [data-theme="dark"] {
@@ -50,25 +43,10 @@
   --c-muted:    #94a3b8;
   --c-faint:    #64748b;
   --c-navy:     #1e3a8a;
-  --c-accent:   #3b82f6;
-  --c-blue:     #60a5fa;
+  --c-accent:   #60a5fa;
+  --c-blue:     #93c5fd;
   --c-red:      #f87171;
   --c-green:    #34d399;
-}
-
-[data-theme="dark"] {
-  --c-bg:       #0d1117;
-  --c-surface:  #161b22;
-  --c-border:   #30363d;
-  --c-border2:  #484f58;
-  --c-text:     #e6edf3;
-  --c-muted:    #8b949e;
-  --c-faint:    #6e7681;
-  --c-navy:     #1f2937;
-  --c-accent:   #58a6ff;
-  --c-blue:     #388bfd;
-  --c-red:      #f85149;
-  --c-green:    #3fb950;
 }
 
 [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
@@ -129,7 +107,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   background: var(--c-bg);
   color: var(--c-text);
   min-height: 100vh;
@@ -153,7 +131,7 @@ body {
 }
 .login-logo {
   width: 52px; height: 52px; border-radius: 12px;
-  background: var(--c-navy); margin: 0 auto 18px;
+  background: linear-gradient(135deg, #0f2554 0%, #1e3a8a 100%); margin: 0 auto 18px;
   display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
 }
 .login-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 4px; color: var(--c-text); }
@@ -213,8 +191,8 @@ body {
   100% { box-shadow: 0 0 0 0 rgba(229,188,102,0); transform: scale(1); }
 }
 .bilgi-btn {
-  background: linear-gradient(135deg, #d97706, #b45309) !important;
-  color: #fff !important;
+  background: #e5bc66 !important;
+  color: #1a2332 !important;
   border: none !important;
   padding: 8px 18px !important;
   border-radius: 7px !important;
@@ -291,17 +269,11 @@ body {
   background: var(--c-bg); border-bottom: 1px solid var(--c-border);
 }
 .caliber-btn {
-  padding: 8px 22px;
-  background: transparent;
-  border: 1.5px solid var(--c-border);
-  border-radius: 6px;
-  font-family: 'Outfit', sans-serif;
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--c-muted);
-  cursor: pointer;
-  transition: .2s;
-  letter-spacing: .3px;
+  padding: 9px 24px; background: #fff;
+  border: 1.5px solid var(--c-border); border-radius: 8px;
+  font-family: inherit; font-size: .86rem; font-weight: 600;
+  color: var(--c-muted); cursor: pointer; transition: .15s;
+  letter-spacing: .2px;
 }
 .caliber-btn:hover { border-color: var(--c-border2); color: var(--c-text); background: #fff; }
 .caliber-btn.active {
@@ -460,7 +432,8 @@ body {
   gap: 10px; margin-bottom: 14px;
 }
 .result-card {
-  background: var(--c-bg); border: 1.5px solid var(--c-border);
+  background: #fff;
+  box-shadow: var(--shadow-sm); border: 1.5px solid var(--c-border);
   border-radius: var(--r-lg); padding: 14px 15px;
 }
 .result-card.highlight {
@@ -643,146 +616,555 @@ tr:nth-child(even) td { background: var(--c-bg); }
 #bilgiContent li{margin-bottom:5px}
 #bilgiContent b{color:#1d2b45}
 
-/* ── KURUMSAL TASARIM EKLERİ ─────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   PROFESYONEL BUTON PALETİ — Sade & Şık
+   ═══════════════════════════════════════════════════════════ */
 
-/* Genel arka plan */
-body { background: linear-gradient(160deg, #e8edf5 0%, #f0f2f7 100%); min-height: 100vh; }
+/* Base buton — tüm butonların temeli */
+.btn {
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: .78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .2px !important;
+  cursor: pointer !important;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
+  border: 1px solid transparent !important;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:active { transform: scale(.98) !important; }
 
-/* Wrapper padding */
-.app-wrapper { padding: 20px 16px; }
-
-/* Left panel */
-.left-panel {
-  background: var(--c-surface);
-  border-right: 1px solid var(--c-border);
+/* ── PRIMARY — Slate Blue (ana eylem) ────────────────────── */
+.btn-primary {
+  background: linear-gradient(180deg, #3b6fb5 0%, #2c5896 100%) !important;
+  color: #fff !important;
+  border: 1px solid #2c5896 !important;
+  box-shadow: 0 1px 2px rgba(44,88,150,.3), inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(180deg, #4179c4 0%, #316099 100%) !important;
+  box-shadow: 0 3px 8px rgba(44,88,150,.35), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  transform: translateY(-1px);
 }
 
-/* Right panel */
-.right-panel {
-  background: #f8fafc;
-}
-
-/* Param label */
-.param-row label {
-  font-size: .7rem;
-  font-weight: 600;
-  color: var(--c-muted);
-  letter-spacing: .4px;
-  text-transform: uppercase;
-}
-
-/* Input fields */
-input[type="text"], input[type="number"], select {
-  border: 1.5px solid var(--c-border);
-  border-radius: 6px;
-  font-family: 'Outfit', sans-serif;
-  transition: border-color .2s, box-shadow .2s;
-}
-input:focus, select:focus {
-  border-color: var(--c-accent);
-  box-shadow: 0 0 0 3px rgba(29,78,216,.1);
-  outline: none;
-}
-
-/* Result header card */
-.result-card.highlight {
-  background: linear-gradient(135deg, #0f2554, #1e3a8a);
-  border-color: #1d4ed8;
-}
-
-/* fn-toggle open state */
-.fn-toggle.open {
-  border-left-color: var(--c-accent);
-  color: var(--c-accent);
-  background: #f0f4ff;
-}
-
-/* Hesapla button */
+/* ── HESAPLA — Ana CTA butonu (en güçlü) ─────────────────── */
 #hesaplaBtn {
-  background: linear-gradient(135deg, #0f2554, #1e40af) !important;
-  border: none !important;
-  font-size: .9rem !important;
+  background: linear-gradient(180deg, #2c5e8f 0%, #1e4570 100%) !important;
+  color: #fff !important;
+  border: 1px solid #1e4570 !important;
+  font-size: .86rem !important;
   font-weight: 700 !important;
   letter-spacing: .3px !important;
-  box-shadow: 0 4px 14px rgba(15,37,84,.3) !important;
-  transition: all .2s !important;
+  padding: 11px !important;
+  box-shadow: 0 2px 6px rgba(30,69,112,.35), inset 0 1px 0 rgba(255,255,255,.12) !important;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
 }
 #hesaplaBtn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(15,37,84,.4) !important;
+  background: linear-gradient(180deg, #336aa0 0%, #234e7d 100%) !important;
+  box-shadow: 0 4px 14px rgba(30,69,112,.45), inset 0 1px 0 rgba(255,255,255,.18) !important;
+  transform: translateY(-1px);
 }
-#hesaplaBtn:active { transform: translateY(0) !important; }
+#hesaplaBtn:active { transform: translateY(0); }
 
-/* Status dot */
-.status-dot {
-  background: #22c55e;
-  box-shadow: 0 0 8px rgba(34,197,94,.6);
+/* ── SECONDARY — Nötr gri (ikincil) ──────────────────────── */
+.btn-secondary {
+  background: #f4f6f9 !important;
+  color: #4a5568 !important;
+  border: 1px solid #e2e7ee !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03) !important;
 }
-
-/* Ammo selector pills */
-.ammo-option {
-  font-size: .76rem;
-  font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  color: var(--c-muted);
-  transition: .15s;
-  border: 1.5px solid transparent;
-}
-.ammo-option:hover { background: #f0f4ff; color: var(--c-accent); }
-.ammo-option.selected {
-  background: linear-gradient(135deg, #dbeafe, #eff6ff);
-  color: #1e40af;
-  border-color: #bfdbfe;
-  font-weight: 700;
+.btn-secondary:hover {
+  background: #eaeef4 !important;
+  border-color: #d0d8e3 !important;
+  color: #2d3748 !important;
 }
 
-/* Result divider */
-.result-divider {
-  border: none;
-  border-top: 1px solid var(--c-border);
-  margin: 8px 0;
+/* ── METRO — Teal (hava/metro) ───────────────────────────── */
+.btn-metro {
+  background: linear-gradient(180deg, #f0fdfa 0%, #e6fcf7 100%) !important;
+  color: #0d9488 !important;
+  border: 1px solid #99f6e4 !important;
+  width: 100%; margin-top: 8px;
+  box-shadow: 0 1px 2px rgba(13,148,136,.08) !important;
+}
+.btn-metro:hover {
+  background: linear-gradient(180deg, #ccfbf1 0%, #b9f5e9 100%) !important;
+  border-color: #5eead4 !important;
+  box-shadow: 0 2px 6px rgba(13,148,136,.15) !important;
 }
 
-/* Copy btn */
+/* ── GÖZETLEYİCİ — Amber (düzeltme) ──────────────────────── */
+.btn-gozet {
+  background: linear-gradient(180deg, #fffbeb 0%, #fef6e0 100%) !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+  width: 100%; margin-top: 8px;
+  box-shadow: 0 1px 2px rgba(180,83,9,.08) !important;
+}
+.btn-gozet:hover {
+  background: linear-gradient(180deg, #fef3c7 0%, #fdeab8 100%) !important;
+  border-color: #fcd34d !important;
+  box-shadow: 0 2px 6px rgba(180,83,9,.15) !important;
+}
+
+/* ── ACCENT — İndigo (özel eylem) ────────────────────────── */
+.btn-accent {
+  background: linear-gradient(180deg, #eef2ff 0%, #e6ecfe 100%) !important;
+  color: #4f46e5 !important;
+  border: 1px solid #c7d2fe !important;
+  box-shadow: 0 1px 2px rgba(79,70,229,.08) !important;
+}
+.btn-accent:hover {
+  background: linear-gradient(180deg, #e0e7ff 0%, #d4ddfd 100%) !important;
+  border-color: #a5b4fc !important;
+  box-shadow: 0 2px 6px rgba(79,70,229,.15) !important;
+}
+
+/* ── COPY — Minimal (kopyala) ────────────────────────────── */
 .copy-btn {
-  width: 100%;
-  margin-top: 8px;
+  width: 100%; margin-top: 10px; padding: 9px !important;
   background: #f8fafc !important;
-  color: var(--c-muted) !important;
-  border-color: var(--c-border) !important;
-  font-size: .78rem !important;
+  border: 1px solid #e8edf3 !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: .76rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  cursor: pointer;
+  transition: all .2s !important;
 }
 .copy-btn:hover {
-  background: #f0f4ff !important;
-  color: var(--c-accent) !important;
-  border-color: var(--c-accent) !important;
+  background: #eef2f7 !important;
+  border-color: #d8e0ea !important;
+  color: #3b6fb5 !important;
 }
 
-/* AI panel header */
+/* ── CALIBER — Segment kontrol ───────────────────────────── */
+.caliber-btn {
+  padding: 8px 22px !important;
+  background: #fff !important;
+  border: 1px solid #e2e7ee !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: .82rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
+}
+.caliber-btn:hover {
+  border-color: #c5d2e3 !important;
+  color: #3b6fb5 !important;
+  background: #fafcff !important;
+}
+.caliber-btn.active {
+  background: linear-gradient(180deg, #2c5e8f 0%, #1e4570 100%) !important;
+  color: #fff !important;
+  border-color: #1e4570 !important;
+  box-shadow: 0 2px 6px rgba(30,69,112,.3), inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+
+/* ── KONVOY YÖN — Compact (yön seçici) ───────────────────── */
+.kv-yon {
+  background: #f4f6f9 !important;
+  color: #64748b !important;
+  border: 1px solid #e2e7ee !important;
+  border-radius: 6px !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  transition: all .15s !important;
+}
+.kv-yon:hover {
+  background: #eef2f7 !important;
+  color: #3b6fb5 !important;
+}
+.kv-yon.active {
+  background: linear-gradient(180deg, #3b6fb5, #2c5896) !important;
+  color: #fff !important;
+  border-color: #2c5896 !important;
+  box-shadow: 0 1px 4px rgba(44,88,150,.25) !important;
+}
+
+/* ── KONVOY DAKİKA ───────────────────────────────────────── */
+.kv-dk {
+  background: #f4f6f9 !important;
+  color: #64748b !important;
+  border: 1px solid #e2e7ee !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all .15s !important;
+}
+.kv-dk.active {
+  background: #1e4570 !important;
+  color: #fff !important;
+  border-color: #1e4570 !important;
+}
+
+/* ── AI HIZLI BUTON — Pill (öneri) ───────────────────────── */
+.ai-quick-btn {
+  background: #f4f6f9 !important;
+  color: #5a6478 !important;
+  border: 1px solid #e2e7ee !important;
+  border-radius: 99px !important;
+  font-size: .7rem !important;
+  font-weight: 500 !important;
+  padding: 4px 12px !important;
+  transition: all .15s !important;
+}
+.ai-quick-btn:hover {
+  background: #eef2ff !important;
+  border-color: #c7d2fe !important;
+  color: #4f46e5 !important;
+}
+
+/* ── TAÇ TOGGLE ──────────────────────────────────────────── */
+.tac-toggle {
+  background: #f4f6f9 !important;
+  color: #64748b !important;
+  border: 1px solid #e2e7ee !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all .2s !important;
+}
+.tac-toggle.active {
+  background: linear-gradient(180deg, #3b6fb5, #2c5896) !important;
+  color: #fff !important;
+  border-color: #2c5896 !important;
+  box-shadow: 0 1px 4px rgba(44,88,150,.25) !important;
+}
+
+/* ── BİLGİ BTN — Soft amber ──────────────────────────────── */
+.bilgi-btn {
+  background: linear-gradient(180deg, #f59e0b, #d97706) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: .74rem !important;
+  font-weight: 600 !important;
+  padding: 6px 14px !important;
+  box-shadow: 0 1px 4px rgba(217,119,6,.3) !important;
+  transition: all .2s !important;
+}
+.bilgi-btn:hover {
+  background: linear-gradient(180deg, #fbbf24, #ea8606) !important;
+  box-shadow: 0 3px 8px rgba(217,119,6,.4) !important;
+  transform: translateY(-1px);
+  animation: none !important;
+}
+
+/* ── AI HEADER BTN ───────────────────────────────────────── */
 .ai-header-btn {
   background: rgba(255,255,255,.12) !important;
   color: rgba(255,255,255,.85) !important;
-  border: 1px solid rgba(255,255,255,.2) !important;
-  font-size: .76rem !important;
-  padding: 6px 14px !important;
-  border-radius: 6px !important;
-  transition: .2s !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-radius: 8px !important;
+  font-size: .74rem !important;
+  font-weight: 600 !important;
+  padding: 6px 13px !important;
+  transition: all .2s !important;
 }
 .ai-header-btn:hover {
   background: rgba(255,255,255,.2) !important;
+  border-color: rgba(255,255,255,.3) !important;
 }
 
-/* Dark mode fixes */
-[data-theme="dark"] body { background: linear-gradient(160deg, #020b1a 0%, #060d1f 100%); }
-[data-theme="dark"] .left-panel,
-[data-theme="dark"] .mortar-card { background: #0d1a35; border-color: #1e3a5f; }
-[data-theme="dark"] .right-panel { background: #060d1f; }
-[data-theme="dark"] .result-card { background: #0d1a35; border-color: #1e3a5f; }
-[data-theme="dark"] input, [data-theme="dark"] select { background: #060d1f; border-color: #1e3a5f; color: #e2e8f0; }
-[data-theme="dark"] .fn-toggle.open { background: #0d2040; }
-[data-theme="dark"] .ammo-option.selected { background: #0d2040; color: #60a5fa; border-color: #1e3a5f; }
+/* ── KONVOY HEADER BTN ───────────────────────────────────── */
+.konvoy-header-btn {
+  background: rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.85) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-radius: 8px !important;
+  font-size: .74rem !important;
+  font-weight: 600 !important;
+  padding: 6px 13px !important;
+  transition: all .2s !important;
+}
+.konvoy-header-btn:hover {
+  background: rgba(255,255,255,.2) !important;
+}
+
+/* ── PWA YÜKLE — Soft green ──────────────────────────────── */
+#pwaInstallBar button {
+  background: rgba(16,185,129,.18) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16,185,129,.3) !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all .2s !important;
+}
+#pwaInstallBar button:hover {
+  background: rgba(16,185,129,.28) !important;
+  border-color: rgba(16,185,129,.45) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HARİTA BAŞLIĞI & KONTROL BUTONLARI
+   ═══════════════════════════════════════════════════════════ */
+.map-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 10px 10px 0 0;
+  padding: 11px 14px;
+  border-bottom: 2px solid rgba(59,111,181,.3);
+}
+.map-header-icon {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+}
+.map-header-title {
+  color: #fff; font-size: .82rem; font-weight: 700; letter-spacing: .2px;
+}
+.map-header-sub {
+  color: rgba(255,255,255,.5); font-size: .64rem; margin-top: 1px;
+}
+.map-ctrl-btn {
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.9);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 7px;
+  padding: 5px 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: .68rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .18s;
+  display: inline-flex; align-items: center; gap: 4px;
+  backdrop-filter: blur(8px);
+}
+.map-ctrl-btn:hover {
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.3);
+  transform: translateY(-1px);
+}
+.map-ctrl-target {
+  background: rgba(239,68,68,.85) !important;
+  border-color: rgba(239,68,68,.5) !important;
+}
+.map-ctrl-target:hover { background: rgba(239,68,68,1) !important; }
+.map-ctrl-gps {
+  background: rgba(5,150,105,.85) !important;
+  border-color: rgba(5,150,105,.5) !important;
+}
+.map-ctrl-gps:hover { background: rgba(5,150,105,1) !important; }
+
+#mapCollapsible {
+  border: 1px solid var(--c-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 12px;
+  background: var(--c-surface);
+}
+
+/* ── ÇEVRE ANALİZİ — Premium kart ─────────────────────────── */
+#cevreAnaliziPanel {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #fffdf7 0%, #fffbf0 100%);
+  border: 1px solid #fde9c8;
+  border-left: 3px solid #f59e0b;
+  border-radius: 9px;
+  box-shadow: 0 1px 3px rgba(245,158,11,.06);
+}
+#cevreAnaliziPanel.kritik {
+  background: linear-gradient(135deg, #fffafa 0%, #fff5f5 100%);
+  border-color: #fecaca;
+  border-left-color: #ef4444;
+}
+.cevre-title {
+  font-size: .72rem; font-weight: 700; color: #b45309;
+  margin-bottom: 7px; letter-spacing: .2px;
+  display: flex; align-items: center; gap: 6px;
+}
+#cevreAnaliziPanel.kritik .cevre-title { color: #dc2626; }
+#cevreAnaliziIcerik {
+  font-size: .73rem; line-height: 1.7; color: #78350f;
+}
+#cevreAnaliziPanel.kritik #cevreAnaliziIcerik { color: #991b1b; }
+.cevre-loading { font-style: italic; color: var(--c-faint) !important; }
+
+/* ── KOMPAS — Modern ──────────────────────────────────────── */
+.compass-ring {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, rgba(30,41,59,.95), rgba(15,23,42,.98));
+  border: 1.5px solid rgba(148,163,184,.3);
+  box-shadow: 0 3px 12px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.compass-ring::before {
+  content: 'N'; position: absolute; top: 3px; left: 50%; transform: translateX(-50%);
+  color: #f43f5e; font-size: .55rem; font-weight: 800; font-family: 'Inter';
+}
+.compass-ring::after {
+  content: 'S'; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,.35); font-size: .5rem; font-weight: 600; font-family: 'Inter';
+}
+.compass-e, .compass-w {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  color: rgba(255,255,255,.3); font-size: .45rem; font-weight: 600; font-family: 'Inter';
+}
+.compass-e { right: 5px; } .compass-w { left: 5px; }
+.compass-needle {
+  width: 4px; height: 38px; position: relative;
+  transform-origin: center 50%;
+  transition: transform .4s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column; align-items: center;
+}
+.compass-needle-n {
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-bottom: 19px solid #f43f5e;
+  filter: drop-shadow(0 0 3px rgba(244,63,94,.5));
+}
+.compass-needle-s {
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 19px solid rgba(255,255,255,.25);
+}
+.compass-center {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  background: #fff; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  box-shadow: 0 0 5px rgba(255,255,255,.5); z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAVİ → MOR GRADIENT TEMA (Indigo/Violet)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Header — mavi → indigo → mor */
+.header {
+  background: linear-gradient(110deg,
+    #1e40af 0%,
+    #3b5bdb 30%,
+    #5145cd 60%,
+    #6d28d9 100%) !important;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,
+    transparent, #818cf8, #a78bfa, #818cf8, transparent);
+  opacity: .7;
+}
+
+/* Hesapla butonu — mavi → mor */
+#hesaplaBtn {
+  background: linear-gradient(120deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%) !important;
+  border: 1px solid #4f46e5 !important;
+  box-shadow: 0 2px 8px rgba(79,70,229,.35), inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+#hesaplaBtn:hover {
+  background: linear-gradient(120deg, #2d6ef0 0%, #5850ec 50%, #8b3ff0 100%) !important;
+  box-shadow: 0 4px 16px rgba(79,70,229,.45), inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+
+/* Primary buton — mavi → mor */
+.btn-primary {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  border: 1px solid #4f46e5 !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(120deg, #2d6ef0, #7c3aed) !important;
+}
+
+/* Caliber aktif — mavi → mor */
+.caliber-btn.active {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 2px 6px rgba(79,70,229,.3) !important;
+}
+
+/* Harita başlığı — mavi → mor */
+.map-header {
+  background: linear-gradient(120deg,
+    #1e3a8a 0%, #3730a3 50%, #5b21b6 100%) !important;
+  border-bottom: 2px solid rgba(139,92,246,.4) !important;
+}
+
+/* Konvoy yön aktif */
+.kv-yon.active {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  border-color: #4f46e5 !important;
+}
+.kv-dk.active {
+  background: linear-gradient(120deg, #3730a3, #5b21b6) !important;
+}
+
+/* TAÇ toggle aktif */
+.tac-toggle.active {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  border-color: #4f46e5 !important;
+}
+
+/* Highlight sonuç kartı — mavi/mor gradient */
+.result-card.highlight {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  border-color: #4f46e5 !important;
+}
+
+/* Login overlay — mavi/mor radial */
+.login-overlay {
+  background: radial-gradient(ellipse at 30% 30%,
+    rgba(79,70,229,.25) 0%,
+    rgba(30,64,175,.9) 50%,
+    rgba(20,20,50,1) 100%) !important;
+}
+
+/* Login logo */
+.login-logo {
+  background: linear-gradient(120deg, #2563eb, #7c3aed) !important;
+}
+
+/* Header emblem */
+.header-emblem {
+  background: linear-gradient(120deg, rgba(255,255,255,.2), rgba(255,255,255,.05)) !important;
+}
+
+/* AI modal header */
+.ai-modal-header, [class*="ai-header"] {
+  background: linear-gradient(120deg, #1e40af, #6d28d9) !important;
+}
+
+/* Range badge — mor tonlu */
+.range-badge {
+  background: linear-gradient(120deg, #eff6ff, #f3f0ff) !important;
+  border-color: #c7d2fe !important;
+  color: #5145cd !important;
+}
+
+/* Bilgi modal başlıklar */
+#bilgiContent h3 {
+  color: #5145cd !important;
+}
+
+/* Scrollbar — mor */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #7c3aed) !important;
+  border-radius: 99px;
+}
+
+/* Status dot — mor/mavi glow */
+.status-dot {
+  background: #818cf8 !important;
+  box-shadow: 0 0 8px rgba(129,140,248,.6) !important;
+}
+
+/* Map sonuç panel header */
+#mapSonucPanel > div:first-child {
+  background: linear-gradient(120deg, #1e40af, #6d28d9) !important;
+}
+
+/* Tam hesap butonu */
+#mapSonucPanel button[onclick*="mapSonuclaraGit"] {
+  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+}
 
 </style>
 <body>
@@ -991,15 +1373,15 @@ input:focus, select:focus {
             <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#667085;margin-bottom:5px;">🎯 3 Namlu Koordinatları (40m aralık)</div>
             <div id="kvNamlu1" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 1 — Konvoy Başı</div>
-              <div id="kvN1Grid" style="font-size:.85rem;font-weight:700;color:#e5bc66;font-family:'JetBrains Mono',monospace;"></div>
+              <div id="kvN1Grid" style="font-size:.85rem;font-weight:700;color:#e5bc66;font-family:'DM Mono',monospace;"></div>
             </div>
             <div id="kvNamlu2" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:4px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 2 — Konvoy Ortası</div>
-              <div id="kvN2Grid" style="font-size:.85rem;font-weight:700;color:#4ade80;font-family:'JetBrains Mono',monospace;"></div>
+              <div id="kvN2Grid" style="font-size:.85rem;font-weight:700;color:#4ade80;font-family:'DM Mono',monospace;"></div>
             </div>
             <div id="kvNamlu3" style="background:#1d2b45;border-radius:6px;padding:8px 10px;margin-bottom:6px;">
               <div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-bottom:2px;">NAMLU 3 — Konvoy Sonu</div>
-              <div id="kvN3Grid" style="font-size:.85rem;font-weight:700;color:#f97316;font-family:'JetBrains Mono',monospace;"></div>
+              <div id="kvN3Grid" style="font-size:.85rem;font-weight:700;color:#f97316;font-family:'DM Mono',monospace;"></div>
             </div>
             <div id="kvBilgiSatir" style="font-size:.7rem;color:#667085;background:#f5f6f8;border-radius:5px;padding:5px 8px;"></div>
           </div>
@@ -1152,25 +1534,30 @@ input:focus, select:focus {
         </div>
       </div>
       <button id="copyResultsBtn" class="btn copy-btn">Sonuçları Kopyala</button>
-      <div id="cevreAnaliziPanel">
-        <div class="cevre-title">📍 Çevre Analizi</div>
-        <div id="cevreAnaliziIcerik" class="cevre-loading">Analiz ediliyor...</div>
-        <div style="font-size:.62rem;color:#b45309;margin-top:3px;">Kaynak: OpenStreetMap · 500m yarıçap · Veriler eksik olabilir</div>
-      </div>
-
-      <!-- HARİTA -->
+      <!-- HARİTA — HER ZAMAN AÇIK -->
       <div style="margin-top:14px;">
-        <!-- Harita notu -->
-        <div style="background:linear-gradient(135deg,#1d2b45,#2a3f60);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
-          <span style="font-size:1.2rem;">🛰</span>
-          <div>
-            <div style="color:#fff;font-size:.78rem;font-weight:700;margin-bottom:2px;">Haritadan Hedef Seçin</div>
-            <div style="color:rgba(255,255,255,.55);font-size:.68rem;line-height:1.4;">Haritada istediğiniz noktaya dokunun — yan, yükseliş, barut hakkı ve tüm atış değerleri otomatik hesaplanır.</div>
+        <div class="map-header">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span class="map-header-icon">🛰️</span>
+            <div>
+              <div class="map-header-title">Uydu Haritası</div>
+              <div class="map-header-sub">Haritaya dokun · hedef otomatik hesaplanır</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <button id="mapMevziBtn" class="map-ctrl-btn">📍 Mevzi</button>
+            <button id="mapHedefBtn" class="map-ctrl-btn map-ctrl-target">🎯 Hedef</button>
+            <button id="mapFitBtn"   class="map-ctrl-btn">⛶ Sığdır</button>
+            <button id="mapGpsBtn"   class="map-ctrl-btn map-ctrl-gps">
+              <span id="gpsDot" style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;"></span>
+              <span id="gpsLabel">📡 Konum</span>
+            </button>
           </div>
         </div>
+        <div id="mapCollapsible" style="display:block;">
 
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c-faint);">🛰 Uydu Haritası</span>
+        <div style="display:none;">
+          <span>x</span>
           <div style="display:flex;gap:5px;flex-wrap:wrap;">
             <button id="mapMevziBtn" class="btn" style="font-size:.68rem;padding:3px 9px;">📍 Mevzi</button>
             <button id="mapHedefBtn" class="btn" style="font-size:.68rem;padding:3px 9px;background:#e05252;color:#fff;border-color:#e05252;">🎯 Hedef</button>
@@ -1181,8 +1568,22 @@ input:focus, select:focus {
             </button>
           </div>
         </div>
-        <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
-        <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'JetBrains Mono',monospace;min-height:16px;"></div>
+        <div style="position:relative;display:block;width:100%;">
+          <div id="mapDiv" style="height:280px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
+          <!-- PUSULA -->
+          <div id="compassWidget" style="position:absolute;top:10px;right:10px;z-index:500;pointer-events:none;">
+            <div class="compass-ring">
+              <span class="compass-e">E</span>
+              <span class="compass-w">W</span>
+              <div class="compass-needle" id="compassNeedle">
+                <div class="compass-needle-n"></div>
+                <div class="compass-needle-s"></div>
+              </div>
+              <div class="compass-center"></div>
+            </div>
+          </div>
+        </div>
+        <div id="mapStatus" style="font-size:.68rem;color:var(--c-muted);margin-top:4px;font-family:'DM Mono',monospace;min-height:16px;"></div>
 
         <!-- ALT SONUÇ PANELİ -->
         <div id="mapSonucPanel" style="display:none;margin-top:8px;background:#fff;border:1.5px solid var(--c-border);border-radius:var(--r);overflow:hidden;">
@@ -1192,7 +1593,7 @@ input:focus, select:focus {
               style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.9rem;padding:0;">✕</button>
           </div>
           <div style="padding:10px 12px;">
-            <div style="font-size:.7rem;color:#667085;font-family:'JetBrains Mono',monospace;margin-bottom:8px;" id="mapSonucKoord"></div>
+            <div style="font-size:.7rem;color:#667085;font-family:'DM Mono',monospace;margin-bottom:8px;" id="mapSonucKoord"></div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="mapSonucGrid">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;">
@@ -1210,7 +1611,14 @@ input:focus, select:focus {
             <div style="font-size:.68rem;color:#92400e;line-height:1.5;">Harekât bölgesinde canlı konum (GPS) kullanmayınız. Sinyal tespiti ve konum ifşası operasyonel güvenliği tehlikeye atabilir. Koordinatları haritadan manuel olarak seçiniz.</div>
           </div>
         </div>
-      </div>
+        <!-- ÇEVRE ANALİZİ — Harita altında -->
+        <div id="cevreAnaliziPanel">
+          <div class="cevre-title">🗺️ Hedef Çevre Analizi</div>
+          <div id="cevreAnaliziIcerik" class="cevre-loading">Hesaplama yapıldığında otomatik analiz edilir…</div>
+          <div style="font-size:.6rem;color:var(--c-faint);margin-top:4px;">OpenStreetMap · 500m yarıçap</div>
+        </div>
+        </div><!-- /mapCollapsible -->
+      </div><!-- /harita margin-top div -->
 
     </div>
 
@@ -1342,21 +1750,13 @@ input:focus, select:focus {
 </div>
 
   <!-- TELEFONA KUR -->
-  <div id="pwaInstallBar" style="display:flex;background:linear-gradient(135deg,#0f4c35,#166534);
-       padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:1.6rem;">📲</span>
-      <div>
-        <div style="color:#fff;font-size:.82rem;font-weight:700;">Uygulamayı Telefona Kur</div>
-        <div style="color:rgba(255,255,255,.6);font-size:.7rem;">İnternetsiz çalışır · Ana ekrana ekle · Uygulama gibi açılır</div>
-      </div>
+  <div id="pwaInstallBar" style="display:flex;background:rgba(5,46,22,.92);border-top:1px solid rgba(16,185,129,.15);padding:5px 14px;align-items:center;justify-content:space-between;gap:8px;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:.78rem;">📲</span>
+      <span style="color:rgba(255,255,255,.7);font-size:.68rem;font-weight:500;">Uygulamayı Kur</span>
+      <span style="color:rgba(255,255,255,.3);font-size:.62rem;">· internetsiz çalışır</span>
     </div>
-    <button onclick="pwaInstall()"
-      style="background:#fff;color:#166534;border:none;padding:10px 22px;border-radius:8px;
-             font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
-             box-shadow:0 2px 8px rgba(0,0,0,.2);white-space:nowrap;">
-      ⬇️ Kur
-    </button>
+    <button onclick="pwaInstall()" style="background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);padding:3px 10px;border-radius:4px;font-family:inherit;font-size:.66rem;font-weight:600;cursor:pointer;">⬇️ Yükle</button>
   </div>
 
   <!-- PLANLANAN GELİŞTİRMELER -->
@@ -1637,7 +2037,7 @@ input:focus, select:focus {
           <p>106mm'de yükseliş sabit tutulur; değişen parametre barut miktarıdır. Bu yöntem atış hazırlık süresini kısaltır ve standart bir yükseliş açısı üzerinden farklı menzillere erişimi kolaylaştırır.</p>
 
           <h3>Emniyet Şeması Örneği</h3>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
             (X) mesafesi: 3200 m → Karşılık: 17 4/8 BH<br>
             Fazla barut hakları çıkarılarak imha edilir<br>
             (KKT 315-29 Ek-E, Madde d)
@@ -1669,7 +2069,7 @@ input:focus, select:focus {
 
           <h3>TAÇ Faktörleri (BH bazlı)</h3>
           <p>120mm için TAÇ her BH'a özgü sabit çarpanla hesaplanır:</p>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
             BH1: −3.2 &nbsp; BH3: −3.8 &nbsp; BH5: −4.5<br>
             BH7: −5.3 &nbsp; BH9: −5.7 &nbsp; BH10: −5.9
           </p>
@@ -1691,7 +2091,7 @@ input:focus, select:focus {
           </ul>
 
           <h3>Hedef Yanı Formülü (KKT 315-29)</h3>
-          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.88rem;margin:10px 0;">
+          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.88rem;margin:10px 0;">
             Hedef Yanı = DTN İstikameti + DTN Yanı − Hedef İstikameti
           </p>
 
@@ -1711,7 +2111,7 @@ input:focus, select:focus {
           </ul>
 
           <h3>Rakım Farkı Formülü</h3>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
             Rakım Farkı = Hedef Rakımı − Mevzi Rakımı<br>
             Pozitif (+) → Hedef yukarıda → Nişangah azalır<br>
             Negatif (−) → Hedef aşağıda → Nişangah artar<br>
@@ -1725,7 +2125,7 @@ input:focus, select:focus {
           <p>Military Grid Reference System — NATO standardı askeri koordinat sistemi. UTM sistemini temel alır; dünyayı 6°'lik dilimler ve 8°'lik bantlara böler.</p>
 
           <h3>MGRS Format</h3>
-          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.88rem;">
+          <p style="background:#f5f6f8;padding:12px 16px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.88rem;">
             37S &nbsp; BV &nbsp; 89059 &nbsp; 58179<br>
             ↑ &nbsp;&nbsp;&nbsp;&nbsp; ↑↑ &nbsp;&nbsp; ←Doğu→ ←Kuzey→<br>
             Dilim &nbsp;100km &nbsp; metre &nbsp;&nbsp; metre
@@ -4584,11 +4984,9 @@ self.addEventListener('fetch', e => {
 
             // Kritik tesis varsa panel rengini değiştir
             if (kritikler.length > 0) {
-                panel.style.borderColor = '#ef4444';
-                panel.style.background = '#fff1f1';
+                panel.classList.add('kritik');
             } else {
-                panel.style.borderColor = '#fec84b';
-                panel.style.background = '#fff8e6';
+                panel.classList.remove('kritik');
             }
 
         } catch(e) {
@@ -4596,10 +4994,27 @@ self.addEventListener('fetch', e => {
         }
     }
 
+
+
+    function toggleMapPanel() {
+        // Harita her zaman açık - bu fonksiyon artık sadece map'i init eder
+        try {
+            if (typeof L !== 'undefined' && _map) _map.invalidateSize(true);
+        } catch(e) {}
+    }
+
 document.addEventListener("DOMContentLoaded", function() {
 
     aiChatEl = document.getElementById('aiChat');
     setTimeout(() => renderBilgi(0), 100);
+    // Harita her zaman açık - sayfa yüklenince başlat
+    setTimeout(function() {
+        try {
+            if (typeof L !== 'undefined' && typeof initMap === 'function' && !_map) {
+                initMap();
+            }
+        } catch(e) { console.warn('Map init:', e); }
+    }, 600);
     // M-301 A2 başlangıçta gizli (81mm ile başla zaten açık)
     if (optM301init) optM301init.style.display = '';
 
@@ -4879,6 +5294,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // ── ÇEVRE ANALİZİ (OpenStreetMap Overpass API) ───────────────────────────
+
+
+    // ── PUSULA ─────────────────────────────────────────────────────────────
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientationabsolute', function(e) {
+            var needle = document.getElementById('compassNeedle');
+            if (!needle) return;
+            var deg = e.alpha ? -e.alpha : 0;
+            needle.style.transform = 'rotate(' + deg + 'deg)';
+        }, true);
+        // Fallback for iOS
+        window.addEventListener('deviceorientation', function(e) {
+            var needle = document.getElementById('compassNeedle');
+            if (!needle) return;
+            var deg = e.webkitCompassHeading ? -e.webkitCompassHeading : (e.alpha ? -e.alpha : 0);
+            needle.style.transform = 'rotate(' + deg + 'deg)';
+        });
+    }
 
 });
 </script>
