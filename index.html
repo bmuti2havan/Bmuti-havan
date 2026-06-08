@@ -1207,6 +1207,51 @@ tr:nth-child(even) td { background: var(--c-bg); }
       </button>
 
       
+      <!-- HEADER PUSULA -->
+      <div id="headerCompass" title="Pusula" style="width:38px;height:38px;flex-shrink:0;">
+        <svg id="compassSvg" viewBox="0 0 38 38" width="38" height="38">
+          <defs>
+            <filter id="needleGlow">
+              <feGaussianBlur stdDeviation="1.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1a2d50"/>
+              <stop offset="100%" stop-color="#0a1628"/>
+            </radialGradient>
+          </defs>
+          <!-- Dış çerçeve -->
+          <circle cx="19" cy="19" r="18" fill="url(#ringGrad)"
+            stroke="rgba(255,255,255,.12)" stroke-width="1.2"/>
+          <!-- Tick çizgileri -->
+          <line x1="19" y1="2.5" x2="19" y2="5.5" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+          <line x1="19" y1="32.5" x2="19" y2="35.5" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
+          <line x1="2.5" y1="19" x2="5.5" y2="19" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
+          <line x1="32.5" y1="19" x2="35.5" y2="19" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
+          <!-- Yön harfleri -->
+          <text x="19" y="10.5" text-anchor="middle" fill="#f87171"
+            font-size="5.5" font-weight="800" font-family="Inter,system-ui">N</text>
+          <text x="19" y="31.5" text-anchor="middle" fill="rgba(255,255,255,.28)"
+            font-size="4.5" font-weight="700" font-family="Inter,system-ui">S</text>
+          <text x="31" y="20.5" text-anchor="middle" fill="rgba(255,255,255,.2)"
+            font-size="4" font-family="Inter,system-ui">E</text>
+          <text x="7" y="20.5" text-anchor="middle" fill="rgba(255,255,255,.2)"
+            font-size="4" font-family="Inter,system-ui">W</text>
+          <!-- Dönen ibre grubu -->
+          <g id="compassNeedleGroup">
+            <!-- Kuzey (kırmızı) -->
+            <polygon points="19,5 17.2,19 19,21 20.8,19"
+              fill="#ef4444" filter="url(#needleGlow)"/>
+            <!-- Güney (gri) -->
+            <polygon points="19,33 17.2,19 19,17 20.8,19"
+              fill="rgba(255,255,255,.2)"/>
+          </g>
+          <!-- Merkez -->
+          <circle cx="19" cy="19" r="2.8" fill="#fff"
+            stroke="rgba(0,0,0,.4)" stroke-width=".8"/>
+        </svg>
+      </div>
+
       <button class="bilgi-btn" onclick="document.getElementById('bilgiModal').style.display='flex'">
         📚 Teknik Bilgiler
       </button>
@@ -4593,11 +4638,11 @@ self.addEventListener('fetch', e => {
 
     let bhAuto120 = true;
 
-    const GROQ_PROXY_URL = 'https://WORKER_ADINIZ.workers.dev/groq';  // ← Cloudflare Worker URL
+    const GROQ_API_KEY = 'gsk_BURAYA_KENDI_ANAHTARINI_YAZ';  // ← Kendi Groq anahtarını yapıştır
 
     const GROQ_MODEL   = 'llama-3.3-70b-versatile';
 
-    const GROQ_URL = GROQ_PROXY_URL; // Worker proxy kullanılıyor
+    const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'; // Doğrudan Groq
 
     const _WIND_DIRS_AI = ['Kuzey','Kuzeydoğu','Doğu','Güneydoğu','Güney','Güneybatı','Batı','Kuzeybatı'];
 
@@ -4825,8 +4870,8 @@ self.addEventListener('fetch', e => {
             const resp = await fetch(GROQ_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                    // Authorization Worker tarafında ekleniyor
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + GROQ_API_KEY
                 },
                 body: JSON.stringify({
                     model: GROQ_MODEL,
@@ -5312,6 +5357,25 @@ document.addEventListener("DOMContentLoaded", function() {
             needle.style.transform = 'rotate(' + deg + 'deg)';
         });
     }
+
+    // ── HEADER PUSULA ──────────────────────────────────────────────────────
+    (function() {
+        var needle = document.getElementById('compassNeedleGroup');
+        if (!needle) return;
+        function rotateTo(deg) {
+            needle.setAttribute('transform', 'rotate(' + deg + ',19,19)');
+        }
+        window.addEventListener('deviceorientation', function(e) {
+            if (e.webkitCompassHeading !== undefined) {
+                rotateTo(-e.webkitCompassHeading);
+            } else if (e.alpha !== null) {
+                rotateTo(-e.alpha);
+            }
+        });
+        window.addEventListener('deviceorientationabsolute', function(e) {
+            if (e.alpha !== null) rotateTo(-e.alpha);
+        }, true);
+    })();
 
 });
 </script>
