@@ -4866,6 +4866,14 @@ self.addEventListener('fetch', e => {
         aiHistory.push({ role: 'user', content: question });
         if (aiHistory.length > 20) aiHistory = aiHistory.slice(-20);
 
+        // Anahtar kontrolü
+        if (!GROQ_API_KEY || GROQ_API_KEY.indexOf('BURAYA') !== -1 || !GROQ_API_KEY.startsWith('gsk_')) {
+            if (loadDiv) loadDiv.remove();
+            aiAddMsg('ai', '⚠️ API anahtarı ayarlanmamış. Kodda 4641. satırdaki GROQ_API_KEY değerini kendi Groq anahtarınla (gsk_ ile başlar) değiştir.');
+            setAiStatus('Anahtar yok', false);
+            return;
+        }
+
         try {
             const resp = await fetch(GROQ_URL, {
                 method: 'POST',
@@ -4885,11 +4893,12 @@ self.addEventListener('fetch', e => {
                 })
             });
 
-            const data = await resp.json();
+            const data = await resp.json().catch(() => ({}));
             loadDiv.remove();
 
-            if (data.error) {
-                aiAddMsg('ai', '⚠️ Hata: ' + (data.error.message || JSON.stringify(data.error)));
+            if (!resp.ok || data.error) {
+                const msg = (data.error && (data.error.message || JSON.stringify(data.error))) || ('HTTP ' + resp.status);
+                aiAddMsg('ai', '⚠️ API Hatası (' + resp.status + '): ' + msg);
                 setAiStatus('Hata', false);
                 return;
             }
@@ -4901,7 +4910,7 @@ self.addEventListener('fetch', e => {
 
         } catch(e) {
             loadDiv.remove();
-            aiAddMsg('ai', '⚠️ Bağlantı hatası: ' + e.message + '<br>İnternet bağlantınızı kontrol edin.');
+            aiAddMsg('ai', '⚠️ Bağlantı/CORS hatası: ' + e.message + '<br>Anahtar doğruysa bu büyük ihtimalle CORS engelidir; o durumda Worker proxy gerekir.');
             setAiStatus('Bağlantı hatası', false);
         }
     }
