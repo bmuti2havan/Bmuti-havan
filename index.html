@@ -5085,7 +5085,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
         }
         const pwdHash = await hashPwd(password);
-        const validHash = '7abf85f24bf197916f7e75ef43758507a7ad193e4dcd73a3497bc9515141ff84';
+        const validHash = 'c49a18508f00c7a6f490306608476677b04078f746d3480ac73ed35fd9b4913d';
         if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
