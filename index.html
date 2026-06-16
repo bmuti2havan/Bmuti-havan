@@ -25,13 +25,13 @@
   --c-text:     #0f172a;
   --c-muted:    #64748b;
   --c-faint:    #94a3b8;
-  --c-navy:     #0f2554;
-  --c-accent:   #1d4ed8;
-  --c-blue:     #1e40af;
-  --c-red:      #dc2626;
-  --c-green:    #047857;
-  --shadow-sm: 0 1px 3px rgba(15,37,84,.07);
-  --shadow-md: 0 4px 12px rgba(15,37,84,.09);
+  --c-navy:     #312e81;
+  --c-accent:   #7c3aed;
+  --c-blue:     #7c3aed;
+  --c-red:      #ec4899;
+  --c-green:    #3b82f6;
+  --shadow-sm: 0 1px 3px rgba(74,84,104,.08);
+  --shadow-md: 0 4px 12px rgba(74,84,104,.1);
 }
 
 [data-theme="dark"] {
@@ -90,7 +90,7 @@
   --c-faint:    #98a2b3;
   --c-navy:     #1d2b45;
   --c-navy-l:   #253555;
-  --c-accent:   #2563eb;
+  --c-accent:   #7c3aed;
   --c-accent-l: #eff4ff;
   --c-green:    #027a48;
   --c-green-l:  #ecfdf3;
@@ -131,7 +131,7 @@ body {
 }
 .login-logo {
   width: 52px; height: 52px; border-radius: 12px;
-  background: linear-gradient(135deg, #0f2554 0%, #1e3a8a 100%); margin: 0 auto 18px;
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%); margin: 0 auto 18px;
   display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
 }
 .login-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 4px; color: var(--c-text); }
@@ -641,9 +641,9 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
 /* ── PRIMARY — Slate Blue (ana eylem) ────────────────────── */
 .btn-primary {
-  background: linear-gradient(180deg, #3b6fb5 0%, #2c5896 100%) !important;
+  background: linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%) !important;
   color: #fff !important;
-  border: 1px solid #2c5896 !important;
+  border: 1px solid #6d28d9 !important;
   box-shadow: 0 1px 2px rgba(44,88,150,.3), inset 0 1px 0 rgba(255,255,255,.15) !important;
 }
 .btn-primary:hover {
@@ -715,7 +715,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 /* ── ACCENT — İndigo (özel eylem) ────────────────────────── */
 .btn-accent {
   background: linear-gradient(180deg, #eef2ff 0%, #e6ecfe 100%) !important;
-  color: #4f46e5 !important;
+  color: #7c3aed !important;
   border: 1px solid #c7d2fe !important;
   box-shadow: 0 1px 2px rgba(79,70,229,.08) !important;
 }
@@ -741,7 +741,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 .copy-btn:hover {
   background: #eef2f7 !important;
   border-color: #d8e0ea !important;
-  color: #3b6fb5 !important;
+  color: #7c3aed !important;
 }
 
 /* ── CALIBER — Segment kontrol ───────────────────────────── */
@@ -759,7 +759,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 }
 .caliber-btn:hover {
   border-color: #c5d2e3 !important;
-  color: #3b6fb5 !important;
+  color: #7c3aed !important;
   background: #fafcff !important;
 }
 .caliber-btn.active {
@@ -781,12 +781,12 @@ tr:nth-child(even) td { background: var(--c-bg); }
 }
 .kv-yon:hover {
   background: #eef2f7 !important;
-  color: #3b6fb5 !important;
+  color: #7c3aed !important;
 }
 .kv-yon.active {
-  background: linear-gradient(180deg, #3b6fb5, #2c5896) !important;
+  background: linear-gradient(180deg, #7c3aed, #6d28d9) !important;
   color: #fff !important;
-  border-color: #2c5896 !important;
+  border-color: #6d28d9 !important;
   box-shadow: 0 1px 4px rgba(44,88,150,.25) !important;
 }
 
@@ -819,7 +819,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 .ai-quick-btn:hover {
   background: #eef2ff !important;
   border-color: #c7d2fe !important;
-  color: #4f46e5 !important;
+  color: #7c3aed !important;
 }
 
 /* ── TAÇ TOGGLE ──────────────────────────────────────────── */
@@ -832,9 +832,9 @@ tr:nth-child(even) td { background: var(--c-bg); }
   transition: all .2s !important;
 }
 .tac-toggle.active {
-  background: linear-gradient(180deg, #3b6fb5, #2c5896) !important;
+  background: linear-gradient(180deg, #7c3aed, #6d28d9) !important;
   color: #fff !important;
-  border-color: #2c5896 !important;
+  border-color: #6d28d9 !important;
   box-shadow: 0 1px 4px rgba(44,88,150,.25) !important;
 }
 
@@ -1050,14 +1050,14 @@ tr:nth-child(even) td { background: var(--c-bg); }
   content: '';
   position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg,
-    transparent, #818cf8, #a78bfa, #818cf8, transparent);
+    transparent, #a5b4fc, #bfdbfe, #a5b4fc, transparent);
   opacity: .7;
 }
 
 /* Hesapla butonu — mavi → mor */
 #hesaplaBtn {
-  background: linear-gradient(120deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%) !important;
-  border: 1px solid #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed 0%, #7c3aed 50%, #6d28d9 100%) !important;
+  border: 1px solid #7c3aed !important;
   box-shadow: 0 2px 8px rgba(79,70,229,.35), inset 0 1px 0 rgba(255,255,255,.15) !important;
 }
 #hesaplaBtn:hover {
@@ -1067,60 +1067,139 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
 /* Primary buton — mavi → mor */
 .btn-primary {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
-  border: 1px solid #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  border: 1px solid #7c3aed !important;
 }
 .btn-primary:hover {
-  background: linear-gradient(120deg, #2d6ef0, #7c3aed) !important;
+  background: linear-gradient(120deg, #2d6ef0, #6d28d9) !important;
 }
 
 /* Caliber aktif — mavi → mor */
 .caliber-btn.active {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
-  border-color: #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  border-color: #7c3aed !important;
   box-shadow: 0 2px 6px rgba(79,70,229,.3) !important;
 }
 
 /* Harita başlığı — mavi → mor */
 .map-header {
   background: linear-gradient(120deg,
-    #1e3a8a 0%, #3730a3 50%, #5b21b6 100%) !important;
+    #1e3a8a 0%, #3730a3 50%, #4338ca 100%) !important;
   border-bottom: 2px solid rgba(139,92,246,.4) !important;
 }
 
 /* Konvoy yön aktif */
 .kv-yon.active {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
-  border-color: #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  border-color: #7c3aed !important;
 }
 .kv-dk.active {
-  background: linear-gradient(120deg, #3730a3, #5b21b6) !important;
+  background: linear-gradient(120deg, #3730a3, #4338ca) !important;
 }
 
 /* TAÇ toggle aktif */
 .tac-toggle.active {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
-  border-color: #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  border-color: #7c3aed !important;
 }
 
 /* Highlight sonuç kartı — mavi/mor gradient */
 .result-card.highlight {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
-  border-color: #4f46e5 !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  border-color: #7c3aed !important;
 }
 
-/* Login overlay — mavi/mor radial */
+/* Login overlay — komuta merkezi temalı */
 .login-overlay {
-  background: radial-gradient(ellipse at 30% 30%,
-    rgba(79,70,229,.25) 0%,
-    rgba(30,64,175,.9) 50%,
-    rgba(20,20,50,1) 100%) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(99,102,241,.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 30%,
+      rgba(79,70,229,.22) 0%,
+      rgba(23,42,99,.96) 48%,
+      rgba(10,12,30,1) 100%) !important;
+  overflow: hidden;
 }
+/* İnce ızgara (harita/grid hissi) */
+.login-overlay::before {
+  content: '';
+  position: absolute; inset: -50%;
+  background-image:
+    linear-gradient(rgba(129,140,248,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(129,140,248,.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Dönen radar taraması */
+.login-overlay::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 900px; height: 900px;
+  margin: -450px 0 0 -450px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    rgba(129,140,248,.16) 0deg,
+    rgba(129,140,248,.04) 30deg,
+    transparent 70deg,
+    transparent 360deg);
+  animation: loginRadar 7s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes loginRadar { to { transform: rotate(360deg); } }
+.login-card { position: relative; z-index: 1; }
 
 /* Login logo */
 .login-logo {
-  background: linear-gradient(120deg, #2563eb, #7c3aed) !important;
+  background: linear-gradient(120deg, #7c3aed, #6d28d9) !important;
 }
+
+/* Login kart — cam efektli koyu panel */
+.login-card {
+  background: rgba(17, 24, 52, .72) !important;
+  border: 1px solid rgba(129,140,248,.25) !important;
+  backdrop-filter: blur(18px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.login-card h2 {
+  color: #f1f5ff !important;
+  letter-spacing: .3px;
+}
+.login-card p {
+  color: #94a3d4 !important;
+  letter-spacing: .4px;
+}
+.login-card input {
+  background: rgba(10,16,38,.6) !important;
+  border: 1.5px solid rgba(129,140,248,.22) !important;
+  color: #e8ecff !important;
+}
+.login-card input::placeholder { color: #6b76a8 !important; }
+.login-card input:focus {
+  border-color: #a5b4fc !important;
+  background: rgba(10,16,38,.9) !important;
+  box-shadow: 0 0 0 3px rgba(129,140,248,.18) !important;
+}
+.login-card button {
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  box-shadow: 0 6px 20px rgba(79,70,229,.35) !important;
+  letter-spacing: .5px;
+  transition: transform .12s, box-shadow .2s !important;
+}
+.login-card button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(79,70,229,.5) !important;
+}
+/* Kart içindeki uyarı kutusu — koyu temaya uyumlu */
+.login-card > div:last-child {
+  background: rgba(120,53,15,.25) !important;
+  border-color: rgba(251,191,36,.35) !important;
+}
+.login-card > div:last-child p { color: #fcd9a8 !important; }
 
 /* Header emblem */
 .header-emblem {
@@ -1129,7 +1208,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
 /* AI modal header */
 .ai-modal-header, [class*="ai-header"] {
-  background: linear-gradient(120deg, #1e40af, #6d28d9) !important;
+  background: linear-gradient(120deg, #6d28d9, #4f46e5) !important;
 }
 
 /* Range badge — mor tonlu */
@@ -1146,25 +1225,442 @@ tr:nth-child(even) td { background: var(--c-bg); }
 
 /* Scrollbar — mor */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6366f1, #7c3aed) !important;
+  background: linear-gradient(180deg, #6366f1, #6d28d9) !important;
   border-radius: 99px;
 }
 
 /* Status dot — mor/mavi glow */
 .status-dot {
-  background: #818cf8 !important;
+  background: #a5b4fc !important;
   box-shadow: 0 0 8px rgba(129,140,248,.6) !important;
 }
 
 /* Map sonuç panel header */
 #mapSonucPanel > div:first-child {
-  background: linear-gradient(120deg, #1e40af, #6d28d9) !important;
+  background: linear-gradient(120deg, #6d28d9, #4f46e5) !important;
 }
 
 /* Tam hesap butonu */
 #mapSonucPanel button[onclick*="mapSonuclaraGit"] {
-  background: linear-gradient(120deg, #2563eb, #6d28d9) !important;
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
 }
+
+/* ══════════ İÇ ARAYÜZ CİLASI ══════════ */
+
+/* Sayfa zemini — ince derinlik */
+body {
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(99,102,241,.10) 0%, transparent 45%),
+    var(--c-bg) !important;
+}
+
+/* Ana kart — yumuşak parlayan kenar */
+.mortar-card {
+  border: 1px solid rgba(129,140,248,.18) !important;
+  box-shadow:
+    0 24px 60px rgba(15,23,55,.16),
+    0 2px 8px rgba(15,23,55,.06) !important;
+}
+
+/* Header — mor → açık mavi gradyan + etrafında akan ışık */
+.header {
+  background: linear-gradient(125deg, #7c3aed 0%, #6366f1 45%, #2563eb 100%) !important;
+  border-bottom: 1px solid rgba(200,200,255,.35) !important;
+  position: relative;
+  border-radius: 16px !important;
+  margin: 8px !important;
+  overflow: visible !important;
+}
+/* Header etrafında dönen ışık çerçevesi */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: conic-gradient(from 0deg,
+    transparent 0deg,
+    rgba(196,181,253,0) 140deg,
+    rgba(167,139,250,1) 250deg,
+    rgba(96,165,250,1) 320deg,
+    rgba(255,255,255,1) 350deg,
+    transparent 360deg);
+  animation: headerGlow 4s linear infinite;
+  z-index: -1;
+}
+.header::after {
+  content: '';
+  position: absolute; left: 14px; right: 14px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+}
+@keyframes headerGlow { to { transform: rotate(360deg); } }
+.header-emblem {
+  background: linear-gradient(120deg, rgba(255,255,255,.22), rgba(255,255,255,.04)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+/* Sonuç/param kartlarına yumuşak geçiş + hover kaldırma */
+.result-card, .param-group, .info-chip, .range-badge,
+[class*="card"], .panel, .box {
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+/* Hesaplama sonucu vurgusu */
+.result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(37,99,235,.14) !important;
+}
+
+/* Genel butonlara dokunsal his */
+button {
+  transition: transform .12s ease, box-shadow .2s ease, filter .15s ease !important;
+}
+button:active { transform: scale(.97); }
+
+/* Input odak halkası — tutarlı mor/mavi */
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #a5b4fc !important;
+  box-shadow: 0 0 0 3px rgba(129,140,248,.16) !important;
+}
+
+/* Yön seçim butonları (kv-yon) hover */
+.kv-yon { transition: all .14s ease !important; }
+.kv-yon:hover {
+  border-color: #a5b4fc !important;
+  background: rgba(129,140,248,.08) !important;
+}
+.kv-yon.selected {
+  background: linear-gradient(120deg, #7c3aed, #4f46e5) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(79,70,229,.32) !important;
+}
+
+/* Bilgi/teknik modal — sırt parlaklığı */
+#bilgiModal .modal-content, [id*="Modal"] [class*="content"] {
+  box-shadow: 0 24px 70px rgba(10,12,30,.45) !important;
+}
+
+/* İnce, modern scrollbar genişliği */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ══════════ AÇIK TEMA — PROFESYONEL PANEL ══════════ */
+:root:not([data-theme="dark"]) body {
+  background:
+    radial-gradient(ellipse 1200px 500px at 50% -120px, rgba(99,102,241,.10), transparent 70%),
+    linear-gradient(180deg, #eef1f7 0%, #f4f6fb 100%) !important;
+}
+
+/* Ana kart — daha temiz, hafif */
+:root:not([data-theme="dark"]) .mortar-card {
+  background: #ffffff !important;
+  border: 1px solid #e6e9f2 !important;
+  box-shadow:
+    0 1px 3px rgba(16,24,40,.04),
+    0 12px 40px rgba(16,24,40,.08),
+    0 32px 64px rgba(99,102,241,.06) !important;
+}
+
+/* Bölüm başlıkları — net hiyerarşi */
+:root:not([data-theme="dark"]) .section-title {
+  background: linear-gradient(180deg, #fafbff, #f1f4fb) !important;
+  border-color: #e6e9f2 !important;
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  letter-spacing: .2px !important;
+}
+
+/* Parametre / sonuç kartları */
+:root:not([data-theme="dark"]) .result-card,
+:root:not([data-theme="dark"]) .param-group {
+  background: #ffffff !important;
+  border: 1px solid #eaedf5 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(16,24,40,.04) !important;
+}
+:root:not([data-theme="dark"]) .result-card:hover {
+  border-color: #c7d0f5 !important;
+  box-shadow: 0 8px 22px rgba(37,99,235,.12) !important;
+}
+:root:not([data-theme="dark"]) .result-label { color: #64748b !important; font-weight: 500 !important; }
+:root:not([data-theme="dark"]) .result-value { color: #0f172a !important; font-weight: 700 !important; }
+
+/* Birincil butonlar — gradyan */
+:root:not([data-theme="dark"]) .btn-primary {
+  background: linear-gradient(120deg, #7c3aed, #7c3aed) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(37,99,235,.28) !important;
+  font-weight: 600 !important;
+}
+:root:not([data-theme="dark"]) .btn-primary:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 22px rgba(37,99,235,.38) !important;
+}
+
+/* İkincil butonlar — yumuşak */
+:root:not([data-theme="dark"]) .btn {
+  background: #f5f7fc !important;
+  border: 1px solid #e2e7f3 !important;
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+:root:not([data-theme="dark"]) .btn:hover {
+  background: #eef2fb !important;
+  border-color: #c7d0f5 !important;
+}
+
+/* Inputlar — daha rafine */
+:root:not([data-theme="dark"]) input,
+:root:not([data-theme="dark"]) select {
+  background: #fbfcfe !important;
+  border: 1.5px solid #e4e8f2 !important;
+  border-radius: 8px !important;
+  color: #0f172a !important;
+}
+
+/* Fonksiyon sekmeleri (üst toggle'lar) */
+:root:not([data-theme="dark"]) .fn-toggle {
+  background: #f5f7fc !important;
+  border: 1px solid #e6e9f2 !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  transition: all .14s ease !important;
+}
+:root:not([data-theme="dark"]) .fn-toggle:hover {
+  background: #eef2fb !important;
+  color: #7c3aed !important;
+}
+:root:not([data-theme="dark"]) .fn-toggle.active {
+  background: linear-gradient(120deg, #7c3aed, #7c3aed) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px rgba(37,99,235,.26) !important;
+}
+
+/* Sol/sağ paneller — yumuşak ayrım */
+:root:not([data-theme="dark"]) .left-panel { background: #fbfcfe !important; }
+:root:not([data-theme="dark"]) .right-panel {
+  background: #f7f9fd !important;
+  border-left: 1px solid #eaedf5 !important;
+}
+
+/* AI hızlı butonları */
+:root:not([data-theme="dark"]) .ai-quick-btn {
+  background: #fff !important;
+  border: 1px solid #e6e9f2 !important;
+  color: #334155 !important;
+  transition: all .14s ease !important;
+}
+:root:not([data-theme="dark"]) .ai-quick-btn:hover {
+  border-color: #a5b4fc !important;
+  background: #f5f3ff !important;
+  color: #5145cd !important;
+}
+
+/* ══════════ KESKİN / ASKERİ-TEKNİK GEOMETRİ ══════════ */
+:root {
+  --r: 3px !important;
+  --r-lg: 4px !important;
+}
+/* Genel keskinleştirme — yuvarlak köşeleri sertleştir (rozet/nokta hariç) */
+.mortar-card, .section-title, .result-card, .param-group, .btn, .btn-primary,
+.fn-toggle, input, select, textarea, .kv-yon, .kv-dk, .ai-quick-btn,
+.range-badge, #mapSonucPanel, .header-emblem, .login-card, .login-card input,
+.login-card button, [class*="card"], [class*="panel"], [class*="Panel"],
+[class*="modal"], [class*="Modal"], [class*="content"] {
+  border-radius: 3px !important;
+}
+/* Köşelere teknik "kesik" hissi veren keskin başlık şeridi */
+.section-title {
+  border-left: 3px solid #7c3aed !important;
+  position: relative;
+}
+/* Header'a keskin teknik alt çizgi */
+.header {
+  border-bottom: 2px solid #7c3aed !important;
+}
+
+/* ══════════ CANLI ANİMASYONLAR ══════════ */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanLine {
+  0%   { background-position: 0 -100%; }
+  100% { background-position: 0 200%; }
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(79,70,229,.0); }
+  50%     { box-shadow: 0 0 14px 1px rgba(79,70,229,.35); }
+}
+@keyframes sweepShine {
+  0%   { transform: translateX(-120%); }
+  60%,100% { transform: translateX(220%); }
+}
+
+/* Kartlar girişte yumuşak belirsin */
+.result-card, .param-group, .ai-msg-ai {
+  animation: fadeSlideIn .35s ease both;
+}
+
+/* Birincil butona "tara + parlama" efekti */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute; top: 0; left: 0; height: 100%; width: 40%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.btn-primary:hover::after {
+  animation: sweepShine .8s ease;
+}
+
+/* Fonksiyon sekmesi aktifken hafif nabız */
+.fn-toggle.active {
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+/* Sonuç değeri vurgu — sayı güncellenince dikkat çeker */
+.result-value {
+  transition: color .2s ease, transform .2s ease;
+}
+.result-card:hover .result-value {
+  transform: scale(1.04);
+  color: #7c3aed !important;
+}
+
+/* Yön/dakika butonları seçilince keskin parlama */
+.kv-yon.active, .kv-dk.active {
+  animation: glowPulse 2.2s ease-in-out infinite;
+}
+
+/* Header durum noktası zaten nabız atıyor — koruyoruz */
+
+/* ══════════ SABİT ALT MENÜ ÇUBUĞU ══════════ */
+#bottomNav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 4000;
+  display: none;
+  justify-content: space-around;
+  align-items: stretch;
+  background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);
+  border-top: 2px solid #7c3aed;
+  box-shadow: 0 -6px 24px rgba(20,18,45,.35);
+  padding: 4px 2px calc(4px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(8px);
+}
+#bottomNav button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #aab4e0;
+  font-family: inherit;
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color .15s, background .15s, transform .1s;
+  position: relative;
+}
+#bottomNav button .bn-ico { font-size: 1.15rem; line-height: 1; }
+#bottomNav button:hover { color: #fff; background: rgba(129,140,248,.12); }
+#bottomNav button:active { transform: scale(.92); }
+#bottomNav button.bn-active { color: #fff; }
+#bottomNav button.bn-active::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 26px; height: 3px; border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, #60a5fa, #a5b4fc);
+}
+/* İçerik alt çubuğun altında kalmasın */
+#mainApp { padding-bottom: 78px !important; }
+/* Açık/koyu tema uyumu zaten koyu çubuk olduğu için sabit */
+
+/* ══════════ SAĞ KENAR — HARİTA BUTONU ══════════ */
+#mapFab {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4000;
+  display: none;
+  background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(37,99,235,.95));
+  color: #fff;
+  border: none;
+  border-radius: 14px 0 0 14px;
+  padding: 11px 7px 11px 9px;
+  font-family: inherit;
+  font-size: .56rem;
+  font-weight: 600;
+  letter-spacing: .4px;
+  cursor: pointer;
+  box-shadow: -2px 3px 14px rgba(79,70,229,.35);
+  backdrop-filter: blur(6px);
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: padding-right .18s ease, box-shadow .25s ease, background .25s ease, transform .12s;
+}
+#mapFab .mf-ico { font-size: 1.2rem; line-height: 1; opacity: .95; }
+#mapFab .mf-txt { writing-mode: vertical-rl; text-orientation: mixed; opacity: .9; }
+#mapFab:hover {
+  padding-right: 11px;
+  background: linear-gradient(135deg, rgba(124,58,237,1), rgba(37,99,235,1));
+  box-shadow: -3px 4px 18px rgba(79,70,229,.5);
+}
+#mapFab:active { transform: translateY(-50%) scale(.94); }
+
+/* ══════════ LOGO — YUVARLAK + YÖRÜNGEDE DÖNEN HAVAN MÜHİMMATI ══════════ */
+.header-emblem {
+  border-radius: 50% !important;
+  position: relative;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+.header-emblem img {
+  border-radius: 50% !important;
+  position: relative;
+  z-index: 2;
+}
+/* Logo etrafında dönen ışık halkası */
+.header-emblem::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    transparent 0deg,
+    rgba(196,181,253,0) 180deg,
+    rgba(196,181,253,.85) 300deg,
+    rgba(255,255,255,1) 350deg,
+    transparent 360deg);
+  animation: emblemSpin 3.2s linear infinite;
+  z-index: 0;
+}
+/* Halkanın iç kısmını oyup sadece ince çizgi bıraksın */
+.header-emblem::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: #7c3aed;
+  z-index: 1;
+}
+@keyframes emblemSpin { to { transform: rotate(360deg); } }
 
 </style>
 <body>
@@ -1207,69 +1703,32 @@ tr:nth-child(even) td { background: var(--c-bg); }
       </button>
 
       
-      <!-- HEADER PUSULA -->
-      <div id="headerCompass" title="Pusula" style="width:38px;height:38px;flex-shrink:0;">
-        <svg id="compassSvg" viewBox="0 0 38 38" width="38" height="38">
-          <defs>
-            <filter id="needleGlow">
-              <feGaussianBlur stdDeviation="1.2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#1a2d50"/>
-              <stop offset="100%" stop-color="#0a1628"/>
-            </radialGradient>
-          </defs>
-          <!-- Dış çerçeve -->
-          <circle cx="19" cy="19" r="18" fill="url(#ringGrad)"
-            stroke="rgba(255,255,255,.12)" stroke-width="1.2"/>
-          <!-- Tick çizgileri -->
-          <line x1="19" y1="2.5" x2="19" y2="5.5" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
-          <line x1="19" y1="32.5" x2="19" y2="35.5" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
-          <line x1="2.5" y1="19" x2="5.5" y2="19" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
-          <line x1="32.5" y1="19" x2="35.5" y2="19" stroke="rgba(255,255,255,.15)" stroke-width=".8"/>
-          <!-- Yön harfleri -->
-          <text x="19" y="10.5" text-anchor="middle" fill="#f87171"
-            font-size="5.5" font-weight="800" font-family="Inter,system-ui">N</text>
-          <text x="19" y="31.5" text-anchor="middle" fill="rgba(255,255,255,.28)"
-            font-size="4.5" font-weight="700" font-family="Inter,system-ui">S</text>
-          <text x="31" y="20.5" text-anchor="middle" fill="rgba(255,255,255,.2)"
-            font-size="4" font-family="Inter,system-ui">E</text>
-          <text x="7" y="20.5" text-anchor="middle" fill="rgba(255,255,255,.2)"
-            font-size="4" font-family="Inter,system-ui">W</text>
-          <!-- Dönen ibre grubu -->
-          <g id="compassNeedleGroup">
-            <!-- Kuzey (kırmızı) -->
-            <polygon points="19,5 17.2,19 19,21 20.8,19"
-              fill="#ef4444" filter="url(#needleGlow)"/>
-            <!-- Güney (gri) -->
-            <polygon points="19,33 17.2,19 19,17 20.8,19"
-              fill="rgba(255,255,255,.2)"/>
-          </g>
-          <!-- Merkez -->
-          <circle cx="19" cy="19" r="2.8" fill="#fff"
-            stroke="rgba(0,0,0,.4)" stroke-width=".8"/>
-        </svg>
-      </div>
 
       <button class="bilgi-btn" onclick="document.getElementById('bilgiModal').style.display='flex'">
         📚 Teknik Bilgiler
       </button>
-      <button class="ai-header-btn" onclick="document.getElementById('aiModalOverlay').style.display='flex'">
-        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;flex-shrink:0;">
-          <defs><radialGradient id="hdrDrop" cx="40%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#f97316"/>
-          </radialGradient></defs>
-          <path d="M10 2 C10 2,5 8,5 12 C5 14.8 7.2 17 10 17 C12.8 17 15 14.8 15 12 C15 8 10 2 10 2Z" fill="url(#hdrDrop)">
-            <animate attributeName="d" dur="3s" repeatCount="indefinite"
-              values="M10 2 C10 2,5 8,5 12 C5 14.8 7.2 17 10 17 C12.8 17 15 14.8 15 12 C15 8 10 2 10 2Z;M10 1.5 C10 1.5,4.5 7.5,4.5 11.5 C4.5 14.5 7 17 10 17 C13 17 15.5 14.5 15.5 11.5 C15.5 7.5 10 1.5 10 1.5Z;M10 2 C10 2,5 8,5 12 C5 14.8 7.2 17 10 17 C12.8 17 15 14.8 15 12 C15 8 10 2 10 2Z"/>
-          </path>
-        </svg>
-        <span>AI Asistan</span>
-      </button>
       <div class="header-status">
         <div class="status-dot"></div>
         <span>AKTİF</span>
+      </div>
+      <!-- HAVAN SİLUETİ -->
+      <div class="header-havan" title="Havan" style="flex-shrink:0;width:46px;height:46px;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 64 64" width="42" height="42" xmlns="http://www.w3.org/2000/svg">
+          <!-- Taban plakası -->
+          <ellipse cx="32" cy="55" rx="18" ry="3.5" fill="rgba(255,255,255,.85)"/>
+          <!-- Sol ayak -->
+          <line x1="22" y1="53" x2="14" y2="40" stroke="rgba(255,255,255,.9)" stroke-width="2.4" stroke-linecap="round"/>
+          <!-- Sağ ayak -->
+          <line x1="42" y1="53" x2="50" y2="40" stroke="rgba(255,255,255,.9)" stroke-width="2.4" stroke-linecap="round"/>
+          <!-- Namlu (eğik) -->
+          <line x1="28" y1="54" x2="46" y2="14" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
+          <!-- Namlu ağzı -->
+          <circle cx="46" cy="14" r="3.6" fill="#fff"/>
+          <!-- Namlu içi (gölge) -->
+          <circle cx="46" cy="14" r="1.6" fill="rgba(180,90,40,.9)"/>
+          <!-- Bipod birleşim noktası -->
+          <circle cx="32" cy="40" r="2.4" fill="rgba(255,255,255,.95)"/>
+        </svg>
       </div>
     </div>
   </div>
@@ -1833,7 +2292,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
               <radialGradient id="dropGrad" cx="40%" cy="35%" r="65%">
                 <stop offset="0%" stop-color="#f97316"/>
                 <stop offset="60%" stop-color="#ea580c"/>
-                <stop offset="100%" stop-color="#c2410c"/>
+                <stop offset="100%" stop-color="#6d28d9"/>
               </radialGradient>
             </defs>
             <path d="M16 4 C16 4, 8 13, 8 19 C8 23.4 11.6 27 16 27 C20.4 27 24 23.4 24 19 C24 13 16 4 16 4Z" fill="url(#dropGrad)">
@@ -2572,7 +3031,7 @@ tr:nth-child(even) td { background: var(--c-bg); }
                 '<td style="' + td + '">' + c.mesafe + 'm</td>' +
                 '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#1d5fa8') + ';">' + g1 + '</td>' +
                 '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#166534') + ';">' + g2 + '</td>' +
-                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#c2410c') + ';">' + g3 + '</td>';
+                '<td style="' + td + 'color:' + (isAtis ? '#e5bc66' : '#6d28d9') + ';">' + g3 + '</td>';
             tbody.appendChild(tr);
         });
 
@@ -3608,6 +4067,34 @@ self.addEventListener('fetch', e => {
             document.getElementById(id).classList.toggle('open');
         });
     }
+    // Alt menü: paneli aç (kapalıysa) ve üstüne kaydır
+    window.bnGoto = function(toggleId, contentId) {
+        var content = document.getElementById(contentId);
+        var toggle = document.getElementById(toggleId);
+        if (!content || !toggle) return;
+        if (!content.classList.contains('show')) {
+            content.classList.add('show');
+            toggle.classList.add('open');
+        }
+        // aktif buton göstergesi
+        document.querySelectorAll('#bottomNav button').forEach(function(b){ b.classList.remove('bn-active'); });
+        var clicked = document.querySelector('#bottomNav button[onclick*="' + toggleId + '"]');
+        if (clicked) clicked.classList.add('bn-active');
+        // yumuşak kaydır
+        setTimeout(function(){
+            toggle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+    };
+    // Sağ kenar butonu: haritaya git
+    window.bnGotoMap = function() {
+        var map = document.getElementById('mapDiv');
+        if (!map) return;
+        map.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Leaflet boyutunu tazele (kaydırma sonrası gri kalmasın)
+        setTimeout(function(){
+            try { if (window._map && window._map.invalidateSize) window._map.invalidateSize(); } catch(e){}
+        }, 450);
+    };
     function setCaliber(cal) {
         // M-301 A2 sadece 81mm'de görünür
         var optM301 = document.getElementById('ammoOpt_m301a2');
@@ -4187,6 +4674,7 @@ self.addEventListener('fetch', e => {
             attributionControl: false,
             preferCanvas: true
         }).setView(startView, 13);
+        window._map = _map;
 
         // invalidateSize - tile yükleme hatası için kritik
         setTimeout(function() { _map.invalidateSize(true); }, 100);
@@ -4316,9 +4804,9 @@ self.addEventListener('fetch', e => {
                     sonucKart('Yan', hesapSonuc.yan + ' mil', '#1d2b45') +
                     sonucKart('Yükseliş', hesapSonuc.yukselis + ' mil', '#1d2b45') +
                     sonucKart('Mesafe', hesapSonuc.mesafe + ' m', '#059669') +
-                    sonucKart('BH', hesapSonuc.bh, '#7c3aed') +
+                    sonucKart('BH', hesapSonuc.bh, '#6d28d9') +
                     (hesapSonuc.ucusSuresi ? sonucKart('Uçuş Süresi', hesapSonuc.ucusSuresi + ' sn', '#0284c7') : '') +
-                    (mesafeBilgi ? sonucKart('Azimut', azimutBilgi + ' / ' + milBilgi, '#c2410c') : '');
+                    (mesafeBilgi ? sonucKart('Azimut', azimutBilgi + ' / ' + milBilgi, '#6d28d9') : '');
 
                 panel.style.display = 'block';
                 // Alt panele scroll
@@ -5089,6 +5577,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (username.toLowerCase() === 'osmaniye' && pwdHash === validHash) {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
+            var bn = document.getElementById('bottomNav'); if (bn) bn.style.display = 'flex';
+            var mf = document.getElementById('mapFab'); if (mf) mf.style.display = 'flex';
         } else {
             document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
         }
@@ -5388,5 +5878,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
+<button type="button" id="mapFab" onclick="bnGotoMap()"><span class="mf-ico">🗺️</span><span class="mf-txt">HARİTA</span></button>
+<nav id="bottomNav">
+  <button type="button" onclick="bnGoto('metroToggle','metroContent')"><span class="bn-ico">📡</span>Metro</button>
+  <button type="button" onclick="bnGoto('corrToggle','corrContent')"><span class="bn-ico">⚙️</span>Düzeltme</button>
+  <button type="button" onclick="bnGoto('demetToggle','demetContent')"><span class="bn-ico">💥</span>Demet</button>
+  <button type="button" onclick="bnGoto('gozetPanelToggle','gozetPanelContent')"><span class="bn-ico">🔭</span>Gözet</button>
+  <button type="button" onclick="bnGoto('konvoyToggle','konvoyContent')"><span class="bn-ico">🚗</span>Konvoy</button>
+</nav>
 </body>
 </html>
