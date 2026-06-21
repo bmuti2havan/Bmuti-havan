@@ -1634,39 +1634,6 @@ input:focus, select:focus, textarea:focus {
 }
 #mapFab:active { transform: translateY(-50%) scale(.94); }
 
-/* ══════════ SAĞ KENAR — KILAVUZ BUTONU (Harita butonunun altında) ══════════ */
-#kilavuzFab {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(calc(-50% + 78px));
-  z-index: 4000;
-  display: none;
-  background: linear-gradient(135deg, rgba(28,47,110,.95), rgba(46,74,143,.95));
-  color: #fff;
-  border: none;
-  border-radius: 14px 0 0 14px;
-  padding: 11px 7px 11px 9px;
-  font-family: inherit;
-  font-size: .56rem;
-  font-weight: 600;
-  letter-spacing: .4px;
-  cursor: pointer;
-  box-shadow: -2px 3px 14px rgba(22,36,60,.35);
-  backdrop-filter: blur(6px);
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  transition: padding-right .18s ease, box-shadow .25s ease, background .25s ease, transform .12s;
-}
-#kilavuzFab .mf-ico { font-size: 1.2rem; line-height: 1; opacity: .95; }
-#kilavuzFab .mf-txt { writing-mode: vertical-rl; text-orientation: mixed; opacity: .9; }
-#kilavuzFab:hover {
-  padding-right: 11px;
-  background: linear-gradient(135deg, rgba(28,47,110,1), rgba(46,74,143,1));
-  box-shadow: -3px 4px 18px rgba(22,36,60,.5);
-}
-#kilavuzFab:active { transform: translateY(calc(-50% + 78px)) scale(.94); }
 
 /* ══════════ LOGO — YUVARLAK + YÖRÜNGEDE DÖNEN HAVAN MÜHİMMATI ══════════ */
 .header-emblem {
@@ -1746,6 +1713,7 @@ input:focus, select:focus, textarea:focus {
                font-weight:600;cursor:pointer;align-items:center;gap:5px;">
         📲 Uygulamayı Kur
       </button>
+
       
 
       <button class="bilgi-btn" onclick="document.getElementById('bilgiModal').style.display='flex'">
@@ -2413,29 +2381,6 @@ input:focus, select:focus, textarea:focus {
   </div>
 </div>
 
-<!-- KULLANIM KILAVUZU MODALI -->
-<div id="kilavuzModal" style="display:none;position:fixed;inset:0;background:rgba(16,24,40,.8);
-     backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:14px;max-width:820px;width:100%;max-height:90vh;
-               overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.3);">
-    <!-- Modal Header -->
-    <div style="background:#1c2f6e;padding:14px 24px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;flex-wrap:wrap;gap:8px;">
-      <div>
-        <div style="color:#fff;font-weight:700;font-size:1rem;letter-spacing:-.2px;">📖 Kullanım Kılavuzu</div>
-        <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-top:2px;">Bmuti Havan Ateş İdare Sistemi — Adım Adım Rehber</div>
-      </div>
-
-      <button onclick="document.getElementById('kilavuzModal').style.display='none'"
-        style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;
-               border-radius:8px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
-    </div>
-    <!-- Tab Bar -->
-    <div id="kilavuzTabBar" style="display:flex;background:#f5f6f8;border-bottom:1px solid #e4e7ec;flex-shrink:0;overflow-x:auto;"></div>
-    <!-- Content -->
-    <div id="kilavuzContent" style="overflow-y:auto;padding:24px;flex:1;"></div>
-  </div>
-</div>
-
 <script>
 
     // ── BİLGİ SAYFALARI ─────────────────────────────────────────
@@ -2754,224 +2699,6 @@ input:focus, select:focus, textarea:focus {
         content: ''
       }
     ];
-
-    // ── KULLANIM KILAVUZU SAYFALARI ─────────────────────────────────────────
-    const KILAVUZ_PAGES = [
-      {
-        title: '🚀 Başlarken',
-        content: `
-          <h3>Uygulama Ne İşe Yarar?</h3>
-          <p>Bu uygulama, 81mm, 106mm ve 120mm havan toplarının atış verilerini (yükseliş açısı, yan/istikamet, mesafe, BH — bombakırıcı seçimi vb.) hesaplar. Mevzi (havanın bulunduğu nokta) ve hedef koordinatlarını girersiniz, uygulama gerekli atış verilerini otomatik hesaplar.</p>
-
-          <h3>İlk Açılışta Yapılacaklar</h3>
-          <ul>
-            <li><b>1.</b> Giriş ekranında kullanıcı adı ve şifre ile giriş yapın</li>
-            <li><b>2.</b> Üstteki kalibre butonlarından (81 / 106 / 120) kullanacağınız havan kalibresini seçin</li>
-            <li><b>3.</b> Altındaki <b>Mühimmat</b> şeridinden atılacak mühimmat türünü seçin (örn. Mke Mod 214, M-64, Sis mühimmatı vb.)</li>
-            <li><b>4.</b> Sol paneldeki <b>DTN Bilgileri</b>, <b>Mevzi &amp; Hedef</b> alanlarını doldurun</li>
-          </ul>
-
-          <h3>Ekranın Genel Yapısı</h3>
-          <ul>
-            <li><b>Üst kısım (Header):</b> Uygulama başlığı, Teknik Bilgiler butonu, AKTİF durum göstergesi</li>
-            <li><b>Mühimmat şeridi:</b> Kalibre ve mühimmat seçimi, azami menzil bilgisi</li>
-            <li><b>Sol panel:</b> DTN bilgileri, Mevzi/Hedef koordinatları, sonuç kartı</li>
-            <li><b>Alt menü (mavi şerit):</b> Metro, Düzeltme, Demet, Gözet, Konvoy bölümlerine hızlı geçiş</li>
-            <li><b>Sağ kenar butonları:</b> Harita ve bu Kılavuz</li>
-          </ul>`
-      },
-      {
-        title: '🎯 Temel Hesaplama',
-        content: `
-          <h3>Adım 1 — Kalibre ve Mühimmat Seçimi</h3>
-          <p>Sayfanın üstündeki <b>81 / 106 / 120</b> butonlarından kalibreyi seçin. Altında açılan mühimmat şeridinden kullanacağınız mühimmatı seçin. Seçtiğiniz mühimmatın azami menzili sağ üstte <b>"Azami ... m"</b> şeklinde gösterilir.</p>
-
-          <h3>Adım 2 — DTN Bilgileri</h3>
-          <ul>
-            <li><b>DTN İstikamet (milyem):</b> Havanın sıfır/referans atış yönü. Topçu pusulası veya harita üzerinden belirlenen açıdır</li>
-            <li><b>DTN Yan (milyem):</b> Referans doğrultu üzerindeki yan açı değeri</li>
-          </ul>
-
-          <h3>Adım 3 — Mevzi ve Hedef Girişi</h3>
-          <ul>
-            <li><b>Mevzi Grid (MGRS):</b> Havanın bulunduğu noktanın MGRS koordinatı (örn. <code>37S CB 50000 50000</code>)</li>
-            <li><b>Mevzi Rakım:</b> Havanın bulunduğu noktanın deniz seviyesinden yüksekliği (metre)</li>
-            <li><b>Hedef Grid (MGRS):</b> Vurulacak hedefin MGRS koordinatı</li>
-            <li><b>Hedef Rakım:</b> Hedefin yüksekliği (metre)</li>
-          </ul>
-          <p>MGRS koordinatını boşluksuz da yapıştırabilirsiniz (örn. <code>37SCB5000050000</code>), uygulama otomatik olarak doğru formata çevirir.</p>
-
-          <h3>Adım 4 — Hesapla</h3>
-          <p>Tüm alanlar dolduktan sonra <b>Hesapla</b> butonuna basın. Sonuç kartında şu bilgiler görünür:</p>
-          <ul>
-            <li><b>Yan:</b> Havanın çevrileceği yön değeri (milyem)</li>
-            <li><b>Yükseliş:</b> Namlu açısı (milyem)</li>
-            <li><b>Mesafe:</b> Mevzi-hedef arası gerçek mesafe (metre)</li>
-            <li><b>BH:</b> Kullanılacak bombakırıcı/barut hazinesi numarası</li>
-            <li><b>Uçuş Süresi:</b> Merminin havada kalış süresi (saniye)</li>
-          </ul>
-          <p style="background:#fef3f2;border-left:4px solid #c0392b;padding:10px 14px;border-radius:6px;"><b>Menzil dışı</b> hatası alırsanız, hedef mesafesi seçtiğiniz mühimmatın azami menzilini aşıyor demektir — daha uzun menzilli bir mühimmat seçin veya koordinatları kontrol edin.</p>`
-      },
-      {
-        title: '📡 Metro Raporu',
-        content: `
-          <h3>Metro Raporu Nedir?</h3>
-          <p>Rüzgar, sıcaklık, basınç ve nem gibi hava koşulları merminin uçuş yolunu etkiler. Metro Raporu bölümü bu etkileri hesaba katıp otomatik bir düzeltme üretir.</p>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>1.</b> Alt menüden <b>Metro</b> butonuna basarak bölümü açın</li>
-            <li><b>2.</b> <b>Rüzgar Hızı</b> ve <b>Rüzgar Yönü</b> (milyem) değerlerini girin</li>
-            <li><b>3.</b> <b>Hava Sıcaklığı (°C)</b>, <b>Hava Basıncı (hPa)</b> ve <b>Nem Oranı (%)</b> değerlerini girin</li>
-            <li><b>4.</b> <b>Metro Uygula</b> butonuna basın</li>
-          </ul>
-          <p>Uygulama bu verilerden otomatik bir <b>yan milyem</b> ve <b>mesafe metre</b> düzeltmesi hesaplayıp sonraki tüm hesaplamalara otomatik olarak ekler. Metro etkisini kaldırmak isterseniz değerleri sıfırlayıp tekrar Metro Uygula'ya basabilirsiniz.</p>`
-      },
-      {
-        title: '⚙️ Düzeltmeler',
-        content: `
-          <h3>Düzeltmeler Ne İşe Yarar?</h3>
-          <p>İlk atıştan sonra mermi hedefi tam vurmamışsa, gözlem sonucuna göre <b>yan (sağa/sola)</b> ve <b>mesafe (uzat/kısalt)</b> düzeltmesi girerek bir sonraki atışı isabetli hâle getirirsiniz.</p>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>Yanca (m):</b> Açılır listeden <b>Sağa</b> veya <b>Sola</b> seçin, yanındaki kutuya metre cinsinden düzeltme miktarını yazın</li>
-            <li><b>Mesafe (m):</b> Açılır listeden <b>Uzalt</b> (mermiyi hedeften öteye götür, yani mesafeyi artır) veya <b>Kısalt</b> (mesafeyi azalt) seçin, miktarı girin</li>
-            <li>Düzeltme girdikten sonra ana <b>Hesapla</b> butonuna basarak güncel sonucu görün</li>
-          </ul>
-          <p>Bu alanlardaki değerler sıfırlanmadığı sürece sonraki tüm hesaplamalara (Demet hesaplamaları dahil) otomatik olarak eklenir. Düzeltmeyi kaldırmak için açılır listeyi <b>"Yok"</b>'a alıp miktarı 0 yapın.</p>
-
-          <h3>Yükseklik (TAÇ) Düzeltmesi</h3>
-          <p>Hedef ile mevzi arasındaki rakım farkı otomatik hesaba katılır. Gerekirse <b>Kaldır/İndir</b> seçeneğiyle ek bir paralanma düzeltmesi de girilebilir.</p>`
-      },
-      {
-        title: '💥 Demetler',
-        content: `
-          <h3>Demet Nedir?</h3>
-          <p>Demet, birden fazla havanın aynı hedefe farklı noktalardan veya farklı düzenle ateş etmesidir. Uygulama üç tür demet hesaplayabilir.</p>
-
-          <h3>Demet Tipleri</h3>
-          <ul>
-            <li><b>Paralel Demet:</b> 3 havan, hedefin solundan ve sağından eşit aralıklarla (mühimmat tipine göre otomatik 10 veya 40 metre) paralel olarak ateş eder. Geniş alan etkisi sağlar</li>
-            <li><b>Kapalı Demet:</b> 3 havan da aynı tek noktaya (esas hedefe) ateş eder. Yoğun, dar alan etkisi sağlar</li>
-            <li><b>Özel Demet:</b> Her havan için ayrı ayrı <b>Mesafe (Uzalt/Kısalt)</b> ve <b>Yan (Sağa/Sola)</b> düzeltmesi girilerek 3 havanın hedefleri serbestçe belirlenir. 2. Havan "Esas" olarak işaretlenmiştir, diğer ikisi ona göre tanımlanan offsetlerle konumlanır</li>
-          </ul>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>1.</b> Alt menüden <b>Demet</b> butonuna basın</li>
-            <li><b>2.</b> <b>Demet Tipi</b> açılır listesinden istediğiniz tipi seçin</li>
-            <li><b>3.</b> Özel Demet seçtiyseniz, 1/2/3. Havan için Mesafe ve Yan alanlarını doldurun</li>
-            <li><b>4.</b> <b>Demet Hesapla</b> butonuna basın</li>
-          </ul>
-          <p>Sonuç tablosunda her havan için ayrı satırda Yan, Yükseliş, Mesafe, BH, Uçuş Süresi ve Mühimmat bilgisi görünür.</p>`
-      },
-      {
-        title: '🔭 İleri Gözetleyici',
-        content: `
-          <h3>İleri Gözetleyici Ne İşe Yarar?</h3>
-          <p>Hedefi doğrudan göremeyen havan mürettebatı için, hedefi gören bir <b>ileri gözetleyici</b> kendi konumundan gözlem yapıp düzeltme bildirir. Bu bölüm, gözetleyicinin bildirdiği düzeltmeyi gerçek hedef koordinatına çevirir.</p>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>Gözetleyici Grid:</b> İleri gözetleyicinin bulunduğu noktanın MGRS koordinatı</li>
-            <li><b>İstikamet (milyem):</b> Gözetleyicinin hedefe bakış açısı</li>
-            <li><b>Yan Düzeltme:</b> Açılır listeden <b>Sağa</b> veya <b>Sola</b> seçin, ardından metre cinsinden miktarı girin</li>
-            <li><b>Mesafe Düzeltme:</b> Açılır listeden <b>Uzat</b> (hedefi gözetleyiciden uzaklaştır) veya <b>Kısalt</b> seçin, miktarı girin</li>
-            <li><b>İleri Gözetleyici Uygula</b> butonuna basın</li>
-          </ul>
-          <p>Uygulama bu bilgilerle yeni, düzeltilmiş hedef koordinatını hesaplar, ana <b>Hedef Grid</b> alanını otomatik günceller ve sonucu yeniden hesaplar.</p>`
-      },
-      {
-        title: '🚗 Konvoy Hedef',
-        content: `
-          <h3>Konvoy Hedef Ne İşe Yarar?</h3>
-          <p>Hareketli bir hedefe (konvoy, araç vb.) ateş etmek için, hedefin gidiş yönü ve hızı dikkate alınarak <b>tahmini buluşma noktası</b> hesaplanır.</p>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>1.</b> Alt menüden <b>Konvoy</b> butonuna basın</li>
-            <li><b>2.</b> Hedefin şu anki konumu (Grid), gidiş yönü (milyem) ve hızını girin</li>
-            <li><b>3.</b> Mermi uçuş süresini de hesaba katarak, hedefin mermi havadayken ulaşacağı noktayı uygulama otomatik hesaplar</li>
-            <li><b>4.</b> Sonuç, ana hesaplama alanına yansıtılır</li>
-          </ul>
-          <p>Bu özellik özellikle hızlı hareket eden araçlara karşı isabeti artırmak için kullanılır.</p>`
-      },
-      {
-        title: '🎯 3 Ayrı Hedef',
-        content: `
-          <h3>3 Ayrı Hedef Ne İşe Yarar?</h3>
-          <p>Birbirinden bağımsız <b>3 farklı hedefe</b> aynı anda atış verisi hesaplamak için kullanılır (demetten farkı: her hedef tamamen ayrı bir koordinat, birbirine göre değil).</p>
-
-          <h3>Nasıl Kullanılır</h3>
-          <ul>
-            <li><b>1.</b> Alt menüden veya ilgili bölümden <b>3 Ayrı Hedef</b>'i açın</li>
-            <li><b>2.</b> Her hedef için ayrı ayrı <b>Grid</b> ve <b>Rakım</b> bilgisini girin</li>
-            <li><b>3.</b> Hesapla butonuna basarak her 3 hedef için ayrı ayrı Yan/Yükseliş/Mesafe/BH sonuçlarını görün</li>
-          </ul>`
-      },
-      {
-        title: '🗺️ Harita',
-        content: `
-          <h3>Harita Özelliği</h3>
-          <p>Sağ kenardaki <b>🗺️ HARİTA</b> butonuna basarak uydu haritasına geçebilirsiniz. Harita üzerinde mevzi ve hedef konumları işaretli gösterilir.</p>
-          <ul>
-            <li>Harita üzerinde hedefe dokunarak veya sürükleyerek koordinatı güncelleyebilirsiniz</li>
-            <li>Çevre analizi özelliğiyle hedefin etrafındaki arazi/yapı bilgisi otomatik sorgulanabilir</li>
-            <li>Haritadan ana ekrana dönmek için harita başlığındaki geri butonunu kullanın</li>
-          </ul>`
-      },
-      {
-        title: '📚 Teknik Bilgiler',
-        content: `
-          <h3>Teknik Bilgiler Bölümü</h3>
-          <p>Üst kısımdaki <b>📚 Teknik Bilgiler</b> butonuna basarak; atış emniyeti kuralları, havanın tarihçesi, havanın yapısı, sayısal/teknik ölçüler ve yapay zeka destekli soru-cevap bölümüne ulaşabilirsiniz.</p>
-          <p>Bu bölüm yalnızca <b>bilgi/eğitim amaçlıdır</b>, gerçek atış emniyet kurallarının ve talimnamelerin (KKT 315-29 vb.) yerini tutmaz.</p>`
-      },
-      {
-        title: '❓ Sık Sorulan Sorular',
-        content: `
-          <h3>"Menzil dışı" hatası neden çıkıyor?</h3>
-          <p>Hesaplanan mesafe, seçili mühimmatın azami menzilini aşıyor demektir. Daha uzun menzilli bir mühimmat seçin veya Mevzi/Hedef koordinatlarını kontrol edin.</p>
-
-          <h3>MGRS koordinatını nasıl yazmalıyım?</h3>
-          <p>Standart format: <code>37S CB 50000 50000</code> (Zone+Bant, 100km kare harfleri, 5 haneli doğu, 5 haneli kuzey). Boşluksuz yapıştırılan koordinatlar da otomatik tanınır.</p>
-
-          <h3>Düzeltme girdiğim hâlde sonuç değişmiyor, neden?</h3>
-          <p>Düzeltme girdikten sonra ilgili <b>Hesapla</b> butonuna (ana ekran için "Hesapla", demet için "Demet Hesapla") tekrar basmanız gerekir; alanlar otomatik yeniden hesaplama tetiklemez.</p>
-
-          <h3>Karanlık/aydınlık tema nasıl değiştirilir?</h3>
-          <p>Üst kısımdaki tema değiştirme düğmesine basarak koyu ve açık tema arasında geçiş yapabilirsiniz.</p>
-
-          <h3>Uygulamayı telefonuma nasıl kurarım?</h3>
-          <p>Üstte görünen <b>"📲 Uygulamayı Kur"</b> butonuna basarak uygulamayı ana ekranınıza kısayol olarak ekleyebilirsiniz (PWA).</p>`
-      }
-    ];
-
-    let kilavuzCurrentPage = 0;
-
-    function renderKilavuz(idx) {
-      kilavuzCurrentPage = idx;
-      const p = KILAVUZ_PAGES[idx];
-
-      const tabBar = document.getElementById('kilavuzTabBar');
-      tabBar.innerHTML = '';
-      KILAVUZ_PAGES.forEach((pg, i) => {
-        const btn = document.createElement('button');
-        btn.onclick = () => renderKilavuz(i);
-        const active = i === idx;
-        btn.style.cssText = 'padding:10px 16px;border:none;border-bottom:2.5px solid '
-          + (active ? '#1c2f6e' : 'transparent')
-          + ';background:none;font-family:inherit;font-size:.75rem;font-weight:'
-          + (active ? '700' : '500')
-          + ';color:' + (active ? '#1c2f6e' : '#667085')
-          + ';cursor:pointer;white-space:nowrap;transition:.15s;';
-        btn.textContent = pg.title;
-        tabBar.appendChild(btn);
-      });
-
-      document.getElementById('kilavuzContent').innerHTML = p.content;
-    }
 
     let bilgiCurrentPage = 0;
 
@@ -5868,7 +5595,6 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('mainApp').style.display = 'block'; document.getElementById('loginModal').remove();
             var bn = document.getElementById('bottomNav'); if (bn) bn.style.display = 'flex';
             var mf = document.getElementById('mapFab'); if (mf) mf.style.display = 'flex';
-            var kf = document.getElementById('kilavuzFab'); if (kf) kf.style.display = 'flex';
         } else {
             document.getElementById('loginError').innerText = 'Hatalı kullanıcı adı veya şifre';
         }
@@ -6034,11 +5760,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('bilgiModal').addEventListener('click', function(e) {
       if (e.target === this) this.style.display = 'none';
     });
-    // Init kılavuz modal
-    document.getElementById('kilavuzModal').addEventListener('click', function(e) {
-      if (e.target === this) this.style.display = 'none';
-    });
-    renderKilavuz(0);
 
 
     // ── YAPAY ZEKA ASİSTANI (Groq / Llama-3.3-70B) ─────────────────────────
@@ -6174,7 +5895,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 <button type="button" id="mapFab" onclick="bnGotoMap()"><span class="mf-ico">🗺️</span><span class="mf-txt">HARİTA</span></button>
-<button type="button" id="kilavuzFab" onclick="document.getElementById('kilavuzModal').style.display='flex'"><span class="mf-ico">📖</span><span class="mf-txt">KILAVUZ</span></button>
 <nav id="bottomNav">
   <button type="button" onclick="bnGoto('metroToggle','metroContent')"><span class="bn-ico">📡</span>Metro</button>
   <button type="button" onclick="bnGoto('corrToggle','corrContent')"><span class="bn-ico">⚙️</span>Düzeltme</button>
@@ -6183,4 +5903,4 @@ document.addEventListener("DOMContentLoaded", function() {
   <button type="button" onclick="bnGoto('konvoyToggle','konvoyContent')"><span class="bn-ico">🚗</span>Konvoy</button>
 </nav>
 </body>
-</html>a
+</html>
