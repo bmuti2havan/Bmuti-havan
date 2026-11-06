@@ -2744,6 +2744,19 @@ input:focus, select:focus, textarea:focus {
         </div>
         <div id="mapCollapsible" style="display:block;">
 
+        <!-- HARİTA ÜSTÜ GİRDİLER: ana alanlarla çift yönlü senkron -->
+        <div id="mapGirdiler" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+          <label class="mg-l">Havan Yan (DTN Yan)<input type="text" inputmode="decimal" id="mgYan" data-ana="dtnYan" placeholder="2800"></label>
+          <label class="mg-l">DTN İstikamet (İA)<input type="text" inputmode="decimal" id="mgIa" data-ana="dtnAzimuth" placeholder="1575"></label>
+          <label class="mg-l" style="grid-column:1/3">Mevzi Koordinatı<input type="text" id="mgMevzi" data-ana="mevziGrid" placeholder="37S CB 50000 50000" autocapitalize="characters"></label>
+          <label class="mg-l" style="grid-column:1/3">Hedef Koordinatı<input type="text" id="mgHedef" data-ana="hedefGrid" placeholder="37S CB 53000 52000" autocapitalize="characters"></label>
+          <button type="button" id="mgHesapla" style="grid-column:1/3;padding:9px;background:#1f3a5f;color:#fff;border:none;border-radius:var(--r);font-weight:700;font-size:.8rem;cursor:pointer;">🎯 Haritadan Hesapla</button>
+        </div>
+        <style>
+          .mg-l{display:flex;flex-direction:column;font-size:.62rem;font-weight:700;color:var(--text-sec);gap:2px;min-width:0}
+          .mg-l input{padding:7px 8px;border:1.5px solid var(--c-border);border-radius:var(--r);font-family:'DM Mono',monospace;font-size:.78rem;width:100%;min-width:0;background:var(--c-card,#fff);color:inherit}
+        </style>
+
         <!-- KOORDİNAT ARAMA: MGRS yazınca hedef olarak haritaya yerleştirir -->
         <div style="display:flex;gap:6px;margin-bottom:8px;">
           <input type="text" id="mapKoordArama" placeholder="🔍 MGRS koordinatı yazın (örn: 37S CB 50000 50000)"
@@ -2832,7 +2845,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-39</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-40</span>
     </span>
   </div>
 
@@ -11601,6 +11614,52 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
   }
   if (document.readyState === 'complete') baslat(); else window.addEventListener('load', baslat);
 })();
+
+    // ── Harita üstü girdiler: ana alanlarla çift yönlü senkron ──
+    (function () {
+        var alanlar = Array.prototype.slice.call(document.querySelectorAll('#mapGirdiler input[data-ana]'));
+        function ana(el) { return document.getElementById(el.getAttribute('data-ana')); }
+        function aynala() {
+            alanlar.forEach(function (el) {
+                var a = ana(el);
+                if (a && document.activeElement !== el && el.value !== a.value) el.value = a.value;
+            });
+        }
+        function haritaYenile() {
+            if (typeof _map === 'undefined' || !_map) return;
+            var m = (document.getElementById('mevziGrid').value || '').trim();
+            var h = (document.getElementById('hedefGrid').value || '').trim();
+            try { if (m && mgrsToUtm(m)) mapShowMevzi(); } catch (e) {}
+            try { if (h && mgrsToUtm(h)) mapShowHedef(); } catch (e) {}
+            var st = document.getElementById('mapStatus'); if (st) st.textContent = mapDurumSatiri();
+        }
+        alanlar.forEach(function (el) {
+            el.addEventListener('input', function () {
+                var a = ana(el); if (!a) return;
+                a.value = el.value;
+                a.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+            el.addEventListener('change', function () {
+                var a = ana(el); if (a) a.dispatchEvent(new Event('change', { bubbles: true }));
+                el.style.borderColor = '';
+                if (/Grid|Koord/i.test(el.previousSibling ? el.previousSibling.textContent : '') || el.id === 'mgMevzi' || el.id === 'mgHedef') {
+                    var v = el.value.trim();
+                    if (v && !mgrsToUtm(v)) { el.style.borderColor = '#dc2626'; return; }
+                }
+                haritaYenile();
+            });
+        });
+        document.getElementById('mgHesapla').addEventListener('click', function () {
+            var st = document.getElementById('mapStatus');
+            var m = document.getElementById('mgMevzi').value.trim(), h = document.getElementById('mgHedef').value.trim();
+            if (!mgrsToUtm(m)) { if (st) st.textContent = '⚠️ Mevzi koordinatı geçersiz.'; return; }
+            if (!mgrsToUtm(h)) { if (st) st.textContent = '⚠️ Hedef koordinatı geçersiz.'; return; }
+            haritaYenile();
+            document.getElementById('hesaplaBtn').click();
+            setTimeout(function () { var s2 = document.getElementById('mapStatus'); if (s2) s2.textContent = mapDurumSatiri(); }, 400);
+        });
+        setInterval(aynala, 600); aynala();
+    })();
 </script>
 </body>
 </html>
