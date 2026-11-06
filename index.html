@@ -2858,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-43</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-44</span>
     </span>
   </div>
 
@@ -11739,5 +11739,185 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
     })();
 </script>
 <div id="haisImza" style="position:fixed;top:3px;right:8px;z-index:99999;pointer-events:none;font:700 10px/1.2 'DM Sans',system-ui,sans-serif;color:#fff;background:rgba(11,31,61,.78);padding:3px 8px;border-radius:10px;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.5);">P.Uzm.Çvş Burak MUTİ</div>
+
+<!-- ═══ UYGULAMA GÖRÜNÜMÜ: alt menü, Diğer, tam ekran paneller, sonuç ekranı ═══ -->
+<style>
+body.app-mode{padding-bottom:132px}
+body.app-mode .left-panel > .fn-toggle,
+body.app-mode .left-panel > .accordion-content:not(.app-sheet),
+body.app-mode #ortakGorevAcBtnGozet,
+body.app-mode .right-panel:not(.app-sheet){display:none!important}
+body.app-mode .left-panel{max-height:none}
+.app-sheet{position:fixed!important;left:0;right:0;top:52px;bottom:62px;overflow:auto;z-index:9000;padding:12px 12px 30px!important;
+  background:#fbfcfe;-webkit-overflow-scrolling:touch;max-height:none!important;border:0!important;display:block!important;min-width:0!important;flex:none!important;box-sizing:border-box}
+[data-theme="dark"] .app-sheet{background:#0d1117}
+.right-panel.app-sheet.mode-sonuc > #appHaritaPanel{display:none!important}
+.right-panel.app-sheet.mode-harita > :not(#appHaritaPanel){display:none!important}
+#appSheetBar{position:fixed;left:0;right:0;top:0;height:52px;z-index:9100;display:none;align-items:center;gap:10px;padding:0 145px 0 10px;background:#0b1f3d;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#appSheetBar button{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:800;font-size:.85rem;cursor:pointer}
+#appKapat{display:none}
+#appSheetBar .t{font-weight:800;font-size:.95rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appNav{position:fixed;left:0;right:0;bottom:0;height:62px;z-index:9200;display:none;background:#0b1f3d;border-top:2px solid #c8102e;box-shadow:0 -2px 10px rgba(0,0,0,.3);padding-bottom:env(safe-area-inset-bottom)}
+#appNav button{flex:1;background:none;border:0;color:#a9b8d0;font-size:.62rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;position:relative;font-family:inherit}
+#appNav button .i{font-size:1.35rem;line-height:1}
+#appNav button.on{color:#fff;background:rgba(255,255,255,.1)}
+#appNav .dot{position:absolute;top:7px;right:calc(50% - 22px);width:10px;height:10px;border-radius:50%;background:#e11d48;display:none;border:2px solid #0b1f3d}
+#appOzet{position:fixed;left:8px;right:8px;bottom:68px;z-index:9150;display:none;background:#12315c;color:#fff;border-radius:12px;padding:8px 12px;font-weight:800;font-size:.8rem;box-shadow:0 2px 10px rgba(0,0,0,.4);cursor:pointer;justify-content:space-between;gap:8px;border:1px solid rgba(255,255,255,.25)}
+#appOzet span b{color:#ffd166}
+#appDiger{display:none;position:fixed;left:0;right:0;top:52px;bottom:62px;z-index:9000;overflow:auto;background:#fbfcfe;padding:14px 12px 30px;box-sizing:border-box}
+[data-theme="dark"] #appDiger{background:#0d1117}
+#appDiger .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#appDiger .tile{background:#fff;border:1.5px solid #cfd8e6;border-radius:14px;padding:16px 8px;text-align:center;font-weight:800;font-size:.8rem;color:#12315c;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center;font-family:inherit;min-height:92px;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#appDiger .tile .i{font-size:1.9rem;line-height:1}
+[data-theme="dark"] #appDiger .tile{background:#161b22;color:#e6edf3;border-color:#30363d}
+#appDiger h3{margin:14px 2px 8px;font-size:.78rem;color:#6b7a90;letter-spacing:.5px}
+#appUstBildirim{display:none}
+body.app-mode #appUstBildirim{display:block}
+</style>
+<div id="appSheetBar"><button type="button" id="appGeri">← Geri</button><div class="t" id="appBaslik"></div><button type="button" id="appKapat">✕</button></div>
+<div id="appDiger"></div>
+<div id="appOzet" onclick="appAc('sonuc')"><span id="appOzetMetin"></span><span>Detay ›</span></div>
+<div id="appNav">
+  <button type="button" data-nav="hesap" class="on"><span class="i">🏠</span>Hesap</button>
+  <button type="button" data-nav="sonuc"><span class="i">📊</span>Sonuç<span class="dot" id="appNavDot"></span></button>
+  <button type="button" data-nav="harita"><span class="i">🗺️</span>Harita</button>
+  <button type="button" data-nav="diger"><span class="i">☰</span>Diğer</button>
+</div>
+<script>
+(function () {
+  var KEY = 'hais_gorunum';
+  var MODULLER = ['konvoyToggle','demetToggle','koordAydToggle','sisPerdeToggle','polarToggle','gozetPanelToggle','ucHedefToggle','metroToggle','corrToggle','kFaktorToggle','ortakToggle','gecmisToggle'];
+  var el = function (i) { return document.getElementById(i); };
+  var mainApp = el('mainApp'), nav = el('appNav'), bar = el('appSheetBar'), diger = el('appDiger'), ozet = el('appOzet');
+  [nav, bar, diger, ozet].forEach(function (x) { mainApp.appendChild(x); });
+  var acik = null;        // { tip:'modul'|'sonuc'|'harita'|'diger', node, ... }
+  var geriDiger = false;
+  function uygMod() { try { return localStorage.getItem(KEY) !== 'klasik'; } catch (e) { return true; } }
+
+  // Ortak bildirim panellerini sağ panelden çıkar: sonuç ekranı kapalıyken de görünsün
+  var ust = document.createElement('div'); ust.id = 'appUstBildirim';
+  var content = document.querySelector('.content'); content.parentNode.insertBefore(ust, content);
+  ['ortakBildirimBanner','gozetIstekPanel','ortakOnayRozetleri','komutanAksiyonPanel','mangaAksiyonPanel'].forEach(function (i) { var e = el(i); if (e) ust.appendChild(e); });
+  var rp = document.querySelector('.right-panel');
+  var harita = rp.lastElementChild; harita.id = 'appHaritaPanel';
+
+  function baslikOf(t) { return t.innerText.replace(/[▸▾]/g, '').replace(/\s+/g, ' ').trim(); }
+  function sheetKapatNode() {
+    if (!acik) return;
+    if (acik.tip === 'modul') { acik.node.classList.remove('app-sheet'); acik.node.classList.remove('show'); acik.toggle.classList.remove('open'); }
+    if (acik.tip === 'sonuc' || acik.tip === 'harita') { rp.classList.remove('app-sheet', 'mode-sonuc', 'mode-harita'); }
+    if (acik.tip === 'diger') diger.style.display = 'none';
+    acik = null;
+  }
+  function barGoster(baslik) { bar.style.display = 'flex'; el('appBaslik').textContent = baslik; }
+  function navIsaretle(k) { Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-nav') === k); }); }
+  function ozetGuncelle() {
+    var r = window.__sonHesaplananSonuc;
+    var goster = uygMod() && r && !acik;
+    if (!goster) { ozet.style.display = 'none'; return; }
+    var y = Math.round(r.yan), yk = Math.round(r.yukselis), m = Math.round(r.mesafe);
+    if (isNaN(y) || isNaN(yk)) { ozet.style.display = 'none'; return; }
+    el('appOzetMetin').innerHTML = 'YAN <b>' + y + '</b> · YÜK <b>' + yk + '</b> · <b>' + m + '</b> m';
+    ozet.style.display = 'flex';
+  }
+  window.appKapat = function () {
+    sheetKapatNode(); bar.style.display = 'none'; geriDiger = false; navIsaretle('hesap'); ozetGuncelle();
+  };
+  function modulAc(toggleId, digerden) {
+    var t = el(toggleId), c = el(toggleId.replace('Toggle', 'Content')); if (!t || !c) return;
+    sheetKapatNode();
+    c.classList.add('show'); t.classList.add('open'); c.classList.add('app-sheet'); c.scrollTop = 0;
+    acik = { tip: 'modul', node: c, toggle: t }; geriDiger = !!digerden;
+    barGoster(baslikOf(t)); navIsaretle(digerden ? 'diger' : ''); ozet.style.display = 'none';
+  }
+  window.appAc = function (tip) {
+    if (!uygMod()) return;
+    if (tip === 'hesap') { appKapat(); window.scrollTo(0, 0); return; }
+    if (tip === 'sonuc' || tip === 'harita') {
+      sheetKapatNode(); rp.classList.add('app-sheet', tip === 'sonuc' ? 'mode-sonuc' : 'mode-harita'); rp.scrollTop = 0;
+      acik = { tip: tip }; geriDiger = false; barGoster(tip === 'sonuc' ? '📊 Sonuç' : '🗺️ Harita'); navIsaretle(tip); ozet.style.display = 'none';
+      el('appNavDot').style.display = 'none';
+      if (tip === 'harita') setTimeout(function () { try { if (typeof _map !== 'undefined' && _map) _map.invalidateSize(); } catch (e) {} }, 200);
+      return;
+    }
+    if (tip === 'diger') { digerGoster(); return; }
+  };
+  function tile(ikon, ad, fn) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'tile';
+    b.innerHTML = '<span class="i">' + ikon + '</span><span>' + ad + '</span>'; b.addEventListener('click', fn); return b;
+  }
+  function digerGoster() {
+    sheetKapatNode(); diger.innerHTML = ''; diger.style.display = 'block'; diger.scrollTop = 0;
+    acik = { tip: 'diger' }; barGoster('☰ Diğer İşlevler'); navIsaretle('diger'); ozet.style.display = 'none';
+    var h1 = document.createElement('h3'); h1.textContent = 'HESAPLAMA MODÜLLERİ'; diger.appendChild(h1);
+    var g = document.createElement('div'); g.className = 'grid'; diger.appendChild(g);
+    MODULLER.forEach(function (id) {
+      var t = el(id); if (!t) return;
+      var tx = baslikOf(t); var m = tx.match(/^(\S+)\s+(.*)$/);
+      g.appendChild(tile(m ? m[1] : '•', m ? m[2] : tx, function () { modulAc(id, true); }));
+    });
+    var h2 = document.createElement('h3'); h2.textContent = 'ARAÇLAR'; diger.appendChild(h2);
+    var g2 = document.createElement('div'); g2.className = 'grid'; diger.appendChild(g2);
+    var gb = el('ortakGorevAcBtnGozet');
+    if (gb) g2.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }));
+    g2.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }));
+    g2.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }));
+    g2.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }));
+  }
+  function uygula() {
+    var a = uygMod();
+    if (!a) { sheetKapatNode(); bar.style.display = 'none'; }
+    document.body.classList.toggle('app-mode', a);
+    nav.style.display = a ? 'flex' : 'none';
+    if (!a) { ozet.style.display = 'none'; ensureKlasikDugme(); }
+    else { var k = el('appUygBtn'); if (k) k.remove(); ozetGuncelle(); }
+  }
+  function ensureKlasikDugme() {
+    if (el('appUygBtn')) return;
+    var b = document.createElement('button'); b.id = 'appUygBtn'; b.type = 'button'; b.textContent = '📱 Uygulama Görünümü';
+    b.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9200;background:#0b1f3d;color:#fff;border:0;border-radius:20px;padding:9px 14px;font-weight:800;font-size:.75rem;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    b.addEventListener('click', function () { try { localStorage.removeItem(KEY); } catch (e) {} uygula(); });
+    document.body.appendChild(b);
+  }
+  // Alt menü
+  Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) { b.addEventListener('click', function () { appAc(b.getAttribute('data-nav')); }); });
+  el('appGeri').addEventListener('click', function () { if (geriDiger) { digerGoster(); } else appKapat(); });
+  el('appKapat').addEventListener('click', appKapat);
+  // Dışarıdan açılan paneller (başka kodlar akordeonu açarsa) tam ekran olsun
+  MODULLER.forEach(function (id) {
+    var c = el(id.replace('Toggle', 'Content')); if (!c) return;
+    new MutationObserver(function () {
+      if (!uygMod()) return;
+      if (c.classList.contains('show') && !c.classList.contains('app-sheet')) modulAc(id, false);
+    }).observe(c, { attributes: true, attributeFilter: ['class'] });
+  });
+  // HESAPLA'ya (kullanıcı dokunuşuyla) basınca sonuç ekranı aç
+  el('hesaplaBtn').addEventListener('click', function (e) {
+    if (!uygMod() || !e.isTrusted) return;
+    var onceki = JSON.stringify(window.__sonHesaplananSonuc && [window.__sonHesaplananSonuc.yan, window.__sonHesaplananSonuc.yukselis, window.__sonHesaplananSonuc.mesafe]);
+    setTimeout(function () {
+      var r = window.__sonHesaplananSonuc; if (!r) return;
+      var hata = document.querySelector('#sonucAlan .error, #sonucAlan .err');
+      appAc('sonuc'); window.scrollTo(0, 0);
+    }, 450);
+  });
+  // Yeni sonuç geldiğinde (örn. haritadan seçim) özet şeridi ve nokta
+  var sonImza = '';
+  setInterval(function () {
+    var r = window.__sonHesaplananSonuc; var im = r ? [r.yan, r.yukselis, r.mesafe].join('|') : '';
+    if (im !== sonImza) {
+      sonImza = im;
+      if (uygMod() && acik && acik.tip !== 'sonuc' && im) el('appNavDot').style.display = 'block';
+    }
+    ozetGuncelle();
+  }, 600);
+  // Başlat: ana ekran görünür olunca
+  function basla() { uygula(); }
+  if (getComputedStyle(mainApp).display !== 'none') basla();
+  var gozle = new MutationObserver(function () { if (getComputedStyle(mainApp).display !== 'none') { gozle.disconnect(); basla(); } });
+  gozle.observe(mainApp, { attributes: true, attributeFilter: ['style', 'class'] });
+  basla();
+})();
+</script>
 </body>
 </html>
