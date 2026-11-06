@@ -2735,6 +2735,7 @@ input:focus, select:focus, textarea:focus {
             <button id="mapMevziBtn" class="map-ctrl-btn">📍 Mevzi</button>
             <button id="mapHedefBtn" class="map-ctrl-btn map-ctrl-target">🎯 Hedef</button>
             <button id="mapFitBtn"   class="map-ctrl-btn">⛶ Sığdır</button>
+            <button id="mapKonumumBtn" class="map-ctrl-btn" type="button" title="Canlı konumumu haritada göster (mevzi/hedefi değiştirmez)">🔵 Konumum</button>
             <button id="mapGpsBtn"   class="map-ctrl-btn map-ctrl-gps">
               <span id="gpsDot" style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;"></span>
               <span id="gpsLabel">📡 Konumumdan Al</span>
@@ -2831,7 +2832,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-37</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-38</span>
     </span>
   </div>
 
@@ -5289,12 +5290,14 @@ body {
             kvGridEl.value = hedefGrid;
             window.__sonKvHedef = hedefGrid.trim();
         }
-        if (typeof sonuc !== 'undefined' && sonuc && sonuc.ucusSuresi) {
-            document.getElementById('kvUcus').value = sonuc.ucusSuresi;
+        var _son = window.__sonHesaplananSonuc; // son "Hesapla" sonucu
+        var _ucus = _son && (_son.ucusSuresi || _son.flightTime);
+        if (_ucus) {
+            document.getElementById('kvUcus').value = _ucus;
         }
         var kal    = (typeof currentCaliber !== 'undefined') ? currentCaliber + 'mm' : '—';
         var ucus   = document.getElementById('kvUcus').value || '—';
-        var mesafe = (typeof sonuc !== 'undefined' && sonuc && sonuc.mesafe) ? sonuc.mesafe + 'm' : '—';
+        var mesafe = (_son && _son.mesafe) ? _son.mesafe + 'm' : '—';
         document.getElementById('kvSistemBilgiLeft').innerHTML =
             '<b>' + kal + '</b> &nbsp;·&nbsp; Uçuş: <b>' + ucus + 'sn</b> &nbsp;·&nbsp; Mesafe: <b>' + mesafe + '</b>';
     }
@@ -5472,6 +5475,8 @@ body {
         var mevziRakVal  = parseFloat(document.getElementById('mevziRakim') ? document.getElementById('mevziRakim').value : '') || 0;
         var hedefRakVal  = parseFloat(document.getElementById('hedefRakim') ? document.getElementById('hedefRakim').value : '') || 0;
         var balistikVar  = !!mevziGridVal && typeof calculateTargetSimpleWithYanCorrection === 'function';
+        var dtnIaKv = parseFloat(document.getElementById('dtnAzimuth').value) || 0;   // Yan, ana hesapla aynı olsun
+        var dtnYanKv = numOr('dtnYan', 2800);
 
         // Bir nokta için yan/yükseliş/BH çözümü döndürür. Hata olursa {hata:'sebep'} döner.
         // atisMesafe = mevzi→nokta gerçek atış mesafesi (konvoyun kat ettiği yol DEĞİL).
@@ -5480,7 +5485,7 @@ body {
             var atisMes = null;
             try { atisMes = distanceMgrs(mevziGridVal, gridStr); } catch(e) {}
             try {
-                var s = calculateTargetSimpleWithYanCorrection(gridStr, hedefRakVal, mevziGridVal, mevziRakVal, 0, 0, 'yok', 0, 'yok', 0, 0);
+                var s = calculateTargetSimpleWithYanCorrection(gridStr, hedefRakVal, mevziGridVal, mevziRakVal, dtnIaKv, dtnYanKv, 'yok', 0, 'yok', 0, 0);
                 if (!s) return { hata: 'çözüm yok', atisMes: atisMes };
                 return { yan: s.yan, yukselis: s.yukselis, bh: s.bh, atisMes: (s.mesafe != null ? s.mesafe : atisMes) };
             } catch (e) {
@@ -9022,6 +9027,38 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
         var hg = (document.getElementById('hedefGrid').value || '').trim();
         if (hg && mgrsToUtm(hg)) mapShowHedef();
         if (st) st.textContent = mapDurumSatiri();
+        // Canlı konum noktası (yalnızca gösterir; mevzi/hedefi DEĞİŞTİRMEZ, haritayı kaydırmaz)
+        if (!_liveWatch) mapKonumGoster(true, false);
+    }
+    var _liveWatch = null, _liveMarker = null, _liveCircle = null;
+    function mapKonumGoster(ac, git) {
+        var btn = document.getElementById('mapKonumumBtn'), st = document.getElementById('mapStatus');
+        if (!ac) {
+            if (_liveWatch !== null) navigator.geolocation.clearWatch(_liveWatch);
+            _liveWatch = null;
+            if (_map && _liveMarker) { _map.removeLayer(_liveMarker); _liveMarker = null; }
+            if (_map && _liveCircle) { _map.removeLayer(_liveCircle); _liveCircle = null; }
+            if (btn) { btn.style.background = ''; btn.style.color = ''; btn.textContent = '🔵 Konumum'; }
+            return;
+        }
+        if (!navigator.geolocation) { if (st) st.textContent = 'Tarayıcınız konum özelliğini desteklemiyor.'; return; }
+        initMap();
+        if (btn) { btn.style.background = '#2563eb'; btn.style.color = '#fff'; btn.textContent = '🔵 Konumum (açık)'; }
+        var ilk = true;
+        _liveWatch = navigator.geolocation.watchPosition(function (pos) {
+            var ll = [pos.coords.latitude, pos.coords.longitude], acc = Math.round(pos.coords.accuracy);
+            if (!_liveMarker) {
+                _liveMarker = L.marker(ll, { interactive: false, zIndexOffset: 500, icon: L.divIcon({ className: '',
+                    html: '<div style="width:16px;height:16px;background:#2563eb;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(37,99,235,.45),0 1px 4px rgba(0,0,0,.5)"></div>', iconAnchor: [8, 8] }) }).addTo(_map);
+                _liveCircle = L.circle(ll, { radius: acc, color: '#2563eb', weight: 1, fillOpacity: 0.12, interactive: false }).addTo(_map);
+            } else { _liveMarker.setLatLng(ll); _liveCircle.setLatLng(ll); _liveCircle.setRadius(acc); }
+            if (ilk && git) _map.setView(ll, Math.max(_map.getZoom(), 15));
+            ilk = false;
+            if (st) st.textContent = '🔵 Konumunuz haritada (±' + acc + ' m): ' + latLonToMgrsApprox(ll[0], ll[1]) + ' — mevzi değişmedi.';
+        }, function (err) {
+            if (err && err.code === 1) { mapKonumGoster(false); if (st) st.textContent = 'Konum izni reddedildi. Tarayıcı ayarlarından izin verin.'; }
+            else if (st) st.textContent = '🔵 Konum aranıyor… (GPS sinyali bekleniyor)';
+        }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
     }
     // Cihazın konumunu BİR KEZ alıp Mevzi Grid ve Mevzi Rakımı alanlarına yazar (sürekli izleme yok).
     function mapKonumdanMevziAl() {
@@ -11073,6 +11110,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── GERÇEK ZAMANLI KONUM (GPS) ────────────────────────────────────────────
 
     document.getElementById('mapGpsBtn').addEventListener('click', function() { mapKonumdanMevziAl(); });
+    document.getElementById('mapKonumumBtn').addEventListener('click', function() { if (_liveWatch !== null) mapKonumGoster(false); else mapKonumGoster(true, true); });
 
 
 
