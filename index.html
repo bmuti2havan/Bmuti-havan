@@ -2767,6 +2767,19 @@ input:focus, select:focus, textarea:focus {
         </div>
         <div id="mapKoordAramaStatus" style="font-size:.68rem;color:#b91c1c;margin:-4px 0 6px 2px;min-height:14px;"></div>
 
+        <!-- SEÇİM MODU: haritaya dokununca ne seçilsin? -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;">
+          <button type="button" id="mapSecMevziBtn" class="sec-btn">📍 MEVZİ SEÇ</button>
+          <button type="button" id="mapSecHedefBtn" class="sec-btn sec-on">🎯 HEDEF SEÇ</button>
+        </div>
+        <div id="mapSecIpucu" style="font-size:.68rem;color:var(--text-sec);margin:0 0 8px 2px;">🎯 Haritaya dokun: hedef seçilir ve hesap otomatik yapılır.</div>
+        <style>
+          .sec-btn{padding:11px 6px;border:2px solid #1f3a5f;background:#fff;color:#1f3a5f;border-radius:var(--r);font-weight:800;font-size:.82rem;cursor:pointer}
+          .sec-btn.sec-on{background:#1f3a5f;color:#fff}
+          #mapSecHedefBtn{border-color:#c0392b;color:#c0392b}#mapSecHedefBtn.sec-on{background:#c0392b;color:#fff}
+          #mapDiv.sec-mevzi{cursor:crosshair!important}
+        </style>
+
         <div style="position:relative;display:block;width:100%;">
           <div id="mapDiv" style="height:480px;width:100%;position:relative;border-radius:var(--r);border:1.5px solid var(--c-border);overflow:hidden;background:#1a1a2e;display:block;"></div>
           <button type="button" id="mapActivateBtn" onclick="mapActivateGps()">
@@ -2845,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-40</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-41</span>
     </span>
   </div>
 
@@ -8684,6 +8697,7 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
 
         // Haritaya tıklayınca otomatik hedef + anlık hesaplama
         _map.on('click', function(e) {
+            if (_secModu === 'mevzi') { mapPlaceMevziAt(e.latlng.lat, e.latlng.lng); mapSecModu('hedef', true); return; }
             mapPlaceTargetAt(e.latlng.lat, e.latlng.lng);
         });
     }
@@ -8691,6 +8705,34 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
     // Belirtilen lat/lng'i HEDEF olarak haritaya yerleştirir: marker koyar, mevziden
     // mesafe/azimut hesaplar, rakım çeker, sonuç panelini gösterir. Hem harita tıklamasından
     // hem de koordinat arama kutusundan çağrılır - aynı davranış garanti edilir.
+    var _secModu = 'hedef';
+    function mapSecModu(m, sessiz) {
+        _secModu = m;
+        var bm = document.getElementById('mapSecMevziBtn'), bh = document.getElementById('mapSecHedefBtn');
+        if (bm) bm.classList.toggle('sec-on', m === 'mevzi');
+        if (bh) bh.classList.toggle('sec-on', m === 'hedef');
+        var d = document.getElementById('mapDiv'); if (d) d.classList.toggle('sec-mevzi', m === 'mevzi');
+        var ip = document.getElementById('mapSecIpucu');
+        if (ip && !sessiz) ip.textContent = m === 'mevzi' ? '📍 Haritaya BİR KEZ dokun: mevzi o noktaya alınır, sonra hedef seçime dönülür.' : '🎯 Haritaya dokun: hedef seçilir ve hesap otomatik yapılır.';
+        if (ip && sessiz) ip.textContent = '✅ Mevzi seçildi. 🎯 Şimdi haritaya dokunarak hedef seçebilirsiniz.';
+    }
+    function mapPlaceMevziAt(lat, lng) {
+        var grid = latLonToMgrsApprox(lat, lng);
+        var el = document.getElementById('mevziGrid');
+        el.value = grid; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true }));
+        _gpsAltitudeMatchesGrid = false;
+        try { fetchElevation(grid, 'mevziRakim'); } catch (e) {}
+        if (_mevziMarker) _map.removeLayer(_mevziMarker);
+        _mevziMarker = L.marker([lat, lng], { icon: mapIconHtml('#1f3a5f', 'M') }).addTo(_map);
+        _mevziMarker.bindPopup('<b>📍 MEVZİ</b><br><span style="font-family:monospace">' + grid + '</span>');
+        if (_hedefMarker) {
+            if (_hatLat) _map.removeLayer(_hatLat);
+            _hatLat = L.polyline([[lat, lng], _hedefMarker.getLatLng()], { color: '#e5bc66', weight: 2.5, dashArray: '6,4', opacity: .9 }).addTo(_map);
+        }
+        var st = document.getElementById('mapStatus'); if (st) st.textContent = '📍 Mevzi seçildi: ' + grid;
+        var hg = (document.getElementById('hedefGrid').value || '').trim();
+        if (hg && mgrsToUtm(hg)) setTimeout(function () { document.getElementById('hesaplaBtn').click(); }, 600);
+    }
     function mapPlaceTargetAt(lat, lng) {
             // Eski marker ve çizgiyi sil
             if (_hedefMarker) { _map.removeLayer(_hedefMarker); _hedefMarker = null; }
@@ -11109,6 +11151,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Buton listeners
     document.getElementById('mapMevziBtn').addEventListener('click', mapShowMevzi);
+    document.getElementById('mapSecMevziBtn').addEventListener('click', function () {
+        initMap(); var a = document.getElementById('mapActivateBtn'); if (a) a.style.display = 'none';
+        mapSecModu(_secModu === 'mevzi' ? 'hedef' : 'mevzi');
+    });
+    document.getElementById('mapSecHedefBtn').addEventListener('click', function () {
+        initMap(); var a = document.getElementById('mapActivateBtn'); if (a) a.style.display = 'none';
+        mapSecModu('hedef');
+    });
     document.getElementById('mapHedefBtn').addEventListener('click', mapShowHedef);
     document.getElementById('mapFitBtn').addEventListener('click', function() { initMap(); mapFit(); });
 
