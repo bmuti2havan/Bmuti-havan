@@ -2858,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-41</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-42</span>
     </span>
   </div>
 
@@ -6923,9 +6923,35 @@ const dtac_m43a1b1 = {
         return { zone, latBand: latBandChar, easting, northing };
     }
 
+    // Farklı UTM dilimlerindeki iki nokta (ör. 30°D çizgisinin iki yanı): ikinci noktayı
+    // birinci noktanın dilimine izdüşürür; böylece mesafe/istikamet doğru çıkar.
+    function latLngToUtmZone(lat, lng, zone, isSouth) {
+        const a = 6378137.0, f = 1 / 298.257223563, e2 = f * (2 - f), ep2 = e2 / (1 - e2), k0 = 0.9996;
+        const lon0 = (zone - 1) * 6 - 180 + 3;
+        const phi = lat * Math.PI / 180, dl = (lng - lon0) * Math.PI / 180;
+        const N = a / Math.sqrt(1 - e2 * Math.sin(phi) * Math.sin(phi));
+        const T = Math.tan(phi) * Math.tan(phi), C = ep2 * Math.cos(phi) * Math.cos(phi), A = dl * Math.cos(phi);
+        const M = a * ((1 - e2 / 4 - 3 * e2 * e2 / 64 - 5 * e2 * e2 * e2 / 256) * phi
+            - (3 * e2 / 8 + 3 * e2 * e2 / 32 + 45 * e2 * e2 * e2 / 1024) * Math.sin(2 * phi)
+            + (15 * e2 * e2 / 256 + 45 * e2 * e2 * e2 / 1024) * Math.sin(4 * phi)
+            - (35 * e2 * e2 * e2 / 3072) * Math.sin(6 * phi));
+        const easting = 500000 + k0 * N * (A + (1 - T + C) * Math.pow(A, 3) / 6 + (5 - 18 * T + T * T + 72 * C - 58 * ep2) * Math.pow(A, 5) / 120);
+        const northing = (isSouth ? 10000000 : 0) + k0 * (M + N * Math.tan(phi) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * Math.pow(A, 4) / 24 + (61 - 58 * T + T * T + 600 * C - 330 * ep2) * Math.pow(A, 6) / 720));
+        return { easting: easting, northing: northing };
+    }
+    function utmAyniDilim(u1, u2) {
+        if (!u1 || !u2 || u1.zone === u2.zone) return u2;
+        const s2 = 'CDEFGHJKLM'.includes(u2.latBand || 'S');
+        const ll = utmToLatLng(u2.zone, u2.easting, u2.northing, s2);
+        if (!ll || isNaN(ll.lat)) return u2;
+        const s1 = 'CDEFGHJKLM'.includes(u1.latBand || 'S');
+        const p = latLngToUtmZone(ll.lat, ll.lng, u1.zone, s1);
+        return { zone: u1.zone, latBand: u2.latBand, easting: p.easting, northing: p.northing };
+    }
     function distanceMgrs(grid1, grid2) {
-        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
+        const u1 = mgrsToUtm(grid1); let u2 = mgrsToUtm(grid2);
         if (!u1 || !u2) return null;
+        u2 = utmAyniDilim(u1, u2);
         const dx = u2.easting - u1.easting;
         const dy = u2.northing - u1.northing;
         return Math.hypot(dx, dy);
@@ -6934,8 +6960,9 @@ const dtac_m43a1b1 = {
     // Grid Bearing (Atış İstikamet Açısı): atan2(dx, dy) ile hesaplanır, kuzeyden saat
     // yönünde ölçülür. Sonuç standart formülle normalize edilir: bearing=(bearing+360)%360
     function azimuthDegrees(grid1, grid2) {
-        const u1 = mgrsToUtm(grid1), u2 = mgrsToUtm(grid2);
+        const u1 = mgrsToUtm(grid1); let u2 = mgrsToUtm(grid2);
         if (!u1 || !u2) return null;
+        u2 = utmAyniDilim(u1, u2);
         const dx = u2.easting - u1.easting;
         const dy = u2.northing - u1.northing;
         let bearing = Math.atan2(dx, dy) * 180 / Math.PI;
