@@ -2858,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-44</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-45</span>
     </span>
   </div>
 
@@ -11790,7 +11790,8 @@ body.app-mode #appUstBildirim{display:block}
   var el = function (i) { return document.getElementById(i); };
   var mainApp = el('mainApp'), nav = el('appNav'), bar = el('appSheetBar'), diger = el('appDiger'), ozet = el('appOzet');
   [nav, bar, diger, ozet].forEach(function (x) { mainApp.appendChild(x); });
-  var acik = null;        // { tip:'modul'|'sonuc'|'harita'|'diger', node, ... }
+  var acik = null;        // { tip:'modul'|'ozel'|'sonuc'|'harita'|'diger', node, ... }
+  window.__appEk = window.__appEk || [];
   var geriDiger = false;
   function uygMod() { try { return localStorage.getItem(KEY) !== 'klasik'; } catch (e) { return true; } }
 
@@ -11805,6 +11806,7 @@ body.app-mode #appUstBildirim{display:block}
   function sheetKapatNode() {
     if (!acik) return;
     if (acik.tip === 'modul') { acik.node.classList.remove('app-sheet'); acik.node.classList.remove('show'); acik.toggle.classList.remove('open'); }
+    if (acik.tip === 'ozel') { acik.node.classList.remove('app-sheet'); acik.node.style.display = 'none'; }
     if (acik.tip === 'sonuc' || acik.tip === 'harita') { rp.classList.remove('app-sheet', 'mode-sonuc', 'mode-harita'); }
     if (acik.tip === 'diger') diger.style.display = 'none';
     acik = null;
@@ -11842,6 +11844,14 @@ body.app-mode #appUstBildirim{display:block}
     }
     if (tip === 'diger') { digerGoster(); return; }
   };
+  function ozelAc(it, digerden) {
+    sheetKapatNode();
+    it.node.style.display = 'block'; it.node.classList.add('app-sheet'); it.node.scrollTop = 0;
+    acik = { tip: 'ozel', node: it.node }; geriDiger = !!digerden;
+    barGoster(it.ikon + ' ' + it.ad); navIsaretle('diger'); ozet.style.display = 'none';
+    if (it.onAc) { try { it.onAc(); } catch (e) {} }
+  }
+  window.appOzelAc = function (id) { var it = window.__appEk.filter(function (x) { return x.id === id; })[0]; if (it) ozelAc(it, false); };
   function tile(ikon, ad, fn) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'tile';
     b.innerHTML = '<span class="i">' + ikon + '</span><span>' + ad + '</span>'; b.addEventListener('click', fn); return b;
@@ -11856,11 +11866,15 @@ body.app-mode #appUstBildirim{display:block}
       var tx = baslikOf(t); var m = tx.match(/^(\S+)\s+(.*)$/);
       g.appendChild(tile(m ? m[1] : '•', m ? m[2] : tx, function () { modulAc(id, true); }));
     });
+    window.__appEk.forEach(function (it) { if (!it.node) return;
+      g.appendChild(tile(it.ikon, it.ad, function () { ozelAc(it, true); })); });
     var h2 = document.createElement('h3'); h2.textContent = 'ARAÇLAR'; diger.appendChild(h2);
     var g2 = document.createElement('div'); g2.className = 'grid'; diger.appendChild(g2);
     var gb = el('ortakGorevAcBtnGozet');
     if (gb) g2.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }));
     g2.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }));
+    window.__appEk.forEach(function (it) { if (!it.fn) return;
+      g2.appendChild(tile(it.ikon, it.ad, function () { it.fn(); })); });
     g2.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }));
     g2.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }));
   }
@@ -11917,6 +11931,300 @@ body.app-mode #appUstBildirim{display:block}
   var gozle = new MutationObserver(function () { if (getComputedStyle(mainApp).display !== 'none') { gozle.disconnect(); basla(); } });
   gozle.observe(mainApp, { attributes: true, attributeFilter: ['style', 'class'] });
   basla();
+})();
+</script>
+<!-- ═══ EK MODÜLLER: Atış Listesi · Atış Defteri · Dost Uyarı · Rapor · Gece Görüş ═══ -->
+<style>
+.ek{font-family:inherit;color:#12315c}
+[data-theme="dark"] .ek{color:#e6edf3}
+.ek h4{margin:12px 0 6px;font-size:.85rem}
+.ek .row{display:flex;gap:6px;margin:6px 0;flex-wrap:wrap}
+.ek input,.ek select,.ek textarea{padding:9px 8px;border:1.5px solid #c9d3e0;border-radius:8px;font-size:.85rem;font-family:'DM Mono',monospace;min-width:0;background:#fff;color:#111;box-sizing:border-box}
+[data-theme="dark"] .ek input,[data-theme="dark"] .ek select,[data-theme="dark"] .ek textarea{background:#161b22;color:#e6edf3;border-color:#30363d}
+.ek textarea{width:100%;min-height:90px}
+.ek .b{padding:10px 12px;border:0;border-radius:8px;background:#12315c;color:#fff;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit}
+.ek .b.r{background:#c8102e}.ek .b.g{background:#15803d}.ek .b.o{background:#6b7a90}
+.ek .b.s{padding:6px 9px;font-size:.72rem}
+.ek .kart{border:1.5px solid #cfd8e6;border-radius:12px;padding:9px 10px;margin:8px 0;background:#fff}
+[data-theme="dark"] .ek .kart{background:#161b22;border-color:#30363d}
+.ek .kart.tehlike{border-color:#c8102e;background:#fdecee}
+[data-theme="dark"] .ek .kart.tehlike{background:#3a1218}
+.ek .kart.bitti{opacity:.55}
+.ek .sn{display:inline-block;min-width:22px;height:22px;border-radius:11px;background:#c8102e;color:#fff;text-align:center;font-weight:800;font-size:.75rem;line-height:22px;margin-right:6px}
+.ek .sonuc{font-family:'DM Mono',monospace;font-weight:800;font-size:.85rem;margin-top:5px}
+.ek .sonuc b{color:#c8102e}
+.ek .not{font-size:.72rem;color:#6b7a90;margin:4px 0}
+#appDostUyari{position:fixed;left:8px;right:8px;top:30px;z-index:9300;display:none;border-radius:10px;padding:9px 12px;font-weight:800;font-size:.78rem;box-shadow:0 3px 12px rgba(0,0,0,.45);cursor:pointer}
+#appDostUyari.kirmizi{background:#b91c1c;color:#fff;animation:dostYan 1s infinite}
+#appDostUyari.sari{background:#fef3c7;color:#92400e;border:1px solid #f59e0b}
+@keyframes dostYan{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.8)}50%{box-shadow:0 0 0 10px rgba(185,28,28,0)}}
+#gvKirmizi,#gvKarart{position:fixed;inset:0;pointer-events:none;display:none}
+#gvKirmizi{background:#ff1a1a;mix-blend-mode:multiply;z-index:100000}
+#gvKarart{background:rgba(0,0,0,.38);z-index:100001}
+body.gece-gorus #gvKirmizi,body.gece-gorus #gvKarart{display:block}
+.rapor-btnler{display:flex;gap:8px;margin:10px 0}
+.rapor-btnler button{flex:1;padding:11px 6px;border:0;border-radius:8px;font-weight:800;font-size:.8rem;cursor:pointer;background:#12315c;color:#fff;font-family:inherit}
+</style>
+<div id="appDostUyari"></div>
+<div id="gvKirmizi"></div><div id="gvKarart"></div>
+<div id="ekAtisListesi" class="ek" style="display:none"></div>
+<div id="ekAtisDefteri" class="ek" style="display:none"></div>
+<script>
+(function () {
+  var el = function (i) { return document.getElementById(i); };
+  var app = el('mainApp');
+  var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  function ld(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function sv(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  ['ekAtisListesi', 'ekAtisDefteri'].forEach(function (i) { app.appendChild(el(i)); });
+  app.appendChild(el('appDostUyari'));
+
+  // ───────── ortak: tek hedef hesabı (ana alanlardaki mevzi/DTN/faktör/metro ile) ─────────
+  function hesapla(grid, rak) {
+    var mG = el('mevziGrid').value, mR = parseFloat(el('mevziRakim').value) || 0;
+    var ia = parseFloat(el('dtnAzimuth').value) || 0, yan = (typeof numOr === 'function') ? numOr('dtnYan', 2800) : (parseFloat(el('dtnYan').value) || 2800);
+    return calculateTargetSimpleWithYanCorrection(grid, rak || 0, mG, mR, ia, yan, el('rangeCorrDir').value, 0, el('yanCorrDir').value, 0, 0);
+  }
+  function dostMesafe(grid) {
+    var d = el('dostKuvvetGrid'); var g = d ? d.value.trim() : ''; if (!g || !mgrsToUtm(g)) return null;
+    try { var m = distanceMgrs(g, grid); return isNaN(m) ? null : m; } catch (e) { return null; }
+  }
+
+  // ═════════════ 1 + 7: ATIŞ LİSTESİ (+ içe aktarma) ═════════════
+  var LK = 'hais_atis_listesi_v1';
+  var liste = ld(LK, []);
+  var AL = el('ekAtisListesi');
+  function mgrsFmt(g1, g2, a, b) { a = (a + '00000').slice(0, 5); b = (b + '00000').slice(0, 5); return g1.replace(/\s+/g, '').toUpperCase().replace(/^(\d{1,2}[A-Z])$/, '$1') + ' ' + g2.toUpperCase() + ' ' + a + ' ' + b; }
+  function ayristir(metin) {
+    var out = [], n = 0;
+    function ekle(ad, grid, rak) { if (!grid || !mgrsToUtm(grid)) return; out.push({ ad: ad || ('Hedef ' + (liste.length + out.length + 1)), grid: grid, rak: rak || 0, bitti: false }); }
+    if (/<kml|<Placemark/i.test(metin)) {
+      try {
+        var x = new DOMParser().parseFromString(metin, 'text/xml');
+        Array.prototype.forEach.call(x.getElementsByTagName('Placemark'), function (pm) {
+          var c = pm.getElementsByTagName('coordinates')[0]; if (!c) return;
+          var p = c.textContent.trim().split(/\s+/)[0].split(',').map(parseFloat);
+          if (isNaN(p[0]) || isNaN(p[1])) return;
+          var nm = pm.getElementsByTagName('name')[0];
+          ekle(nm ? nm.textContent.trim() : '', latLonToMgrsApprox(p[1], p[0]), isNaN(p[2]) ? 0 : Math.round(p[2]));
+        });
+      } catch (e) {}
+      return out;
+    }
+    metin.split(/\r?\n/).forEach(function (satir) {
+      var t = satir.trim(); if (!t) return;
+      var m = t.match(/(\d{1,2}\s?[C-HJ-NP-X])\s*([A-HJ-NP-Z]{2})\s*(\d{3,5})\s*[ ,.\-]?\s*(\d{3,5})/i);
+      var grid = null, bas = '', son = '';
+      if (m) { grid = mgrsFmt(m[1], m[2], m[3], m[4]); bas = t.slice(0, m.index); son = t.slice(m.index + m[0].length); }
+      else {
+        var ll = t.match(/(-?\d{1,2}\.\d{3,})\s*[,;\s]\s*(-?\d{1,3}\.\d{3,})/);
+        if (ll) { grid = latLonToMgrsApprox(parseFloat(ll[1]), parseFloat(ll[2])); bas = t.slice(0, ll.index); son = t.slice(ll.index + ll[0].length); }
+      }
+      if (!grid) return;
+      var rk = son.match(/(?:rak[ıi]m|alt|h|yük)\w*\s*[:=]?\s*(\d{1,4})|[,;\s]\s*(\d{1,4})\s*(?:m)?\s*$/i);
+      var rak = rk ? parseInt(rk[1] || rk[2], 10) : 0;
+      var ad = bas.replace(/https?:\S*|[:=\-–,;]+\s*$/g, '').replace(/^\s*[\d]+[.)]\s*/, '').trim();
+      ekle(ad, grid, rak);
+    });
+    return out;
+  }
+  function kaydetListe() { sv(LK, liste); }
+  function ciz() {
+    var h = '<div class="not">Mevzi, DTN, düzeltme faktörü ve metro <b>ana ekrandaki değerlerden</b> alınır. Her hedef için yan, yükseliş, BH ve uçuş süresi tek ekranda.</div>' +
+      '<div class="row"><button class="b g" id="alAnaEkle">➕ Ana Hedefi Ekle</button><button class="b" id="alHesapla">⚡ Hepsini Hesapla</button><button class="b o" id="alRapor">📄 Rapor</button></div>' +
+      '<div class="row"><input id="alAd" placeholder="Ad" style="flex:1 1 90px"><input id="alGrid" placeholder="37S CB 53000 52000" style="flex:2 1 150px" autocapitalize="characters"><input id="alRak" placeholder="Rakım" inputmode="numeric" style="width:70px"><button class="b" id="alEkle">Ekle</button></div>';
+    if (!liste.length) h += '<div class="not">Liste boş. Ana hedefi ekleyin, elle yazın ya da aşağıdan içe aktarın.</div>';
+    liste.forEach(function (t, i) {
+      var kart = '', dm = dostMesafe(t.grid);
+      var sonuc = '';
+      try {
+        var r = hesapla(t.grid, t.rak);
+        sonuc = '<div class="sonuc">YAN <b>' + formatMil(r.yan) + '</b> · YÜK <b>' + formatMil(r.yukselis) + '</b> · BH <b>' + esc(r.bh) + '</b><br>' + Math.round(r.mesafe) + ' m · uçuş ' + (r.ucusSuresi != null ? Number(r.ucusSuresi).toFixed(1) + ' sn' : '—') + '</div>';
+      } catch (e) { sonuc = '<div class="sonuc" style="color:#b91c1c">⚠️ ' + esc(e.message || 'Hesaplanamadı') + '</div>'; }
+      var tehlike = dm !== null && dm < 600;
+      h += '<div class="kart' + (tehlike ? ' tehlike' : '') + (t.bitti ? ' bitti' : '') + '"><div class="row" style="margin:0;align-items:center"><span class="sn">' + (i + 1) + '</span><b style="flex:1">' + esc(t.ad) + '</b>' +
+        '<button class="b s o" data-up="' + i + '">↑</button><button class="b s o" data-dn="' + i + '">↓</button></div>' +
+        '<div class="not" style="font-family:\'DM Mono\',monospace">' + esc(t.grid) + (t.rak ? ' · ' + t.rak + ' m' : '') + '</div>' + sonuc +
+        (tehlike ? '<div class="not" style="color:#b91c1c;font-weight:800">🚨 Dost kuvvete ' + Math.round(dm) + ' m — TEHLİKELİ YAKINLIK</div>' : '') +
+        '<div class="row"><button class="b s" data-yuk="' + i + '">▶ Ana ekrana al</button><button class="b s g" data-bit="' + i + '">' + (t.bitti ? '↺ Geri al' : '✓ Ateşlendi') + '</button><button class="b s r" data-sil="' + i + '">✕ Sil</button></div></div>';
+    });
+    h += '<h4>📥 İçe Aktar</h4><div class="not">WhatsApp/not defterinden kopyalanan koordinat satırlarını (MGRS veya enlem,boylam; konum bağlantıları) yapıştırın ya da KML/TXT/CSV dosyası seçin.<br>Örnek: <code>Tepe-1: 37S CB 53000 52000 rakım 720</code> &nbsp; <code>41.0123, 29.0456</code></div>' +
+      '<textarea id="alYapis" placeholder="Koordinatları buraya yapıştırın"></textarea><div class="row"><button class="b" id="alIce">📥 İçe Aktar</button><input type="file" id="alDosya" accept=".kml,.txt,.csv,.gpx,text/*" style="flex:1"></div><div id="alMsg" class="not"></div>' +
+      '<div class="row"><button class="b r s" id="alTemizle">Listeyi Temizle</button></div>';
+    var scr = AL.scrollTop; AL.innerHTML = h; AL.scrollTop = scr; bagla();
+  }
+  function msg(t) { var m = el('alMsg'); if (m) m.textContent = t; }
+  function bagla() {
+    el('alAnaEkle').onclick = function () {
+      var g = el('hedefGrid').value.trim(); if (!g || !mgrsToUtm(g)) { alert('Ana ekrandaki hedef koordinatı geçerli değil.'); return; }
+      liste.push({ ad: 'Hedef ' + (liste.length + 1), grid: g, rak: parseFloat(el('hedefRakim').value) || 0, bitti: false }); kaydetListe(); ciz();
+    };
+    el('alEkle').onclick = function () {
+      var g = el('alGrid').value.trim().toUpperCase(); if (!mgrsToUtm(g)) { msg('⚠️ Koordinat geçersiz (örn. 37S CB 53000 52000).'); return; }
+      liste.push({ ad: el('alAd').value.trim() || ('Hedef ' + (liste.length + 1)), grid: g, rak: parseFloat(el('alRak').value) || 0, bitti: false }); kaydetListe(); ciz();
+    };
+    el('alHesapla').onclick = function () { ciz(); };
+    el('alRapor').onclick = function () { listeRaporu(); };
+    el('alIce').onclick = function () {
+      var o = ayristir(el('alYapis').value); if (!o.length) { msg('⚠️ Geçerli koordinat bulunamadı.'); return; }
+      o.forEach(function (x) { liste.push(x); }); kaydetListe(); ciz(); msg('✅ ' + o.length + ' hedef içe aktarıldı.');
+    };
+    el('alDosya').onchange = function (e) {
+      var f = e.target.files[0]; if (!f) return; var r = new FileReader();
+      r.onload = function () { var o = ayristir(String(r.result)); if (!o.length) { msg('⚠️ Dosyada geçerli koordinat bulunamadı.'); return; } o.forEach(function (x) { liste.push(x); }); kaydetListe(); ciz(); msg('✅ ' + o.length + ' hedef içe aktarıldı (' + f.name + ').'); };
+      r.readAsText(f);
+    };
+    el('alTemizle').onclick = function () { if (confirm('Liste tamamen silinsin mi?')) { liste = []; kaydetListe(); ciz(); } };
+    Array.prototype.forEach.call(AL.querySelectorAll('[data-up],[data-dn],[data-yuk],[data-bit],[data-sil]'), function (b) {
+      b.onclick = function () {
+        var i;
+        if (b.hasAttribute('data-up')) { i = +b.getAttribute('data-up'); if (i > 0) { var t = liste[i]; liste[i] = liste[i - 1]; liste[i - 1] = t; } }
+        else if (b.hasAttribute('data-dn')) { i = +b.getAttribute('data-dn'); if (i < liste.length - 1) { var t2 = liste[i]; liste[i] = liste[i + 1]; liste[i + 1] = t2; } }
+        else if (b.hasAttribute('data-bit')) { i = +b.getAttribute('data-bit'); liste[i].bitti = !liste[i].bitti; }
+        else if (b.hasAttribute('data-sil')) { i = +b.getAttribute('data-sil'); liste.splice(i, 1); }
+        else if (b.hasAttribute('data-yuk')) {
+          i = +b.getAttribute('data-yuk'); var t3 = liste[i];
+          var g = el('hedefGrid'); g.value = t3.grid; g.dispatchEvent(new Event('input', { bubbles: true })); g.dispatchEvent(new Event('change', { bubbles: true }));
+          var r = el('hedefRakim'); r.value = t3.rak || ''; r.dispatchEvent(new Event('input', { bubbles: true })); r.dispatchEvent(new Event('change', { bubbles: true }));
+          if (window.appKapat) appKapat(); window.scrollTo(0, 0); return;
+        }
+        kaydetListe(); ciz();
+      };
+    });
+  }
+  function listeRaporu() {
+    var s = '<h2>Atış Listesi</h2><table><tr><th>#</th><th>Hedef</th><th>Koordinat</th><th>Rakım</th><th>Yan</th><th>Yükseliş</th><th>BH</th><th>Mesafe</th><th>Uçuş</th></tr>';
+    liste.forEach(function (t, i) {
+      var c; try { var r = hesapla(t.grid, t.rak); c = '<td><b>' + formatMil(r.yan) + '</b></td><td><b>' + formatMil(r.yukselis) + '</b></td><td>' + esc(r.bh) + '</td><td>' + Math.round(r.mesafe) + ' m</td><td>' + (r.ucusSuresi != null ? Number(r.ucusSuresi).toFixed(1) + ' sn' : '—') + '</td>'; } catch (e) { c = '<td colspan="5">' + esc(e.message) + '</td>'; }
+      s += '<tr><td>' + (i + 1) + '</td><td>' + esc(t.ad) + '</td><td>' + esc(t.grid) + '</td><td>' + (t.rak || '') + '</td>' + c + '</tr>';
+    });
+    s += '</table>' + ortakBilgi(); yazdir('Atış Listesi', s);
+  }
+  window.__appEk.push({ id: 'atislistesi', ikon: '🎯', ad: 'Atış Listesi', node: AL, onAc: ciz });
+
+  // ═════════════ 2: ATIŞ DEFTERİ ═════════════
+  var DK = 'hais_atis_defteri_v1', defter = ld(DK, []);
+  var AD = el('ekAtisDefteri');
+  function kalAmmo() { try { var k = currentCaliber, a = k === '81' ? currentAmmo81 : (k === '106' ? currentAmmo106 : currentAmmo120); return k + '/' + a; } catch (e) { return '?'; } }
+  function ortalama(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : 0; }
+  function defterCiz() {
+    var son = window.__sonHesaplananSonuc, mes = son ? Math.round(son.mesafe) : '';
+    var buKal = defter.filter(function (d) { return d.ka === kalAmmo(); });
+    var kler = buKal.map(function (d) { return d.kM / (d.mes / 1000); }), yler = buKal.map(function (d) { return d.yM / (d.mes / 1000); });
+    var kO = ortalama(kler), yO = ortalama(yler);
+    var h = '<div class="not">Gerçek atışta merminin <b>hedefe göre nereye düştüğünü</b> kaydedin. Sistem, aynı kalibre/mühimmat kayıtlarından <b>K ve yan faktörünü</b> önerir.</div>' +
+      '<h4>Yeni Kayıt</h4><div class="row"><input id="adMes" placeholder="Atış mesafesi (m)" inputmode="numeric" value="' + mes + '" style="flex:1 1 130px"></div>' +
+      '<div class="row"><select id="adKY" style="flex:1"><option value="kisa">KISA düştü</option><option value="uzun">UZUN düştü</option><option value="isabet">Mesafe tam</option></select><input id="adKM" placeholder="metre" inputmode="numeric" style="width:90px"></div>' +
+      '<div class="row"><select id="adYY" style="flex:1"><option value="sag">SAĞA düştü</option><option value="sol">SOLA düştü</option><option value="isabet">Yan tam</option></select><input id="adYM" placeholder="metre" inputmode="numeric" style="width:90px"></div>' +
+      '<div class="row"><button class="b g" id="adKaydet">💾 Kaydet</button></div><div id="adMsg" class="not"></div>';
+    h += '<h4>Öneri (' + esc(kalAmmo()) + ' · ' + buKal.length + ' atış)</h4>';
+    if (!buKal.length) h += '<div class="not">Henüz bu kalibre/mühimmat için kayıt yok.</div>';
+    else {
+      var kT = Math.abs(Math.round(kO)) + ' m/1000m ' + (kO >= 0 ? 'KISA' : 'UZUN'), yT = Math.abs(Math.round(yO)) + ' mil ' + (yO >= 0 ? 'SAĞA AL' : 'SOLA AL');
+      h += '<div class="kart"><div class="sonuc">K: <b>' + kT + '</b><br>Yan: <b>' + yT + '</b></div><div class="not">Ortalama hata; mermi sağa düştüyse namlu SOLA, sola düştüyse SAĞA alınır.</div>' +
+        '<div class="row"><button class="b" id="adUygula">📏 Faktörlere Uygula</button></div></div>';
+    }
+    h += '<h4>Kayıtlar</h4>';
+    defter.slice().reverse().forEach(function (d, ri) {
+      var i = defter.length - 1 - ri;
+      h += '<div class="kart"><div class="not"><b>' + esc(d.zaman) + '</b> · ' + esc(d.ka) + ' · ' + d.mes + ' m</div><div class="sonuc">' +
+        (d.kM === 0 ? 'Mesafe tam' : Math.abs(d.kM) + ' m ' + (d.kM > 0 ? 'KISA' : 'UZUN')) + ' · ' + (d.yM === 0 ? 'Yan tam' : Math.abs(d.yM) + ' m ' + (d.yM > 0 ? 'SOLA' : 'SAĞA')) + '</div>' +
+        '<div class="row"><button class="b s r" data-dsil="' + i + '">✕ Sil</button></div></div>';
+    });
+    AD.innerHTML = h;
+    el('adKaydet').onclick = function () {
+      var mesv = parseFloat(el('adMes').value); if (!mesv || mesv < 50) { el('adMsg').textContent = '⚠️ Atış mesafesini girin.'; return; }
+      var km = Math.abs(parseFloat(el('adKM').value) || 0), ym = Math.abs(parseFloat(el('adYM').value) || 0);
+      var ky = el('adKY').value, yy = el('adYY').value;
+      var kM = ky === 'kisa' ? km : (ky === 'uzun' ? -km : 0), yM = yy === 'sag' ? -ym : (yy === 'sol' ? ym : 0);
+      defter.push({ zaman: new Date().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }), ka: kalAmmo(), mes: Math.round(mesv), kM: kM, yM: yM }); sv(DK, defter); defterCiz();
+    };
+    var u = el('adUygula'); if (u) u.onclick = function () {
+      function set(id, v) { var e = el(id); e.value = v; e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); }
+      function cb(id, v) { var e = el(id); if (e.checked !== v) { e.checked = v; e.dispatchEvent(new Event('change', { bubbles: true })); e.dispatchEvent(new Event('click', { bubbles: true })); } e.checked = v; }
+      el('kNamluModAktif') && (el('kNamluModAktif').checked = false);
+      set('kYon', kO >= 0 ? 'kisa' : 'uzun'); set('kMetre', Math.abs(Math.round(kO))); cb('kFaktorAktif', Math.round(kO) !== 0);
+      set('yanFakYon', yO >= 0 ? 'sag' : 'sola'); set('yanFakMetre', Math.abs(Math.round(yO))); cb('yanFaktorAktif', Math.round(yO) !== 0);
+      if (window.kFaktorGosterimGuncelle) try { kFaktorGosterimGuncelle(); } catch (e) {}
+      el('adMsg').textContent = '✅ Faktörler uygulandı. Ana ekranda HESAPLA\'ya basın.';
+    };
+    Array.prototype.forEach.call(AD.querySelectorAll('[data-dsil]'), function (b) { b.onclick = function () { defter.splice(+b.getAttribute('data-dsil'), 1); sv(DK, defter); defterCiz(); }; });
+  }
+  window.__appEk.push({ id: 'atisdefteri', ikon: '📒', ad: 'Atış Defteri', node: AD, onAc: defterCiz });
+
+  // ═════════════ 3: DOST KUVVET UYARISI (renk + ses + titreşim) ═════════════
+  var uy = el('appDostUyari'), sonDurum = '', gizli = false, ac = null;
+  function bip(n, f) {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume();
+      for (var i = 0; i < n; i++) { var o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; o.type = 'square'; g.gain.value = 0.12; o.connect(g); g.connect(ac.destination); var t0 = ac.currentTime + i * 0.28; o.start(t0); o.stop(t0 + 0.18); }
+    } catch (e) {}
+  }
+  uy.addEventListener('click', function () { gizli = true; uy.style.display = 'none'; });
+  setInterval(function () {
+    var son = window.__sonHesaplananSonuc, hg = el('hedefGrid').value.trim();
+    var dm = (son && hg && mgrsToUtm(hg)) ? dostMesafe(hg) : null;
+    var d = dm === null ? '' : (dm < 600 ? 'k' : (dm < 900 ? 's' : ''));
+    var imza = d + '|' + (dm === null ? '' : Math.round(dm)) + '|' + (son ? [son.yan, son.yukselis].join() : '');
+    if (imza !== sonDurum) {
+      var degisti = d !== (sonDurum.split('|')[0]);
+      sonDurum = imza; gizli = false;
+      if (d === 'k') { bip(3, 880); if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 600]); }
+      else if (d === 's' && degisti) { bip(1, 660); if (navigator.vibrate) navigator.vibrate(200); }
+    }
+    if (!d || gizli) { uy.style.display = 'none'; return; }
+    uy.className = d === 'k' ? 'kirmizi' : 'sari';
+    uy.textContent = d === 'k' ? '🚨 TEHLİKELİ YAKINLIK: dost kuvvete ' + Math.round(dm) + ' m (<600 m) — ek onay gerekli (dokun: gizle)' : '⚠️ Dikkat: dost kuvvete ' + Math.round(dm) + ' m — eşiğe yakın';
+    uy.style.display = 'block';
+  }, 700);
+
+  // ═════════════ 5: PDF / YAZDIR RAPORU + PAYLAŞ ═════════════
+  function val(i) { var e = el(i); return e ? e.value : ''; }
+  function ortakBilgi() { return '<p class="alt">HAİS · Havan Ateş İdare Sistemi · ' + new Date().toLocaleString('tr-TR') + ' · Yardımcı hesap aracıdır; nihai teyit Ateş İdare Subayındadır.</p>'; }
+  function yazdir(baslik, govde) {
+    var css = 'body{font-family:Arial,sans-serif;padding:18px;color:#12315c}h1{font-size:18px;border-bottom:3px solid #c8102e;padding-bottom:6px}h2{font-size:16px}table{border-collapse:collapse;width:100%;font-size:12px}th{background:#12315c;color:#fff;padding:5px;text-align:left}td{border:1px solid #ccd5e2;padding:5px}.big td{font-size:18px;font-weight:700;text-align:center}.alt{font-size:10px;color:#667;margin-top:14px}.k{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin:6px 0}.k span{background:#eef2f8;padding:3px 8px;border-radius:6px}';
+    var f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(f);
+    var d = f.contentWindow.document; d.open(); d.write('<html><head><meta charset="utf-8"><title>' + esc(baslik) + '</title><style>' + css + '</style></head><body><h1>HAİS — ' + esc(baslik) + '</h1>' + govde + '</body></html>'); d.close();
+    setTimeout(function () { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { alert('Yazdırma bu cihazda desteklenmiyor. Paylaş düğmesini kullanın.'); } setTimeout(function () { f.remove(); }, 60000); }, 400);
+  }
+  function sonucOzet() {
+    var r = window.__sonHesaplananSonuc; if (!r) return null;
+    var dm = dostMesafe(val('hedefGrid'));
+    return { r: r, dm: dm };
+  }
+  function atisRaporu() {
+    var o = sonucOzet(); if (!o) { alert('Önce HESAPLA ile bir sonuç üretin.'); return; }
+    var r = o.r, k = (typeof kFaktorAktifDeger === 'function') ? kFaktorAktifDeger() : null, y = (typeof yanFaktorAktifMil === 'function') ? yanFaktorAktifMil() : null;
+    var s = '<div class="k"><span>Kalibre/Mühimmat: <b>' + esc(r['mühimmat'] || '') + '</b></span><span>Referans: <b>' + (window.azimuthRefMode === 'grid' ? 'Grid' : 'Gerçek Kuzey') + '</b></span></div>' +
+      '<table><tr><th>Mevzi</th><th>Hedef</th><th>DTN İA / Yan</th></tr><tr><td>' + esc(val('mevziGrid')) + '<br>' + esc(val('mevziRakim')) + ' m</td><td>' + esc(val('hedefGrid')) + '<br>' + esc(val('hedefRakim')) + ' m</td><td>' + esc(val('dtnAzimuth')) + ' / ' + esc(val('dtnYan')) + '</td></tr></table><br>' +
+      '<table class="big"><tr><th>HEDEF YANI</th><th>YÜKSELİŞ</th><th>BH</th><th>MESAFE</th><th>UÇUŞ</th></tr><tr><td>' + formatMil(r.yan) + '</td><td>' + formatMil(r.yukselis) + '</td><td>' + esc(r.bh) + '</td><td>' + Math.round(r.mesafe) + ' m</td><td>' + (r.ucusSuresi != null ? Number(r.ucusSuresi).toFixed(1) + ' sn' : '—') + '</td></tr></table>' +
+      '<div class="k"><span>Metro: rüzgâr ' + esc(val('ruzgarHizi')) + ' kt / ' + esc(val('ruzgarYonu')) + ' mil · ' + esc(val('havaSicaklik')) + ' °C · ' + esc(val('havaBasinc')) + ' hPa</span>' +
+      (k ? '<span>K: ' + Math.abs(k) + ' m ' + (k > 0 ? 'KISA' : 'UZUN') + '</span>' : '') + (y ? '<span>Yan faktörü: ' + Math.abs(Math.round(y)) + ' mil ' + (y < 0 ? 'SAĞA' : 'SOLA') + '</span>' : '') +
+      (o.dm !== null ? '<span>Dost kuvvet mesafesi: ' + Math.round(o.dm) + ' m' + (o.dm < 600 ? ' (TEHLİKELİ YAKINLIK)' : '') + '</span>' : '') + '</div>' + ortakBilgi();
+    yazdir('Atış Verisi Raporu', s);
+  }
+  function atisMetni() {
+    var o = sonucOzet(); if (!o) return '';
+    var r = o.r;
+    return 'HAİS ATIŞ VERİSİ\n' + (r['mühimmat'] || '') + '\nMevzi: ' + val('mevziGrid') + ' (' + val('mevziRakim') + ' m)\nHedef: ' + val('hedefGrid') + ' (' + val('hedefRakim') + ' m)\nYAN: ' + formatMil(r.yan) + '\nYÜKSELİŞ: ' + formatMil(r.yukselis) + '\nBH: ' + r.bh + '\nMESAFE: ' + Math.round(r.mesafe) + ' m\nUÇUŞ: ' + (r.ucusSuresi != null ? Number(r.ucusSuresi).toFixed(1) + ' sn' : '—') + (o.dm !== null && o.dm < 600 ? '\n!! TEHLİKELİ YAKINLIK: dost kuvvete ' + Math.round(o.dm) + ' m' : '') + '\n' + new Date().toLocaleString('tr-TR');
+  }
+  function paylas() {
+    var t = atisMetni(); if (!t) { alert('Önce HESAPLA ile bir sonuç üretin.'); return; }
+    if (navigator.share) { navigator.share({ title: 'HAİS Atış Verisi', text: t }).catch(function () {}); }
+    else if (navigator.clipboard) { navigator.clipboard.writeText(t).then(function () { alert('Atış verisi panoya kopyalandı.'); }); }
+    else prompt('Kopyalayın:', t);
+  }
+  // Sonuç ekranına düğmeler
+  var rb = document.createElement('div'); rb.className = 'rapor-btnler';
+  rb.innerHTML = '<button type="button" id="rpPdf">📄 PDF Rapor</button><button type="button" id="rpPaylas">📤 Paylaş</button>';
+  var cp = el('copyResultsBtn'); if (cp && cp.parentNode) cp.parentNode.insertBefore(rb, cp.nextSibling);
+  el('rpPdf').onclick = atisRaporu; el('rpPaylas').onclick = paylas;
+
+  // ═════════════ 8: GECE GÖRÜŞ MODU ═════════════
+  var GK = 'hais_gece_gorus';
+  function geceUygula(a) { document.body.classList.toggle('gece-gorus', a); try { localStorage.setItem(GK, a ? '1' : '0'); } catch (e) {} }
+  try { if (localStorage.getItem(GK) === '1') geceUygula(true); } catch (e) {}
+  window.__appEk.push({ id: 'geceGorus', ikon: '🔴', ad: 'Gece Görüş', fn: function () { geceUygula(!document.body.classList.contains('gece-gorus')); } });
 })();
 </script>
 </body>
