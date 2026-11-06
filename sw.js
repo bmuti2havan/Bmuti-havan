@@ -1,4 +1,4 @@
-const CACHE = 'hais-v36';
+const CACHE = 'hais-v37';
 const ASSETS = ['./', './index.html'];
 
 self.addEventListener('install', e => {
@@ -54,7 +54,7 @@ self.addEventListener('fetch', e => {
         e.request.destination === 'document' ||
         url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
         e.respondWith(
-            fetch(e.request).then(res => {
+            fetch(e.request, { cache: 'no-cache' }).then(res => {
                 if (res && res.status === 200) {
                     var copy = res.clone();
                     caches.open(CACHE).then(c => c.put(e.request, copy));

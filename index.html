@@ -2831,7 +2831,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-37</span>
     </span>
   </div>
 
@@ -11520,7 +11520,26 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
     cik.addEventListener('click', function () { try { ortakKes(); } catch (e) {} cik.style.display = 'none'; var m = $('ortakGorevModal'); if (m) m.style.display = 'none'; toast('Odadan çıkıldınız'); });
   }
 
+  /* ───── 7) Güncelleme: eski önbellek/servis işçisi takılı kalmasın ───── */
+  function guncellemeKur() {
+    if (!('serviceWorker' in navigator) || /claudeusercontent|codepen/.test(location.hostname)) return;
+    try {
+      navigator.serviceWorker.getRegistrations().then(function (rs) {
+        rs.forEach(function (r) {
+          var u = (r.active && r.active.scriptURL) || (r.waiting && r.waiting.scriptURL) || '';
+          if (u && !/\/sw\.js(\?|$)/.test(u)) r.unregister(); // eski blob servis işçisi
+          else r.update().catch(function () {});
+        });
+      }).catch(function () {});
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        try { if (sessionStorage.getItem('haisYenilendi') === '1') return; sessionStorage.setItem('haisYenilendi', '1'); } catch (e) { return; }
+        location.reload(); // yeni sürüm devreye girdi, bir kez yenile
+      });
+    } catch (e) {}
+  }
+
   function baslat() {
+    guncellemeKur();
     // Saat çipine çevrimdışı rozeti
     var saat = $('consoleClock');
     if (saat && !$('haisCevrimdisi')) { var r = document.createElement('span'); r.id = 'haisCevrimdisi'; r.textContent = 'ÇEVRİMDIŞI'; saat.insertAdjacentElement('afterend', r); }
