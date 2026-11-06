@@ -2832,7 +2832,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-38</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-39</span>
     </span>
   </div>
 
@@ -9030,7 +9030,7 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
         // Canlı konum noktası (yalnızca gösterir; mevzi/hedefi DEĞİŞTİRMEZ, haritayı kaydırmaz)
         if (!_liveWatch) mapKonumGoster(true, false);
     }
-    var _liveWatch = null, _liveMarker = null, _liveCircle = null;
+    var _liveWatch = null, _liveMarker = null, _liveCircle = null, _liveSon = null;
     function mapKonumGoster(ac, git) {
         var btn = document.getElementById('mapKonumumBtn'), st = document.getElementById('mapStatus');
         if (!ac) {
@@ -9047,6 +9047,7 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
         var ilk = true;
         _liveWatch = navigator.geolocation.watchPosition(function (pos) {
             var ll = [pos.coords.latitude, pos.coords.longitude], acc = Math.round(pos.coords.accuracy);
+            _liveSon = { pos: pos, t: Date.now() };
             if (!_liveMarker) {
                 _liveMarker = L.marker(ll, { interactive: false, zIndexOffset: 500, icon: L.divIcon({ className: '',
                     html: '<div style="width:16px;height:16px;background:#2563eb;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(37,99,235,.45),0 1px 4px rgba(0,0,0,.5)"></div>', iconAnchor: [8, 8] }) }).addTo(_map);
@@ -9068,21 +9069,34 @@ Mesafe düzeltmesi: ${metro.toplamM >= 0 ? '+' : ''}${metro.toplamM} m\n`;
         initMap();
         if (lb) lb.textContent = '📡 Konum alınıyor…';
         if (st) st.textContent = '📡 Konum alınıyor… (ilk sinyal birkaç saniye sürebilir)';
-        navigator.geolocation.getCurrentPosition(function (pos) {
+        function basari(pos) {
             var grid = latLonToMgrsApprox(pos.coords.latitude, pos.coords.longitude);
             var el = document.getElementById('mevziGrid');
-            el.value = grid; el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.value = grid; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true }));
             _gpsAltitudeMatchesGrid = false;
             fetchElevation(grid, 'mevziRakim');
             if (lb) lb.textContent = '📡 Konumumdan Al';
             mapShowMevzi();
             var hg = (document.getElementById('hedefGrid').value || '').trim();
             if (hg && mgrsToUtm(hg)) mapShowHedef();
+            if (_map) _map.setView([pos.coords.latitude, pos.coords.longitude], Math.max(_map.getZoom(), 15));
             if (st) st.textContent = 'Mevzi konumunuzdan alındı (±' + Math.round(pos.coords.accuracy) + ' m): ' + grid;
-        }, function (err) {
+        }
+        function hata(err) {
             if (lb) lb.textContent = '📡 Konumumdan Al';
-            if (st) st.textContent = err && err.code === 1 ? 'Konum izni reddedildi. Tarayıcı ayarlarından izin verin.' : 'Konum alınamadı. Tekrar deneyin veya mevzi koordinatını elle yazın.';
-        }, { enableHighAccuracy: true, timeout: 25000, maximumAge: 0 });
+            var m = { 1: 'Konum izni reddedildi. Telefon/uygulama ayarlarından konum iznini açın, sonra tekrar deneyin.',
+                      2: 'Konum bulunamadı (GPS/ağ sinyali yok). Telefonda KONUM (GPS) açık mı? Açık alanda tekrar deneyin veya mevzi koordinatını elle yazın.',
+                      3: 'Konum zaman aşımına uğradı. Açık alanda tekrar deneyin veya mevzi koordinatını elle yazın.' };
+            if (st) st.textContent = m[err && err.code] || 'Konum alınamadı. Tekrar deneyin veya mevzi koordinatını elle yazın.';
+        }
+        // 1) Canlı konum zaten alınıyorsa onu kullan (anında)
+        if (_liveSon && (Date.now() - _liveSon.t) < 30000) { basari(_liveSon.pos); return; }
+        // 2) Önce hassas GPS (12 sn); olmazsa ağ/önbellek konumuna düş (25 sn)
+        navigator.geolocation.getCurrentPosition(basari, function (e1) {
+            if (e1 && e1.code === 1) { hata(e1); return; }
+            if (st) st.textContent = '📡 GPS sinyali zayıf, ağ konumu deneniyor…';
+            navigator.geolocation.getCurrentPosition(basari, hata, { enableHighAccuracy: false, timeout: 25000, maximumAge: 120000 });
+        }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
     }
     function gpsBaslat() {
         if (!navigator.geolocation) {
