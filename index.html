@@ -2858,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-47</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-48</span>
     </span>
   </div>
 
@@ -12263,6 +12263,108 @@ body.gece-gorus #gvKirmizi,body.gece-gorus #gvKarart{display:block}
   function geceUygula(a) { document.body.classList.toggle('gece-gorus', a); try { localStorage.setItem(GK, a ? '1' : '0'); } catch (e) {} }
   try { if (localStorage.getItem(GK) === '1') geceUygula(true); } catch (e) {}
   window.__appEk.push({ id: 'geceGorus', ikon: '🔴', ad: 'Gece Görüş', fn: function () { geceUygula(!document.body.classList.contains('gece-gorus')); } });
+})();
+</script>
+<!-- ═══ ARAYÜZ 2: dev sonuç rakamları · sade ana ekran · sabit HESAPLA · harita atış hattı ═══ -->
+<style>
+/* 1 — Sonuç: dev rakamlar */
+body.app-mode .result-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+body.app-mode .result-card.highlight{grid-column:1/-1;text-align:center;padding:24px 12px 24px!important;border-radius:20px!important;position:relative;cursor:pointer;background:linear-gradient(150deg,#0b1f3d,#15417d)!important;border:1px solid rgba(243,211,107,.45)!important;box-shadow:0 14px 28px -16px rgba(11,31,61,.9),0 1px 0 rgba(255,255,255,.12) inset!important}
+body.app-mode .result-card.highlight .result-label{font-size:.72rem!important;letter-spacing:3px!important;color:#f3d36b!important;font-weight:800}
+body.app-mode .result-card.highlight .result-value.big{font-size:4.6rem!important;line-height:1.05!important;color:#fff!important;text-shadow:0 0 22px rgba(120,170,255,.45);margin-top:2px}
+body.app-mode .result-card.highlight .result-unit{font-size:.8rem!important;color:#9fb6d9!important;margin-left:6px}
+body.app-mode .result-card.highlight::after{content:"dokun · kopyala";position:absolute;left:0;right:0;top:auto;width:auto;height:auto;border:0;background:none;text-align:center;bottom:7px;font-size:.58rem;letter-spacing:1px;color:#8fa3c0;opacity:.8}
+body.app-mode .result-card.highlight.kopya::after{content:"✓ kopyalandı";color:#7be0a4;opacity:1}
+body.app-mode .result-card:not(.highlight){border-radius:14px!important;padding:11px 12px!important}
+body.app-mode .result-card:not(.highlight) .result-value{font-size:1.45rem!important}
+#ekToast{position:fixed;left:50%;bottom:140px;transform:translateX(-50%);background:#0b1f3d;color:#fff;padding:8px 16px;border-radius:20px;font-weight:800;font-size:.78rem;z-index:100002;display:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+/* 2 — Sade ana ekran */
+body.app-mode .left-panel .param-group{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}
+body.app-mode .left-panel .param-group>*{grid-column:1/-1;min-width:0}
+body.app-mode .left-panel .param-group{transform:none!important;animation:none!important}
+body.app-mode .left-panel .param-group:has(#mevziGrid){grid-template-columns:minmax(0,1fr) 108px}
+body.app-mode .left-panel .param-row{margin:0!important}
+body.app-mode .left-panel .param-row label{font-size:.68rem!important;letter-spacing:.3px;margin-bottom:3px}
+body.app-mode .left-panel .param-row>div{min-width:0;width:100%}
+body.app-mode .left-panel .param-row input,body.app-mode .left-panel .param-row select{box-sizing:border-box;width:100%;min-width:0;padding:11px 10px!important;border-radius:12px!important;font-size:.95rem}
+body.app-mode .left-panel .param-row:has(#dtnAzimuth),body.app-mode .left-panel .param-row:has(#dtnYan),
+body.app-mode .left-panel .param-row:has(#mevziRakim),body.app-mode .left-panel .param-row:has(#hedefRakim),body.app-mode .left-panel .param-row:has(#mevziGrid),body.app-mode .left-panel .param-row:has(#hedefGrid){grid-column:span 1}
+body.app-mode .left-panel .param-row:has(> span:only-child):not(:has(#azimuthRefInfo)){display:none!important}
+body.app-mode .left-panel .section-title:not(.fn-toggle){font-size:.72rem;letter-spacing:2px;color:#12315c;display:flex;align-items:center;gap:8px;background:none!important;border:0!important;box-shadow:none!important;padding:14px 4px 6px!important}
+body.app-mode .left-panel .section-title:not(.fn-toggle)::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,#c8d3e3,transparent)}
+body.app-mode .ammo-grid{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+body.app-mode .ammo-grid .ammo-option{flex:0 0 138px;scroll-snap-align:start;min-height:0!important;padding:9px 10px!important}
+body.app-mode .ammo-grid[style*="display:none"],body.app-mode .ammo-grid[style*="display: none"]{display:none!important}
+body.app-mode .ammo-grid::-webkit-scrollbar{display:none}
+/* 3 — Sabit HESAPLA */
+body.app-mode .left-panel{padding-bottom:150px!important}
+body.app-mode #hesaplaBtn{position:fixed!important;left:12px;right:12px;bottom:70px;z-index:8900;width:auto!important;height:56px;margin:0!important;border:0;border-radius:16px;font-size:1.05rem!important;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#e11d48,#b0102b)!important;box-shadow:0 10px 24px -6px rgba(200,16,46,.65),0 1px 0 rgba(255,255,255,.3) inset}
+body.app-mode #hesaplaBtn:active{transform:scale(.98)}
+body.app-mode #hesaplaBtn::before{content:"🎯 "}
+body.app-mode #appOzet{bottom:134px!important}
+/* 4 — Harita etiketi */
+.hat-etiket{background:#0b1f3d!important;color:#f3d36b!important;border:1px solid #f3d36b!important;border-radius:10px!important;font-weight:800;font-size:.72rem;padding:3px 8px!important;box-shadow:0 2px 8px rgba(0,0,0,.4)!important}
+.hat-etiket::before{display:none!important}
+</style>
+<div id="ekToast"></div>
+<script>
+(function () {
+  var toast = document.getElementById('ekToast'), tt;
+  document.getElementById('mainApp').appendChild(toast);
+  function bildir(t) { toast.textContent = t; toast.style.display = 'block'; clearTimeout(tt); tt = setTimeout(function () { toast.style.display = 'none'; }, 1400); }
+  // 1 — dokun kopyala (sonuç yeniden çizilse de çalışsın diye delege)
+  document.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('#sonucAlan .result-card.highlight'); if (!c) return;
+    var v = (c.querySelector('.result-value').childNodes[0] || {}).textContent || '';
+    v = v.trim(); if (!v) return;
+    var ok = function () { c.classList.add('kopya'); setTimeout(function () { c.classList.remove('kopya'); }, 1500); bildir('Kopyalandı: ' + v); if (navigator.vibrate) navigator.vibrate(30); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(ok, ok); else ok();
+  });
+  // 5 — hafif titreşim (HESAPLA / alt menü)
+  document.addEventListener('click', function (e) {
+    if (e.isTrusted && e.target.closest && e.target.closest('#hesaplaBtn,#appNav button') && navigator.vibrate) navigator.vibrate(15);
+  }, true);
+
+  // 4 — Harita: atış hattı + menzil çemberi + dost kuvvet çemberi
+  var K = { hat: null, etiket: null, c1: null, c2: null, dost: null, dost2: null, imza: '' };
+  var g = function (i) { var e = document.getElementById(i); return e ? e.value.trim() : ''; };
+  function ll(grid) {
+    var u = grid && mgrsToUtm(grid); if (!u) return null;
+    var r = utmToLatLng(u.zone, u.easting, u.northing, 'CDEFGHJKLM'.indexOf(u.latBand || 'S') > -1);
+    return (r && !isNaN(r.lat)) ? [r.lat, r.lng] : null;
+  }
+  function mil(a, b) {
+    var f1 = a[0] * Math.PI / 180, f2 = b[0] * Math.PI / 180, dl = (b[1] - a[1]) * Math.PI / 180;
+    var y = Math.sin(dl) * Math.cos(f2), x = Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl);
+    var d = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360; return Math.round(d * 6400 / 360);
+  }
+  function menzil() {
+    var s = document.querySelector('.ammo-grid:not([style*="none"]) .ammo-option.selected .ammo-range');
+    var m = s && s.textContent.match(/(\d+)\D+(\d+)/); return m ? [+m[1], +m[2]] : null;
+  }
+  function temizle() { ['hat', 'c1', 'c2', 'dost', 'dost2'].forEach(function (k) { if (K[k] && window._map) { try { _map.removeLayer(K[k]); } catch (e) {} } K[k] = null; }); }
+  function cizHarita() {
+    if (typeof _map === 'undefined' || !_map || typeof L === 'undefined') return;
+    var m = ll(g('mevziGrid')), h = ll(g('hedefGrid')), d = ll(g('dostKuvvetGrid')), r = menzil();
+    var imza = [m, h, d, r].join('|') + (document.getElementById('mapDiv') ? 1 : 0);
+    if (imza === K.imza) return; K.imza = imza; temizle();
+    if (m && r) {
+      K.c2 = L.circle(m, { radius: r[1], color: '#e5bc66', weight: 1.6, dashArray: '8,6', fill: false, opacity: .9, interactive: false }).addTo(_map);
+      K.c1 = L.circle(m, { radius: r[0], color: '#8fa3c0', weight: 1.2, dashArray: '3,5', fill: false, opacity: .8, interactive: false }).addTo(_map);
+    }
+    if (d) {
+      K.dost = L.circle(d, { radius: 600, color: '#dc2626', weight: 2, fillColor: '#dc2626', fillOpacity: .18, interactive: false }).addTo(_map);
+      K.dost2 = L.circle(d, { radius: 900, color: '#f59e0b', weight: 1.2, dashArray: '4,4', fill: false, interactive: false }).addTo(_map);
+      K.dost.bindTooltip('DOST 600 m', { permanent: true, direction: 'center', className: 'hat-etiket' });
+    }
+    if (m && h) {
+      var mes = 0; try { mes = Math.round(distanceMgrs(g('mevziGrid'), g('hedefGrid'))); } catch (e) {}
+      K.hat = L.polyline([m, h], { color: '#f3d36b', weight: 3.5, opacity: .95, interactive: false }).addTo(_map);
+      K.hat.bindTooltip((mes ? mes + ' m' : '') + ' · ' + String(mil(m, h)).padStart(4, '0') + ' mil', { permanent: true, direction: 'center', className: 'hat-etiket' });
+      if (mes && r && (mes > r[1] || mes < r[0])) K.hat.setStyle({ color: '#ef4444', dashArray: '8,6' });
+    }
+  }
+  setInterval(function () { try { cizHarita(); } catch (e) {} }, 900);
 })();
 </script>
 </body>
