@@ -2858,7 +2858,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-46</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.06-47</span>
     </span>
   </div>
 
@@ -11772,6 +11772,35 @@ body.app-mode #bottomNav{display:none!important}
 #appDiger .tile .i{font-size:1.9rem;line-height:1}
 [data-theme="dark"] #appDiger .tile{background:#161b22;color:#e6edf3;border-color:#30363d}
 #appDiger h3{margin:14px 2px 8px;font-size:.78rem;color:#6b7a90;letter-spacing:.5px}
+
+#appDiger{background:#eef2f8!important;padding:0 12px 30px!important}
+[data-theme="dark"] #appDiger{background:#0d1117!important}
+#appDiger .hero{margin:0 -12px;padding:16px 18px 26px;color:#fff;position:relative;background:linear-gradient(160deg,#0b1f3d,#12376b);border-radius:0 0 26px 26px;box-shadow:0 10px 24px -14px rgba(11,31,61,.8)}
+#appDiger .hero::after{content:"";position:absolute;left:18px;bottom:12px;width:46px;height:3px;border-radius:2px;background:linear-gradient(90deg,#d4a017,#f3d36b)}
+#appDiger .hero .k{font-size:1.9rem;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#fff,#f3d36b);-webkit-background-clip:text;background-clip:text;color:transparent}
+#appDiger .hero .b{font-size:.95rem;font-weight:700;opacity:.95}
+#appDiger .hero .d{font-size:.7rem;opacity:.65;margin-top:2px;letter-spacing:.4px}
+#appDiger h3{color:#8fa3c0!important;font-size:.68rem!important;letter-spacing:2px!important;margin:18px 4px 9px!important;display:flex;align-items:center;gap:8px}
+#appDiger h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(143,163,192,.5),transparent)}
+#appDiger .hero + h3{margin-top:20px!important}
+#appDiger .grid{grid-template-columns:1fr!important;gap:8px!important}
+#appDiger .grid.arac{grid-template-columns:1fr 1fr 1fr!important;gap:8px!important}
+#appDiger .tile{flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;gap:13px!important;text-align:left!important;min-height:0!important;padding:11px 12px!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:16px!important;background:linear-gradient(145deg,#fff,#f3f6fb)!important;box-shadow:0 1px 0 #fff inset,0 6px 16px -8px rgba(11,31,61,.45)!important;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+#appDiger .tile::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:0 3px 3px 0;background:var(--ac,#c8102e)}
+#appDiger .tile:active{transform:scale(.975)}
+#appDiger .tile .i{flex:none;width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.45rem!important;background:linear-gradient(145deg,color-mix(in srgb,var(--ac) 16%,#fff),color-mix(in srgb,var(--ac) 30%,#fff));box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 28%,transparent) inset}
+#appDiger .tile .m{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+#appDiger .tile .a{font-size:.88rem;font-weight:800;color:#0b1f3d;line-height:1.15}
+#appDiger .tile .u{font-size:.68rem;font-weight:500;color:#6b7a90;line-height:1.2}
+#appDiger .tile .ok{font-size:1.5rem;color:#9fb0c8;font-weight:300;line-height:1}
+#appDiger .tile.kucuk{flex-direction:column!important;justify-content:center!important;text-align:center!important;gap:6px!important;padding:12px 4px!important}
+#appDiger .tile.kucuk::before{display:none}
+#appDiger .tile.kucuk .i{width:38px;height:38px;font-size:1.25rem!important}
+#appDiger .tile.kucuk .m{flex:none;align-items:center}
+#appDiger .tile.kucuk .a{font-size:.68rem;font-weight:700}
+[data-theme="dark"] #appDiger .tile{background:linear-gradient(145deg,#1a2230,#141a24)!important;border-color:#2b3646!important;box-shadow:0 6px 16px -8px #000!important}
+[data-theme="dark"] #appDiger .tile .a{color:#e6edf3}[data-theme="dark"] #appDiger .tile .u{color:#8b98aa}
+[data-theme="dark"] #appDiger .tile .i{background:linear-gradient(145deg,color-mix(in srgb,var(--ac) 22%,#141a24),color-mix(in srgb,var(--ac) 38%,#141a24))}
 #appUstBildirim{display:none}
 body.app-mode #appUstBildirim{display:block}
 </style>
@@ -11853,13 +11882,21 @@ body.app-mode #appUstBildirim{display:block}
     if (it.onAc) { try { it.onAc(); } catch (e) {} }
   }
   window.appOzelAc = function (id) { var it = window.__appEk.filter(function (x) { return x.id === id; })[0]; if (it) ozelAc(it, false); };
-  function tile(ikon, ad, fn) {
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'tile';
-    b.innerHTML = '<span class="i">' + ikon + '</span><span>' + ad + '</span>'; b.addEventListener('click', fn); return b;
+  var ALT = { 'Konvoy':'Hareketli hedefe önden atış', 'Demet':'Demet ve alan atışı', 'Aydınlatma':'Koordineli aydınlatma planı', 'Sis':'Sis perdesi planlama', 'Kutup':'Polar koordinatla hedef', 'Gözetleyici':'İleri gözetleyici düzeltmesi', '3 Ayrı':'Üç hedef birden', 'Metro':'Canlı hava ve rüzgâr', 'Düzeltmeler':'Atış sonrası düzeltme', 'Faktör':'K ve yan faktörü', 'Ortak':'Ortak atış görevi', 'Hedef Listesi':'Kayıtlı hedefler ve geçmiş', 'Atış Listesi':'Hedefleri sırala, hepsini hesapla', 'Defteri':'Gerçek isabet, faktör önerisi' };
+  var RENK = ['#c8102e', '#d4a017', '#2f6fdb', '#1fa37a', '#8b5cf6', '#e8590c'];
+  var tileSay = 0;
+  function altBul(ad) { for (var k in ALT) if (ad.indexOf(k) > -1) return ALT[k]; return ''; }
+  function tile(ikon, ad, fn, kucuk) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'tile' + (kucuk ? ' kucuk' : '');
+    var r = RENK[tileSay++ % RENK.length], alt = kucuk ? '' : altBul(ad);
+    b.style.setProperty('--ac', r);
+    b.innerHTML = '<span class="i">' + ikon + '</span><span class="m"><span class="a">' + ad + '</span>' + (alt ? '<span class="u">' + alt + '</span>' : '') + '</span>' + (kucuk ? '' : '<span class="ok">›</span>');
+    b.addEventListener('click', fn); return b;
   }
   function digerGoster() {
-    sheetKapatNode(); diger.innerHTML = ''; diger.style.display = 'block'; diger.scrollTop = 0;
+    sheetKapatNode(); diger.innerHTML = ''; tileSay = 0; diger.style.display = 'block'; diger.scrollTop = 0;
     acik = { tip: 'diger' }; barGoster('☰ Diğer İşlevler'); navIsaretle('diger'); ozet.style.display = 'none';
+    var hr = document.createElement('div'); hr.className = 'hero'; hr.innerHTML = '<div class="k">HAİS</div><div class="b">Havan Ateş İdare Sistemi</div><div class="d">12. Komando Tugayı · 81 / 106 / 120 mm</div>'; diger.appendChild(hr);
     var h1 = document.createElement('h3'); h1.textContent = 'HESAPLAMA MODÜLLERİ'; diger.appendChild(h1);
     var g = document.createElement('div'); g.className = 'grid'; diger.appendChild(g);
     MODULLER.forEach(function (id) {
@@ -11870,14 +11907,14 @@ body.app-mode #appUstBildirim{display:block}
     window.__appEk.forEach(function (it) { if (!it.node) return;
       g.appendChild(tile(it.ikon, it.ad, function () { ozelAc(it, true); })); });
     var h2 = document.createElement('h3'); h2.textContent = 'ARAÇLAR'; diger.appendChild(h2);
-    var g2 = document.createElement('div'); g2.className = 'grid'; diger.appendChild(g2);
+    var g2 = document.createElement('div'); g2.className = 'grid arac'; diger.appendChild(g2);
     var gb = el('ortakGorevAcBtnGozet');
-    if (gb) g2.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }));
-    g2.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }));
+    if (gb) g2.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }, true));
+    g2.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }, true));
     window.__appEk.forEach(function (it) { if (!it.fn) return;
-      g2.appendChild(tile(it.ikon, it.ad, function () { it.fn(); })); });
-    g2.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }));
-    g2.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }));
+      g2.appendChild(tile(it.ikon, it.ad, function () { it.fn(); }, true)); });
+    g2.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }, true));
+    g2.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }, true));
   }
   function uygula() {
     var a = uygMod();
