@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-62</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-63</span>
     </span>
   </div>
 
@@ -12460,9 +12460,9 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     var h = '<div class="not">Talimname 4-41 / 4-67. Her havan kendi düzeltme turlarını alır. Önce <b>esas havan (2.)</b> tanzimini yapar; 1. ve 3. havan esasın son verisiyle başlayıp kendi düzeltmelerini alır. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2., soldaki 3. havandır.</div>';
     NAMLU.forEach(function (n) {
       h += '<h4>' + n[1] + '</h4><div id="tzT' + n[0] + '"></div><div id="tzI' + n[0] + '"></div>' +
-        '<div style="display:flex;gap:8px"><button class="b g" id="tzE' + n[0] + '">✔ Uygula</button><button class="b o" id="tzS' + n[0] + '" style="flex:0 0 38%">↶ Geri al</button></div>';
+        '<div style="display:flex;gap:8px"><button class="b g" id="tzE' + n[0] + '">✔ Uygula</button><button class="b o" id="tzS' + n[0] + '" style="flex:0 0 38%">↶ Geri al</button></div><div id="tzM' + n[0] + '" class="not" style="color:#b91c1c;font-weight:800"></div>';
     });
-    h += '<div id="tzSon"></div>';
+    h += '<div id="tzSon"></div><button class="b r" id="tzSifir" style="background:#c8102e">🗑 Tüm düzeltmeleri sıfırla</button>';
     TZ.innerHTML = h;
     NAMLU.forEach(function (n) {
       turlariCiz(n);
@@ -12470,11 +12470,23 @@ body.app-mode .left-panel{padding-bottom:10px!important}
         var d = el('tzI' + n[0]), g = function (s) { return d.querySelector('[data-k="n' + s + '"]'); };
         var o = { yd: g('yd').value, ym: g('ym').value, rd: g('rd').value, rm: g('rm').value };
         if (!signed(o.yd, o.ym) && !signed(o.rd, o.rm)) return;
+        var msg = el('tzM' + n[0]); msg.textContent = '';
+        try {
+          var t = toplam(n[0]), ee = esasDegerler();
+          hesap(ee, t.dy + signed(o.yd, o.ym), t.dr + signed(o.rd, o.rm));
+        } catch (x) { msg.textContent = '⚠️ Bu düzeltme uygulanamaz: ' + (x.message || 'menzil dışı') + ' (şu ana kadarki toplam ' + Math.round(toplam(n[0]).dr) + ' m mesafe düzeltmesi var; gerekirse “Geri al” yapın)'; return; }
         st[n[2]].push(o); sv(st); turlariCiz(n); hesapla();
       };
-      el('tzS' + n[0]).onclick = function () { st[n[2]].pop(); sv(st); hesapla(); };
+      el('tzS' + n[0]).onclick = function () { st[n[2]].pop(); sv(st); el('tzM' + n[0]).textContent = ''; hesapla(); };
     });
+    el('tzSifir').onclick = function () { if (confirm('Üç namlunun tüm düzeltmeleri silinsin mi?')) { st.rounds = []; st.r1 = []; st.r3 = []; sv(st); ciz(); } };
     hesapla();
+  }
+  function toplam(no) {
+    var dy = 0, dr = 0;
+    st.rounds.forEach(function (o) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); });
+    if (no !== 2) st[no === 1 ? 'r1' : 'r3'].forEach(function (o) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); });
+    return { dy: dy, dr: dr };
   }
   function turlariCiz(n) {
     el('tzI' + n[0]).innerHTML = satir('n', {}, 'Yeni düzeltme (İG)');
@@ -12491,18 +12503,21 @@ body.app-mode .left-panel{padding-bottom:10px!important}
       NAMLU.forEach(function (n) { el('tzT' + n[0]).innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Ana ekranda geçerli mevzi ve hedef girin: ' + (x.message || '') + '</div>'; });
       s.innerHTML = ''; return;
     }
-    var fin = {}, tot = { dy: 0, dr: 0 };
-    try {
-      NAMLU.forEach(function (n) {
-        var dy = n[0] === 2 ? 0 : tot.dy, dr = n[0] === 2 ? 0 : tot.dr;
-        var rows = [{ ad: n[0] === 2 ? 'İlk atış' : 'Esas verisi', v: n[0] === 2 ? ilk : fin[2] }];
-        st[n[2]].forEach(function (o, i) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); rows.push({ ad: (i + 1) + '. dz.<br><small style="font-size:.55rem;font-weight:600">' + etiket(o) + '</small>', v: hesap(e, dy, dr) }); });
-        rows[rows.length - 1].e = true; fin[n[0]] = rows[rows.length - 1].v;
-        if (n[0] === 2) { tot.dy = dy; tot.dr = dr; }
-        var ozet = st[n[2]].length ? '' : '<div class="not">' + (n[0] === 2 ? 'Gözetleyici düzeltme verdikçe aşağıya yazıp “Uygula”ya basın.' : 'Esasın son verisiyle atılır; düzeltme verildikçe yazıp “Uygula”ya basın.') + '</div>';
-        el('tzT' + n[0]).innerHTML = '<div class="kt">' + tablo(rows) + ozet + '</div>';
-      });
-    } catch (x) { s.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ ' + (x.message || 'Hesaplanamadı') + '</div>'; return; }
+    var fin = {}, tot = { dy: 0, dr: 0 }, hataVar = false;
+    NAMLU.forEach(function (n) {
+      var dy = n[0] === 2 ? 0 : tot.dy, dr = n[0] === 2 ? 0 : tot.dr, hata = '';
+      if (n[0] !== 2 && !fin[2]) { el('tzT' + n[0]).innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Önce esas havanın düzeltmesi geçerli olmalı.</div>'; hataVar = true; return; }
+      var rows = [{ ad: n[0] === 2 ? 'İlk atış' : 'Esas verisi', v: n[0] === 2 ? ilk : fin[2] }];
+      for (var i = 0; i < st[n[2]].length; i++) {
+        var o = st[n[2]][i]; dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm);
+        try { rows.push({ ad: (i + 1) + '. dz.<br><small style="font-size:.55rem;font-weight:600">' + etiket(o) + '</small>', v: hesap(e, dy, dr) }); }
+        catch (x) { hata = (i + 1) + '. düzeltme uygulanamıyor: ' + (x.message || 'menzil dışı') + '. “Geri al” ile son düzeltmeyi silin.'; hataVar = true; break; }
+      }
+      if (!hata) { rows[rows.length - 1].e = true; fin[n[0]] = rows[rows.length - 1].v; if (n[0] === 2) { tot.dy = dy; tot.dr = dr; } }
+      var ozet = hata ? '<div class="not" style="color:#b91c1c;font-weight:800">⚠️ ' + hata + '</div>' : (st[n[2]].length ? '' : '<div class="not">' + (n[0] === 2 ? 'Gözetleyici düzeltme verdikçe aşağıya yazıp “Uygula”ya basın.' : 'Esasın son verisiyle atılır; düzeltme verildikçe yazıp “Uygula”ya basın.') + '</div>');
+      el('tzT' + n[0]).innerHTML = '<div class="kt">' + tablo(rows) + ozet + '</div>';
+    });
+    if (hataVar || !fin[1] || !fin[2] || !fin[3]) { s.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Nihai veri hesaplanamadı. Hatalı turu “Geri al” ile silin veya “Tüm düzeltmeleri sıfırla” düğmesine basın.</div>'; return; }
     var sonDz = function (key) { var r = st[key]; return r.length ? '<br><small style="font-size:.55rem;font-weight:600">' + r.length + '. dz: ' + etiket(r[r.length - 1]) + '</small>' : '<br><small style="font-size:.55rem;font-weight:600">dz. yok</small>'; };
     var all = [{ ad: '1' + sonDz('r1'), v: fin[1] }, { ad: '2 (esas)' + sonDz('rounds'), v: fin[2], e: true }, { ad: '3' + sonDz('r3'), v: fin[3] }];
     var kmt = 'TESİR ATIŞI — 3 NAMLU\n' + all.map(function (r) { return r.ad.charAt(0) + '. HAVAN  YAN ' + fm(r.v.yan) + '  YÜKSELİŞ ' + fm(r.v.yukselis) + '  BH ' + r.v.bh; }).join('\n') + '\nMESAFE (esas): ' + Math.round(fin[2].mesafe) + ' m · Uçuş: ' + (fin[2].ucusSuresi != null ? Number(fin[2].ucusSuresi).toFixed(1) + ' sn' : '—');
@@ -12518,6 +12533,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   window.__appEk.push({ id: 'tanzim3', ikon: '🎯', ad: 'Tanzim (3 Namlu)', node: TZ, onAc: ciz, ust: true });
 })();
 </script>
+
 
 
 
