@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-54</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-50</span>
     </span>
   </div>
 
@@ -11764,72 +11764,46 @@ body.app-mode #bottomNav{display:none!important}
 #appNav .dot{position:absolute;top:7px;right:calc(50% - 22px);width:10px;height:10px;border-radius:50%;background:#e11d48;display:none;border:2px solid #0b1f3d}
 #appOzet{position:fixed;left:8px;right:8px;bottom:68px;z-index:9150;display:none;background:#12315c;color:#fff;border-radius:12px;padding:8px 12px;font-weight:800;font-size:.8rem;box-shadow:0 2px 10px rgba(0,0,0,.4);cursor:pointer;justify-content:space-between;gap:8px;border:1px solid rgba(255,255,255,.25)}
 #appOzet span b{color:#ffd166}
-#appDiger{display:none;position:fixed;left:0;right:0;top:52px;bottom:62px;z-index:9000;overflow:auto;background:#fbfcfe;padding:14px 12px 30px;box-sizing:border-box}
+/* Daha fazla: sağdan açılan çekmece */
+#appDrawerOv{display:none;position:fixed;inset:0;z-index:9150;background:rgba(6,14,30,.5);backdrop-filter:blur(1.5px)}
+#appDiger{display:none;position:fixed;right:0;top:0;bottom:62px;width:86%;max-width:390px;z-index:9160;overflow-y:auto;background:#f3f6fb;box-shadow:-8px 0 30px rgba(0,0,0,.35);border-radius:22px 0 0 22px;animation:drawIn .22s ease-out;-webkit-overflow-scrolling:touch}
+@keyframes drawIn{from{transform:translateX(100%)}to{transform:none}}
 [data-theme="dark"] #appDiger{background:#0d1117}
-#appDiger .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#appDiger .tile{background:#fff;border:1.5px solid #cfd8e6;border-radius:14px;padding:16px 8px;text-align:center;font-weight:800;font-size:.8rem;color:#12315c;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center;font-family:inherit;min-height:92px;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-#appDiger .tile .i{font-size:1.9rem;line-height:1}
-
-/* Diğer: kare butonlar */
-body #appDiger .grid,body #appDiger .grid.arac{grid-template-columns:repeat(3,1fr)!important;gap:9px!important}
-body #appDiger .tile,body #appDiger .tile.kucuk{flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;gap:7px!important;aspect-ratio:1/1;padding:6px 4px!important;border-radius:16px!important}
-body #appDiger .tile::before{left:18%;right:18%;top:0;bottom:auto;width:auto;height:3px;border-radius:0 0 3px 3px}
-body #appDiger .tile .u,body #appDiger .tile .ok{display:none!important}
-body #appDiger .tile,body #appDiger .tile.kucuk{background:linear-gradient(150deg,color-mix(in srgb,var(--ac) 14%,#fff),color-mix(in srgb,var(--ac) 5%,#fff))!important;border-color:color-mix(in srgb,var(--ac) 32%,#fff)!important}
-[data-theme="dark"] body #appDiger .tile,body[data-theme="dark"] #appDiger .tile{background:linear-gradient(150deg,color-mix(in srgb,var(--ac) 22%,#141a24),#141a24)!important;border-color:color-mix(in srgb,var(--ac) 40%,#141a24)!important}
-body #appDiger .tile .m{flex:none;align-items:center}
-body #appDiger .tile .a,body #appDiger .tile.kucuk .a{font-size:.64rem!important;font-weight:800;line-height:1.15;text-align:center}
-body #appDiger .tile .i,body #appDiger .tile.kucuk .i{width:38px;height:38px;font-size:1.25rem!important}
-[data-theme="dark"] #appDiger .tile{background:#161b22;color:#e6edf3;border-color:#30363d}
-#appDiger h3{margin:14px 2px 8px;font-size:.78rem;color:#6b7a90;letter-spacing:.5px}
-
-#appDiger{background:#eef2f8!important;padding:0 12px 30px!important}
-[data-theme="dark"] #appDiger{background:#0d1117!important}
-#appDiger .hero{margin:0 -12px;padding:16px 18px 26px;color:#fff;position:relative;background:linear-gradient(160deg,#0b1f3d,#12376b);border-radius:0 0 26px 26px;box-shadow:0 10px 24px -14px rgba(11,31,61,.8)}
-#appDiger .hero::after{content:"";position:absolute;left:18px;bottom:12px;width:46px;height:3px;border-radius:2px;background:linear-gradient(90deg,#d4a017,#f3d36b)}
-#appDiger .hero .k{font-size:1.4rem;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#fff,#f3d36b);-webkit-background-clip:text;background-clip:text;color:transparent}
-#appDiger .hero .b{font-size:.95rem;font-weight:700;opacity:.95}
-#appDiger .hero .d{font-size:.7rem;opacity:.65;margin-top:2px;letter-spacing:.4px}
-#appDiger h3{color:#8fa3c0!important;font-size:.68rem!important;letter-spacing:2px!important;margin:18px 4px 9px!important;display:flex;align-items:center;gap:8px}
-#appDiger h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(143,163,192,.5),transparent)}
-#appDiger .hero + h3{margin-top:20px!important}
-#appDiger .grid{grid-template-columns:1fr!important;gap:8px!important}
-#appDiger .grid.arac{grid-template-columns:1fr 1fr 1fr!important;gap:8px!important}
-#appDiger .tile{flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;gap:11px!important;text-align:left!important;min-height:0!important;padding:8px 10px!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:16px!important;background:linear-gradient(145deg,#fff,#f3f6fb)!important;box-shadow:0 1px 0 #fff inset,0 6px 16px -8px rgba(11,31,61,.45)!important;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
-#appDiger .tile::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:0 3px 3px 0;background:var(--ac,#c8102e)}
-#appDiger .tile:active{transform:scale(.975)}
-#appDiger .tile .i{flex:none;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.15rem!important;background:linear-gradient(145deg,color-mix(in srgb,var(--ac) 16%,#fff),color-mix(in srgb,var(--ac) 30%,#fff));box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 28%,transparent) inset}
-#appDiger .tile .m{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
-#appDiger .tile .a{font-size:.76rem;font-weight:800;color:#0b1f3d;line-height:1.15}
-#appDiger .tile .u{font-size:.6rem;font-weight:500;color:#6b7a90;line-height:1.2}
-#appDiger .tile .ok{font-size:1.5rem;color:#9fb0c8;font-weight:300;line-height:1}
-#appDiger .tile.kucuk{flex-direction:column!important;justify-content:center!important;text-align:center!important;gap:6px!important;padding:12px 4px!important}
-#appDiger .tile.kucuk::before{display:none}
-#appDiger .tile.kucuk .i{width:38px;height:38px;font-size:1.25rem!important}
-#appDiger .tile.kucuk .m{flex:none;align-items:center}
-#appDiger .tile.kucuk .a{font-size:.6rem;font-weight:700}
-[data-theme="dark"] #appDiger .tile{background:linear-gradient(145deg,#1a2230,#141a24)!important;border-color:#2b3646!important;box-shadow:0 6px 16px -8px #000!important}
+#appDiger .dh{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:14px 14px 14px 18px;background:linear-gradient(135deg,#0b1f3d,#15417d);color:#fff;border-radius:22px 0 0 0}
+#appDiger .dh b{font-size:1.15rem;font-weight:800;letter-spacing:.3px}
+#appDiger .dh button{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:1rem;cursor:pointer}
+#appDiger .dl{padding:10px 12px 18px}
+#appDiger h3{margin:12px 4px 7px;font-size:.62rem;letter-spacing:2px;color:#8fa3c0;font-weight:800}
+#appDiger .tile{display:flex;align-items:center;gap:11px;width:100%;text-align:left;margin:0 0 8px;padding:9px 11px;border:1px solid color-mix(in srgb,var(--ac) 22%,#fff);border-radius:14px;background:#fff;box-shadow:0 3px 10px -6px rgba(11,31,61,.35);cursor:pointer;font-family:inherit}
+#appDiger .tile:active{transform:scale(.98)}
+#appDiger .tile .i{flex:none;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:linear-gradient(145deg,color-mix(in srgb,var(--ac) 14%,#fff),color-mix(in srgb,var(--ac) 30%,#fff))}
+#appDiger .tile .m{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+#appDiger .tile .a{font-size:.8rem;font-weight:800;color:#0b1f3d;line-height:1.15}
+#appDiger .tile .u{font-size:.64rem;font-weight:500;color:#6b7a90;line-height:1.2}
+#appDiger .tile .ok{font-size:1.3rem;color:#9fb0c8;line-height:1}
+[data-theme="dark"] #appDiger .tile{background:#161b22;border-color:#2b3646}
 [data-theme="dark"] #appDiger .tile .a{color:#e6edf3}[data-theme="dark"] #appDiger .tile .u{color:#8b98aa}
-[data-theme="dark"] #appDiger .tile .i{background:linear-gradient(145deg,color-mix(in srgb,var(--ac) 22%,#141a24),color-mix(in srgb,var(--ac) 38%,#141a24))}
 #appUstBildirim{display:none}
 body.app-mode #appUstBildirim{display:block}
 </style>
 <div id="appSheetBar"><button type="button" id="appGeri">← Geri</button><div class="t" id="appBaslik"></div><button type="button" id="appKapat">✕</button></div>
+<div id="appDrawerOv"></div>
 <div id="appDiger"></div>
 <div id="appOzet" onclick="appAc('sonuc')"><span id="appOzetMetin"></span><span>Detay ›</span></div>
 <div id="appNav">
   <button type="button" data-nav="hesap" class="on"><span class="i">🏠</span>Hesap</button>
-  <button type="button" data-nav="sonuc"><span class="i">📊</span>Sonuç<span class="dot" id="appNavDot"></span></button>
   <button type="button" data-nav="harita"><span class="i">🗺️</span>Harita</button>
-  <button type="button" data-nav="diger"><span class="i">☰</span>Diğer</button>
+  <button type="button" data-nav="konvoy"><span class="i">🚗</span>Konvoy</button>
+  <button type="button" data-nav="metro"><span class="i">📡</span>Metro</button>
+  <button type="button" data-nav="diger"><span class="i">☰</span>Daha fazla<span class="dot" id="appNavDot"></span></button>
 </div>
 <script>
 (function () {
   var KEY = 'hais_gorunum';
   var MODULLER = ['konvoyToggle','demetToggle','koordAydToggle','sisPerdeToggle','polarToggle','gozetPanelToggle','ucHedefToggle','metroToggle','corrToggle','kFaktorToggle','ortakToggle','gecmisToggle'];
   var el = function (i) { return document.getElementById(i); };
-  var mainApp = el('mainApp'), nav = el('appNav'), bar = el('appSheetBar'), diger = el('appDiger'), ozet = el('appOzet');
-  [nav, bar, diger, ozet].forEach(function (x) { mainApp.appendChild(x); });
+  var mainApp = el('mainApp'), nav = el('appNav'), bar = el('appSheetBar'), diger = el('appDiger'), ozet = el('appOzet'), ov = el('appDrawerOv');
+  [nav, bar, diger, ozet, ov].forEach(function (x) { mainApp.appendChild(x); });
   var acik = null;        // { tip:'modul'|'ozel'|'sonuc'|'harita'|'diger', node, ... }
   window.__appEk = window.__appEk || [];
   var geriDiger = false;
@@ -11848,7 +11822,7 @@ body.app-mode #appUstBildirim{display:block}
     if (acik.tip === 'modul') { acik.node.classList.remove('app-sheet'); acik.node.classList.remove('show'); acik.toggle.classList.remove('open'); }
     if (acik.tip === 'ozel') { acik.node.classList.remove('app-sheet'); acik.node.style.display = 'none'; }
     if (acik.tip === 'sonuc' || acik.tip === 'harita') { rp.classList.remove('app-sheet', 'mode-sonuc', 'mode-harita'); }
-    if (acik.tip === 'diger') diger.style.display = 'none';
+    if (acik.tip === 'diger') { diger.style.display = 'none'; ov.style.display = 'none'; }
     acik = null;
   }
   function barGoster(baslik) { bar.style.display = 'flex'; el('appBaslik').textContent = baslik; }
@@ -11870,7 +11844,7 @@ body.app-mode #appUstBildirim{display:block}
     sheetKapatNode();
     c.classList.add('show'); t.classList.add('open'); c.classList.add('app-sheet'); c.scrollTop = 0;
     acik = { tip: 'modul', node: c, toggle: t }; geriDiger = !!digerden;
-    barGoster(baslikOf(t)); navIsaretle(digerden ? 'diger' : ''); ozet.style.display = 'none';
+    barGoster(baslikOf(t)); navIsaretle(digerden ? 'diger' : (toggleId === 'konvoyToggle' ? 'konvoy' : (toggleId === 'metroToggle' ? 'metro' : ''))); ozet.style.display = 'none';
   }
   window.appAc = function (tip) {
     if (!uygMod()) return;
@@ -11882,7 +11856,8 @@ body.app-mode #appUstBildirim{display:block}
       if (tip === 'harita') setTimeout(function () { try { if (typeof _map !== 'undefined' && _map) _map.invalidateSize(); } catch (e) {} }, 200);
       return;
     }
-    if (tip === 'diger') { digerGoster(); return; }
+    if (tip === 'konvoy' || tip === 'metro') { modulAc(tip + 'Toggle', false); navIsaretle(tip); return; }
+    if (tip === 'diger') { if (acik && acik.tip === 'diger') { appKapat(); } else digerGoster(); return; }
   };
   function ozelAc(it, digerden) {
     sheetKapatNode();
@@ -11892,39 +11867,44 @@ body.app-mode #appUstBildirim{display:block}
     if (it.onAc) { try { it.onAc(); } catch (e) {} }
   }
   window.appOzelAc = function (id) { var it = window.__appEk.filter(function (x) { return x.id === id; })[0]; if (it) ozelAc(it, false); };
-  var ALT = { 'Konvoy':'Hareketli hedefe önden atış', 'Demet':'Demet ve alan atışı', 'Aydınlatma':'Koordineli aydınlatma planı', 'Sis':'Sis perdesi planlama', 'Kutup':'Polar koordinatla hedef', 'Gözetleyici':'İleri gözetleyici düzeltmesi', '3 Ayrı':'Üç hedef birden', 'Metro':'Canlı hava ve rüzgâr', 'Düzeltmeler':'Atış sonrası düzeltme', 'Faktör':'K ve yan faktörü', 'Ortak':'Ortak atış görevi', 'Hedef Listesi':'Kayıtlı hedefler ve geçmiş', 'Atış Listesi':'Hedefleri sırala, hepsini hesapla', 'Defteri':'Gerçek isabet, faktör önerisi' };
+  var ALT = { 'Son Hesap':'Yan, yükseliş, BH ve uçuş süresi', 'Görev İste':'Ortak atış görevine katıl', 'Teknik Bilgiler':'Tablolar ve havan bilgileri', 'Gece Görüş':'Kırmızı, kısık ekran', 'Gece / Gündüz':'Açık veya koyu tema', 'Klasik Görünüm':'Eski ekran düzeni', 'Konvoy':'Hareketli hedefe önden atış', 'Demet':'Demet ve alan atışı', 'Aydınlatma':'Koordineli aydınlatma planı', 'Sis':'Sis perdesi planlama', 'Kutup':'Polar koordinatla hedef', 'Gözetleyici':'İleri gözetleyici düzeltmesi', '3 Ayrı':'Üç hedef birden', 'Metro':'Canlı hava ve rüzgâr', 'Düzeltmeler':'Atış sonrası düzeltme', 'Faktör':'K ve yan faktörü', 'Ortak':'Ortak atış görevi', 'Hedef Listesi':'Kayıtlı hedefler ve geçmiş', 'Atış Listesi':'Hedefleri sırala, hepsini hesapla', 'Defteri':'Gerçek isabet, faktör önerisi' };
   var RENK = ['#c8102e', '#d4a017', '#2f6fdb', '#1fa37a', '#8b5cf6', '#e8590c'];
   var tileSay = 0;
   function altBul(ad) { for (var k in ALT) if (ad.indexOf(k) > -1) return ALT[k]; return ''; }
   function tile(ikon, ad, fn, kucuk) {
     var b = document.createElement('button'); b.type = 'button'; b.className = 'tile' + (kucuk ? ' kucuk' : '');
-    var r = RENK[tileSay++ % RENK.length], alt = kucuk ? '' : altBul(ad);
+    var r = RENK[tileSay++ % RENK.length], alt = altBul(ad); kucuk = false;
     b.style.setProperty('--ac', r);
     b.innerHTML = '<span class="i">' + ikon + '</span><span class="m"><span class="a">' + ad + '</span>' + (alt ? '<span class="u">' + alt + '</span>' : '') + '</span>' + (kucuk ? '' : '<span class="ok">›</span>');
     b.addEventListener('click', fn); return b;
   }
   function digerGoster() {
-    sheetKapatNode(); diger.innerHTML = ''; tileSay = 0; diger.style.display = 'block'; diger.scrollTop = 0;
-    acik = { tip: 'diger' }; barGoster('☰ Diğer İşlevler'); navIsaretle('diger'); ozet.style.display = 'none';
-    var hr = document.createElement('div'); hr.className = 'hero'; hr.innerHTML = '<div class="k">HAİS</div><div class="b">Havan Ateş İdare Sistemi</div><div class="d">12. Komando Tugayı · 81 / 106 / 120 mm</div>'; diger.appendChild(hr);
-    var h1 = document.createElement('h3'); h1.textContent = 'HESAPLAMA MODÜLLERİ'; diger.appendChild(h1);
-    var g = document.createElement('div'); g.className = 'grid'; diger.appendChild(g);
+    sheetKapatNode(); diger.innerHTML = ''; tileSay = 0; diger.style.display = 'block'; ov.style.display = 'block'; diger.scrollTop = 0;
+    acik = { tip: 'diger' }; bar.style.display = 'none'; navIsaretle('diger'); ozet.style.display = 'none';
+    var dh = document.createElement('div'); dh.className = 'dh'; dh.innerHTML = '<b>Daha fazla</b><button type="button" aria-label="Kapat">✕</button>';
+    dh.querySelector('button').addEventListener('click', appKapat); diger.appendChild(dh);
+    var dl = document.createElement('div'); dl.className = 'dl'; diger.appendChild(dl);
+    function baslik(t) { var h = document.createElement('h3'); h.textContent = t; dl.appendChild(h); }
+    baslik('SONUÇ');
+    dl.appendChild(tile('📊', 'Son Hesap Sonucu', function () { appAc('sonuc'); }));
+    baslik('HESAPLAMA MODÜLLERİ');
     MODULLER.forEach(function (id) {
+      if (id === 'konvoyToggle' || id === 'metroToggle') return;
       var t = el(id); if (!t) return;
       var tx = baslikOf(t); var m = tx.match(/^(\S+)\s+(.*)$/);
-      g.appendChild(tile(m ? m[1] : '•', m ? m[2] : tx, function () { modulAc(id, true); }));
+      dl.appendChild(tile(m ? m[1] : '•', m ? m[2] : tx, function () { modulAc(id, true); }));
     });
     window.__appEk.forEach(function (it) { if (!it.node) return;
-      g.appendChild(tile(it.ikon, it.ad, function () { ozelAc(it, true); })); });
-    var h2 = document.createElement('h3'); h2.textContent = 'ARAÇLAR'; diger.appendChild(h2);
-    var g2 = document.createElement('div'); g2.className = 'grid arac'; diger.appendChild(g2);
+      dl.appendChild(tile(it.ikon, it.ad, function () { ozelAc(it, true); })); });
+    baslik('ARAÇLAR');
     var gb = el('ortakGorevAcBtnGozet');
-    if (gb) g2.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }, true));
-    g2.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }, true));
+    if (gb) dl.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }));
+    dl.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }));
     window.__appEk.forEach(function (it) { if (!it.fn) return;
-      g2.appendChild(tile(it.ikon, it.ad, function () { it.fn(); }, true)); });
-    g2.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }, true));
-    g2.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }, true));
+      dl.appendChild(tile(it.ikon, it.ad, function () { it.fn(); })); });
+    dl.appendChild(tile('🌓', 'Gece / Gündüz', function () { if (window.toggleDarkMode) toggleDarkMode(); }));
+    dl.appendChild(tile('🖥️', 'Klasik Görünüm', function () { try { localStorage.setItem(KEY, 'klasik'); } catch (e) {} uygula(); }));
+    el('appNavDot').style.display = 'none';
   }
   function uygula() {
     var a = uygMod();
@@ -11945,6 +11925,7 @@ body.app-mode #appUstBildirim{display:block}
   Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) { b.addEventListener('click', function () { appAc(b.getAttribute('data-nav')); }); });
   el('appGeri').addEventListener('click', function () { if (geriDiger) { digerGoster(); } else appKapat(); });
   el('appKapat').addEventListener('click', appKapat);
+  ov.addEventListener('click', appKapat);
   // Dışarıdan açılan paneller (başka kodlar akordeonu açarsa) tam ekran olsun
   MODULLER.forEach(function (id) {
     var c = el(id.replace('Toggle', 'Content')); if (!c) return;

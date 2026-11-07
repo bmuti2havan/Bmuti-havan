@@ -1,4 +1,4 @@
-const CACHE = 'hais-v54';
+const CACHE = 'hais-v55';
 const ASSETS = ['./', './index.html'];
 
 self.addEventListener('install', e => {
