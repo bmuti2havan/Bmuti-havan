@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-56</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-58</span>
     </span>
   </div>
 
@@ -11786,6 +11786,16 @@ body.app-mode #bottomNav{display:none!important}
 #appDiger .tile .ok{font-size:1.3rem;color:#9fb0c8;line-height:1}
 [data-theme="dark"] #appDiger .tile{background:#161b22;border-color:#2b3646}
 [data-theme="dark"] #appDiger .tile .a{color:#e6edf3}[data-theme="dark"] #appDiger .tile .u{color:#8b98aa}
+/* Daha fazla: 2'li kare butonlar */
+#appDiger .dl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#appDiger .dl h3{grid-column:1/-1}
+#appDiger .tile,#appDiger .tile.kucuk{flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px;aspect-ratio:1/1;margin:0;padding:4px;border-radius:14px;position:relative;overflow:hidden;background:linear-gradient(150deg,color-mix(in srgb,var(--ac) 15%,#fff),color-mix(in srgb,var(--ac) 5%,#fff));border:1px solid color-mix(in srgb,var(--ac) 32%,#fff)}
+#appDiger .tile::before{content:"";position:absolute;left:20%;right:20%;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--ac)}
+#appDiger .tile .i{width:36px;height:36px;border-radius:11px;font-size:1.15rem}
+#appDiger .tile .m{flex:none;align-items:center}
+#appDiger .tile .a{font-size:.6rem;text-align:center;line-height:1.15}
+#appDiger .tile .u,#appDiger .tile .ok{display:none}
+[data-theme="dark"] #appDiger .tile{background:linear-gradient(150deg,color-mix(in srgb,var(--ac) 22%,#141a24),#141a24);border-color:color-mix(in srgb,var(--ac) 40%,#141a24)}
 #appUstBildirim{display:none}
 body.app-mode #appUstBildirim{display:block}
 </style>
