@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-50</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-56</span>
     </span>
   </div>
 
@@ -11744,8 +11744,11 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
 body.app-mode{padding-bottom:132px}
 body.app-mode .left-panel > .fn-toggle,
 body.app-mode .left-panel > .accordion-content:not(.app-sheet),
-body.app-mode #ortakGorevAcBtnGozet,
-body.app-mode .right-panel:not(.app-sheet){display:none!important}
+body.app-mode #ortakGorevAcBtnGozet{display:none!important}
+body.app-mode .right-panel:not(.app-sheet){flex:0 0 100%;min-width:0;padding:6px 12px 90px!important}
+body.app-mode .right-panel:not(.app-sheet)>#appHaritaPanel{display:none!important}
+body.app-mode .right-panel:not(.app-sheet)::before{display:none!important}
+body.app-mode .left-panel{padding-bottom:10px!important}
 body.app-mode .left-panel{max-height:none}
 .app-sheet{position:fixed!important;left:0;right:0;top:52px;bottom:62px;overflow:auto;z-index:9000;padding:12px 12px 30px!important;
   background:#fbfcfe;-webkit-overflow-scrolling:touch;max-height:none!important;border:0!important;display:block!important;min-width:0!important;flex:none!important;box-sizing:border-box}
@@ -11829,7 +11832,7 @@ body.app-mode #appUstBildirim{display:block}
   function navIsaretle(k) { Array.prototype.forEach.call(nav.querySelectorAll('button'), function (b) { b.classList.toggle('on', b.getAttribute('data-nav') === k); }); }
   function ozetGuncelle() {
     var r = window.__sonHesaplananSonuc;
-    var goster = uygMod() && r && !acik;
+    var goster = false;
     if (!goster) { ozet.style.display = 'none'; return; }
     var y = Math.round(r.yan), yk = Math.round(r.yukselis), m = Math.round(r.mesafe);
     if (isNaN(y) || isNaN(yk)) { ozet.style.display = 'none'; return; }
@@ -11885,8 +11888,6 @@ body.app-mode #appUstBildirim{display:block}
     dh.querySelector('button').addEventListener('click', appKapat); diger.appendChild(dh);
     var dl = document.createElement('div'); dl.className = 'dl'; diger.appendChild(dl);
     function baslik(t) { var h = document.createElement('h3'); h.textContent = t; dl.appendChild(h); }
-    baslik('SONUÇ');
-    dl.appendChild(tile('📊', 'Son Hesap Sonucu', function () { appAc('sonuc'); }));
     baslik('HESAPLAMA MODÜLLERİ');
     MODULLER.forEach(function (id) {
       if (id === 'konvoyToggle' || id === 'metroToggle') return;
@@ -11941,7 +11942,7 @@ body.app-mode #appUstBildirim{display:block}
     setTimeout(function () {
       var r = window.__sonHesaplananSonuc; if (!r) return;
       var hata = document.querySelector('#sonucAlan .error, #sonucAlan .err');
-      appAc('sonuc'); window.scrollTo(0, 0);
+      var sa = el('sonucAlan'); if (sa) sa.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 450);
   });
   // Yeni sonuç geldiğinde (örn. haritadan seçim) özet şeridi ve nokta
@@ -12316,7 +12317,7 @@ body.app-mode .left-panel .param-row:has(#hedefGrid) input,body.app-mode .left-p
 body.app-mode .left-panel .param-row:has(#dtnAzimuth) input,body.app-mode .left-panel .param-row:has(#dtnYan) input{border-color:#bccdee!important}
 [data-theme="dark"] body.app-mode .left-panel .param-row>label{background:#1b2740;color:#9db8ea}
 /* 3 — Sabit HESAPLA */
-body.app-mode .left-panel{padding-bottom:90px!important}
+body.app-mode .left-panel{padding-bottom:10px!important}
 /* 4 — Harita etiketi */
 .hat-etiket{background:#0b1f3d!important;color:#f3d36b!important;border:1px solid #f3d36b!important;border-radius:10px!important;font-weight:800;font-size:.72rem;padding:3px 8px!important;box-shadow:0 2px 8px rgba(0,0,0,.4)!important}
 .hat-etiket::before{display:none!important}
