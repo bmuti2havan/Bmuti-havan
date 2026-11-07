@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-59</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-60</span>
     </span>
   </div>
 
@@ -12420,10 +12420,10 @@ body.app-mode .left-panel{padding-bottom:10px!important}
 (function () {
   var el = function (i) { return document.getElementById(i); };
   var app = el('mainApp'), TZ = el('ekTanzim'); app.appendChild(TZ);
-  var ONE = 'hais_tanzim_v1', son = null;
+  var ONE = 'hais_tanzim_v2', son = null;
   function ld() { try { return JSON.parse(localStorage.getItem(ONE)) || {}; } catch (e) { return {}; } }
   function sv(o) { try { localStorage.setItem(ONE, JSON.stringify(o)); } catch (e) {} }
-  var st = ld();
+  var st = ld(); if (!st.rounds) st.rounds = [];
   function signed(dir, m) { m = Math.abs(parseFloat(m) || 0); return dir === 'sag' || dir === 'uzalt' ? m : (dir === 'sola' || dir === 'kisalt' ? -m : 0); }
   function esasDegerler() {
     return {
@@ -12443,48 +12443,71 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   }
   function opt(v, a) { return '<option value="' + v[0] + '"' + (a === v[0] ? ' selected' : '') + '>' + v[1] + '</option>'; }
   var YO = [['0', 'Yok / Uygun'], ['sag', 'SAĞA'], ['sola', 'SOLA']], RO = [['0', 'Uygun'], ['uzalt', 'UZALT'], ['kisalt', 'KISALT']];
-  function blok(n, ad) {
+  function satir(id, o, ad) {
     return '<div class="kt"><b>' + ad + '</b>' +
-      '<div class="st"><label>Yan</label><select id="tz' + n + 'yd">' + YO.map(function (v) { return opt(v, st['y' + n + 'd']); }).join('') + '</select><input id="tz' + n + 'ym" type="number" inputmode="numeric" placeholder="metre" value="' + (st['y' + n + 'm'] || '') + '"></div>' +
-      '<div class="st"><label>Mesafe</label><select id="tz' + n + 'rd">' + RO.map(function (v) { return opt(v, st['r' + n + 'd']); }).join('') + '</select><input id="tz' + n + 'rm" type="number" inputmode="numeric" placeholder="metre" value="' + (st['r' + n + 'm'] || '') + '"></div></div>';
+      '<div class="st"><label>Yan</label><select data-k="' + id + 'yd">' + YO.map(function (v) { return opt(v, o.yd); }).join('') + '</select><input data-k="' + id + 'ym" type="number" inputmode="numeric" placeholder="metre" value="' + (o.ym || '') + '"></div>' +
+      '<div class="st"><label>Mesafe</label><select data-k="' + id + 'rd">' + RO.map(function (v) { return opt(v, o.rd); }).join('') + '</select><input data-k="' + id + 'rm" type="number" inputmode="numeric" placeholder="metre" value="' + (o.rm || '') + '"></div></div>';
   }
   function fm(v) { return typeof formatMil === 'function' ? formatMil(v) : v; }
+  function tablo(rows) {
+    return '<table><tr><th></th><th>YAN</th><th>YÜKSELİŞ</th><th>BH</th><th>MESAFE</th></tr>' + rows.map(function (r) {
+      var c = r.e ? ' class="e"' : '';
+      return '<tr><td' + c + '>' + r.ad + '</td><td' + c + '>' + fm(r.v.yan) + '</td><td' + c + '>' + fm(r.v.yukselis) + '</td><td' + c + '>' + r.v.bh + '</td><td' + c + '>' + Math.round(r.v.mesafe) + '</td></tr>';
+    }).join('') + '</table>';
+  }
   function ciz() {
-    var h = '<div class="not">Talimname 4-67: <b>Paralel Demet Tanzimi</b>. Esas havan (2.) düzeltme tanzimini bitirmiştir. 1. ve 3. havan, esasın son yan ve yükselişiyle birer atım atar; ileri gözetleyici <b>her havan için ayrı düzeltme</b> verir. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2. (esas), soldaki 3. havandır.</div>' +
-      '<div id="tzEsas"></div>' +
-      '<h4>İleri gözetleyici düzeltmeleri (metre)</h4>' + blok(1, '1. HAVAN (sağdaki)') + blok(3, '3. HAVAN (soldaki)') +
-      '<button class="b g" id="tzHes">⚡ Hesapla — 3 Namlu</button><div id="tzSon"></div>';
-    TZ.innerHTML = h; esasGoster();
-    el('tzHes').onclick = hesapla;
-    Array.prototype.forEach.call(TZ.querySelectorAll('select,input'), function (x) { x.addEventListener('change', kaydet); });
-    if (st.hesapli) hesapla();
+    var h = '<div class="not">Talimname 4-41 / 4-67. Önce <b>esas havan (2.)</b> kendi düzeltme tanzimini yapar; ileri gözetleyici düzeltme verdikçe turları ekleyin. Esas havan tanzimi bitirince 1. ve 3. havan <b>paralel demet tanzimi</b> yapar. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2. (esas), soldaki 3. havandır.</div>' +
+      '<h4>1. ADIM — Esas havan düzeltme tanzimi</h4><div id="tzEsas"></div>' +
+      '<div id="tzTurlar"></div><div style="display:flex;gap:8px"><button class="b o" id="tzTurEkle">＋ Düzeltme turu ekle</button><button class="b o" id="tzTurSil">− Son turu sil</button></div>' +
+      '<h4>2. ADIM — 1. ve 3. havan paralel demet tanzimi</h4><div class="not">Esasın son yan ve yükselişiyle birer atım atarlar; gözetleyicinin her havan için verdiği düzeltmeleri girin.</div>' +
+      '<div id="tzP1"></div><div id="tzP3"></div>' +
+      '<button class="b g" id="tzHes">⚡ 3 Namlu Verisini Hesapla</button><div id="tzSon"></div>';
+    TZ.innerHTML = h; turlariCiz(); paraleliCiz(); hesapla(true);
+    el('tzTurEkle').onclick = function () { st.rounds.push({}); sv(st); turlariCiz(); hesapla(true); };
+    el('tzTurSil').onclick = function () { st.rounds.pop(); sv(st); turlariCiz(); hesapla(true); };
+    el('tzHes').onclick = function () { hesapla(false); };
   }
-  function kaydet() { ['1', '3'].forEach(function (n) { st['y' + n + 'd'] = el('tz' + n + 'yd').value; st['y' + n + 'm'] = el('tz' + n + 'ym').value; st['r' + n + 'd'] = el('tz' + n + 'rd').value; st['r' + n + 'm'] = el('tz' + n + 'rm').value; }); sv(st); }
-  function esasGoster() {
-    var d = el('tzEsas'), e = esasDegerler();
+  function baglaGiris(kök, hedef) {
+    Array.prototype.forEach.call(kök.querySelectorAll('select,input'), function (x) {
+      x.addEventListener('change', function () { hedef(); sv(st); hesapla(true); });
+      x.addEventListener('input', function () { hedef(); sv(st); });
+    });
+  }
+  function turlariCiz() {
+    var d = el('tzTurlar'); d.innerHTML = st.rounds.map(function (o, i) { return satir('t' + i, o, (i + 1) + '. düzeltme (İG → esas havan)'); }).join('');
+    baglaGiris(d, function () {
+      st.rounds = st.rounds.map(function (o, i) { var g = function (s) { return d.querySelector('[data-k="t' + i + s + '"]').value; }; return { yd: g('yd'), ym: g('ym'), rd: g('rd'), rm: g('rm') }; });
+    });
+  }
+  function paraleliCiz() {
+    [1, 3].forEach(function (n) {
+      var d = el('tzP' + n); d.innerHTML = satir('p' + n, st['p' + n] || {}, n + '. HAVAN (' + (n === 1 ? 'sağdaki' : 'soldaki') + ') — İG düzeltmesi');
+      baglaGiris(d, function () { var g = function (s) { return d.querySelector('[data-k="p' + n + s + '"]').value; }; st['p' + n] = { yd: g('yd'), ym: g('ym'), rd: g('rd'), rm: g('rm') }; });
+    });
+  }
+  function hesapla(sessiz) {
+    var e = esasDegerler(), de = el('tzEsas'), s = el('tzSon');
+    var ilk;
+    try { ilk = hesap(e, 0, 0); } catch (x) { son = null; de.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Ana ekranda geçerli mevzi ve hedef girin: ' + (x.message || '') + '</div>'; s.innerHTML = ''; return; }
+    // 1. adım: esas havan turları
+    var rows = [{ ad: 'İlk atış', v: ilk }], dy = 0, dr = 0;
     try {
-      var r = hesap(e, 0, 0); son = r;
-      d.innerHTML = '<div class="kt"><b>2. HAVAN (esas) — ana ekran verisi</b><table><tr><th>YAN</th><th>YÜKSELİŞ</th><th>BH</th><th>MESAFE</th></tr><tr><td class="e">' + fm(r.yan) + '</td><td class="e">' + fm(r.yukselis) + '</td><td class="e">' + r.bh + '</td><td class="e">' + Math.round(r.mesafe) + ' m</td></tr></table>' +
-        '<div class="not">Ana ekrandaki mevzi, hedef, DTN, düzeltme ve faktörlerden alındı. Önce esas havanda düzeltme tanzimini bitirin, sonra buraya gelin.</div></div>';
-    } catch (x) { son = null; d.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Ana ekranda geçerli mevzi/hedef girin: ' + (x.message || '') + '</div>'; }
-  }
-  function hesapla() {
-    kaydet(); st.hesapli = true; sv(st);
-    var e = esasDegerler(), s = el('tzSon'); esasGoster();
-    if (!son) { s.innerHTML = ''; return; }
+      st.rounds.forEach(function (o, i) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); rows.push({ ad: (i + 1) + '. dz.', v: hesap(e, dy, dr) }); });
+    } catch (x) { de.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ ' + (x.message || '') + '</div>'; return; }
+    son = rows[rows.length - 1].v; rows[rows.length - 1].e = true;
+    de.innerHTML = '<div class="kt"><b>2. HAVAN (esas) — ilk atış verisi ve turlar</b>' + tablo(rows) +
+      '<div class="not">İlk atış: ana ekrandaki mevzi, hedef, DTN, düzeltme ve faktörlerden hesaplanan veri. ' + (st.rounds.length ? 'Son satır esasın <b>tanzim sonu</b> verisidir (toplam ' + Math.abs(dy) + ' m ' + (dy > 0 ? 'sağa' : (dy < 0 ? 'sola' : 'yan yok')) + ', ' + Math.abs(dr) + ' m ' + (dr > 0 ? 'uzalt' : (dr < 0 ? 'kısalt' : 'mesafe yok')) + ').' : 'Gözetleyici düzeltme verdikçe “Düzeltme turu ekle” ile girin.') + '</div></div>';
+    if (sessiz && !st.hesapli) { s.innerHTML = ''; return; }
+    if (!sessiz) { st.hesapli = true; sv(st); }
     var g = {};
     try {
-      [1, 3].forEach(function (n) {
-        g[n] = hesap(e, signed(st['y' + n + 'd'], st['y' + n + 'm']), signed(st['r' + n + 'd'], st['r' + n + 'm']));
-      });
+      [1, 3].forEach(function (n) { var o = st['p' + n] || {}; g[n] = hesap(e, dy + signed(o.yd, o.ym), dr + signed(o.rd, o.rm)); });
     } catch (x) { s.innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ ' + (x.message || 'Hesaplanamadı') + '</div>'; return; }
-    var rows = [[1, g[1]], [2, son], [3, g[3]]];
-    var html = '<h4>Her havan için nihai veri</h4><div class="kt"><table><tr><th>HAVAN</th><th>YAN</th><th>YÜKSELİŞ</th><th>BH</th><th>MESAFE</th></tr>' +
-      rows.map(function (r) { var c = r[0] === 2 ? ' class="e"' : ''; return '<tr><td' + c + '>' + r[0] + (r[0] === 2 ? ' (esas)' : '') + '</td><td' + c + '>' + fm(r[1].yan) + '</td><td' + c + '>' + fm(r[1].yukselis) + '</td><td' + c + '>' + r[1].bh + '</td><td' + c + '>' + Math.round(r[1].mesafe) + '</td></tr>'; }).join('') + '</table>' +
-      '<div class="not">Düzeltmeler her havanın kendi verisine uygulandı (milyem formülü, yükseliş tablosundan). Tanzimden sonra AİM tüm kısım için tek yan değeri okuyabilir; yeni hedeflerde her havanın farkı korunur.</div></div>';
-    var kmt = 'TESİR ATIŞI — 3 NAMLU\n' + rows.map(function (r) { return r[0] + '. HAVAN  YAN ' + fm(r[1].yan) + '  YÜKSELİŞ ' + fm(r[1].yukselis) + '  BH ' + r[1].bh; }).join('\n') + '\nMESAFE (esas): ' + Math.round(son.mesafe) + ' m · Uçuş: ' + (son.ucusSuresi != null ? Number(son.ucusSuresi).toFixed(1) + ' sn' : '—');
-    html += '<h4>Atış komutu</h4><pre id="tzKmt">' + kmt.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre><button class="b" id="tzPay">📤 Paylaş / Kopyala</button>';
-    s.innerHTML = html;
+    var all = [{ ad: '1', v: g[1] }, { ad: '2 (esas)', v: son, e: true }, { ad: '3', v: g[3] }];
+    var kmt = 'TESİR ATIŞI — 3 NAMLU\n' + all.map(function (r) { return r.ad.charAt(0) + '. HAVAN  YAN ' + fm(r.v.yan) + '  YÜKSELİŞ ' + fm(r.v.yukselis) + '  BH ' + r.v.bh; }).join('\n') + '\nMESAFE (esas): ' + Math.round(son.mesafe) + ' m · Uçuş: ' + (son.ucusSuresi != null ? Number(son.ucusSuresi).toFixed(1) + ' sn' : '—');
+    s.innerHTML = '<h4>3. ADIM — Her havan için nihai veri</h4><div class="kt">' + tablo(all) +
+      '<div class="not">Tanzimden sonra AİM tüm kısım için tek yan değeri okuyabilir; yeni hedeflerde her havanın farkı korunur.</div></div>' +
+      '<h4>Atış komutu</h4><pre>' + kmt.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre><button class="b" id="tzPay">📤 Paylaş / Kopyala</button>';
     el('tzPay').onclick = function () {
       var t = 'HAİS ' + kmt;
       if (navigator.share) navigator.share({ title: 'HAİS 3 Namlu', text: t }).catch(function () {});
@@ -12494,5 +12517,6 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   window.__appEk.push({ id: 'tanzim3', ikon: '🎯', ad: 'Tanzim (3 Namlu)', node: TZ, onAc: ciz, ust: true });
 })();
 </script>
+
 </body>
 </html>
