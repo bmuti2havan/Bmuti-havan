@@ -2002,6 +2002,7 @@ input:focus, select:focus, textarea:focus {
       </div>
     <div style="flex:0 0 auto;width:44px;height:44px;"></div>
     </div>
+    <div id="haisImza"><span class="yd">★</span>P.Uzm.Çvş Burak MUTİ<span class="yd">★</span></div>
     <div style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;flex-wrap:wrap;">
       <button id="pwaInstallBtn" onclick="pwaInstall()"
         style="display:none;background:rgba(255,255,255,0.08);color:#e8eef6;
@@ -2858,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-49</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-50</span>
     </span>
   </div>
 
@@ -11738,8 +11739,6 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
         setInterval(aynala, 600); aynala();
     })();
 </script>
-<div id="haisImza" style="position:fixed;top:3px;right:8px;z-index:99999;pointer-events:none;font:700 10px/1.2 'DM Sans',system-ui,sans-serif;color:#fff;background:rgba(11,31,61,.78);padding:3px 8px;border-radius:10px;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.5);">P.Uzm.Çvş Burak MUTİ</div>
-
 <!-- ═══ UYGULAMA GÖRÜNÜMÜ: alt menü, Diğer, tam ekran paneller, sonuç ekranı ═══ -->
 <style>
 body.app-mode{padding-bottom:132px}
@@ -11753,7 +11752,7 @@ body.app-mode .left-panel{max-height:none}
 [data-theme="dark"] .app-sheet{background:#0d1117}
 .right-panel.app-sheet.mode-sonuc > #appHaritaPanel{display:none!important}
 .right-panel.app-sheet.mode-harita > :not(#appHaritaPanel){display:none!important}
-#appSheetBar{position:fixed;left:0;right:0;top:0;height:52px;z-index:9100;display:none;align-items:center;gap:10px;padding:0 145px 0 10px;background:#0b1f3d;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#appSheetBar{position:fixed;left:0;right:0;top:0;height:52px;z-index:9100;display:none;align-items:center;gap:10px;padding:0 10px;background:#0b1f3d;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 #appSheetBar button{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:800;font-size:.85rem;cursor:pointer}
 #appKapat{display:none}
 #appSheetBar .t{font-weight:800;font-size:.95rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -12294,10 +12293,25 @@ body.app-mode .left-panel .param-row:has(#mevziRakim),body.app-mode .left-panel 
 body.app-mode .left-panel .param-row:has(> span:only-child):not(:has(#azimuthRefInfo)){display:none!important}
 body.app-mode .left-panel .section-title:not(.fn-toggle){font-size:.72rem;letter-spacing:2px;color:#12315c;display:flex;align-items:center;gap:8px;background:none!important;border:0!important;box-shadow:none!important;padding:14px 4px 6px!important}
 body.app-mode .left-panel .section-title:not(.fn-toggle)::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,#c8d3e3,transparent)}
-body.app-mode .ammo-grid{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-body.app-mode .ammo-grid .ammo-option{flex:0 0 116px;font-size:.78rem;scroll-snap-align:start;min-height:0!important;padding:9px 10px!important}
+
+#haisImza{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto 8px;width:max-content;max-width:92%;padding:4px 14px;border-radius:20px;font:800 .68rem/1.2 'DM Sans',system-ui,sans-serif;letter-spacing:1.2px;color:#f3d36b;background:linear-gradient(135deg,rgba(8,22,46,.72),rgba(18,55,107,.72));border:1px solid rgba(243,211,107,.55);box-shadow:0 2px 10px rgba(0,0,0,.35),0 0 0 3px rgba(243,211,107,.08);text-shadow:0 1px 2px rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+#haisImza .yd{font-size:.55rem;color:#c8102e;text-shadow:none}
+/* Mühimmat: kaydırmasız, kare kutular, sade renkler */
+body.app-mode .ammo-grid{display:grid!important;grid-template-columns:repeat(3,96px)!important;justify-content:space-between;overflow:visible!important;gap:8px!important;padding:2px 0 6px!important;scroll-snap-type:none!important}
 body.app-mode .ammo-grid[style*="display:none"],body.app-mode .ammo-grid[style*="display: none"]{display:none!important}
-body.app-mode .ammo-grid::-webkit-scrollbar{display:none}
+body.app-mode .ammo-grid .ammo-option{flex:none!important;aspect-ratio:1/1;min-width:0;display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:3px;padding:6px!important;border-radius:14px!important;border:1.5px solid color-mix(in srgb,var(--mc) 35%,#fff)!important;background:color-mix(in srgb,var(--mc) 12%,#fff)!important;color:#12315c!important;box-shadow:none!important;position:relative}
+body.app-mode .ammo-grid .ammo-option .ammo-name{font-size:.72rem!important;font-weight:800;line-height:1.15;color:inherit!important}
+body.app-mode .ammo-grid .ammo-option .ammo-range{font-size:.58rem!important;opacity:.7;color:inherit!important}
+body.app-mode .ammo-grid .ammo-option.selected{background:var(--mc)!important;border-color:var(--mc)!important;color:#fff!important;box-shadow:0 6px 14px -6px var(--mc)!important}
+body.app-mode .ammo-grid .ammo-option::before{display:none!important}
+body.app-mode .ammo-grid .ammo-option.selected::after{content:"✓";position:absolute;top:5px;right:8px;left:auto;bottom:auto;width:auto;height:auto;border:0!important;background:none;transform:none!important;font-size:.7rem;font-weight:900;color:#fff}
+body.app-mode .ammo-grid .ammo-option:nth-child(1){--mc:#3b6fd4}
+body.app-mode .ammo-grid .ammo-option:nth-child(2){--mc:#1f9d78}
+body.app-mode .ammo-grid .ammo-option:nth-child(3){--mc:#d4892a}
+body.app-mode .ammo-grid .ammo-option:nth-child(4){--mc:#8b5cc8}
+body.app-mode .ammo-grid .ammo-option:nth-child(5){--mc:#c8453e}
+body.app-mode .ammo-grid .ammo-option:nth-child(6){--mc:#2b90b8}
+[data-theme="dark"] body.app-mode .ammo-grid .ammo-option:not(.selected),body.app-mode[data-theme="dark"] .ammo-grid .ammo-option:not(.selected){background:color-mix(in srgb,var(--mc) 18%,#141a24)!important;color:#e6edf3!important}
 /* 3 — Sabit HESAPLA */
 body.app-mode .left-panel{padding-bottom:90px!important}
 /* 4 — Harita etiketi */
