@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-65</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-66</span>
     </span>
   </div>
 
@@ -12456,8 +12456,45 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     }).join('') + '</table>';
   }
   var NAMLU = [[2, '2. HAVAN (esas) — düzeltme tanzimi', 'rounds'], [1, '1. HAVAN (sağdaki) — paralel demet tanzimi', 'r1'], [3, '3. HAVAN (soldaki) — paralel demet tanzimi', 'r3']];
+  function hedefBilgi() {
+    try {
+      var e = esasDegerler(), v = hesap(e, 0, 0);
+      return '<div class="kt" style="font-size:.7rem;font-weight:700">🎯 Esas hedef: ' + e.hG + ' (rakım ' + e.hR + ') · mevzi ' + e.mG + ' (rakım ' + e.mR + ') · mesafe <b>' + Math.round(v.mesafe) + ' m</b></div>';
+    } catch (x) { return ''; }
+  }
+  function imza() {
+    var e = esasDegerler(), c = '', a = '';
+    try { c = currentCaliber; } catch (x) {}
+    try { a = c === '81' ? currentAmmo81 : (c === '106' ? currentAmmo106 : currentAmmo120); } catch (x) {}
+    return JSON.stringify([e, c, a]);
+  }
+  var bildirim = '';
+  function tutarlilik() {
+    bildirim = '';
+    var yeni = imza(), var_ = st.rounds.length + st.r1.length + st.r3.length;
+    if (var_ && st.sig && st.sig !== yeni) {
+      st.rounds = []; st.r1 = []; st.r3 = [];
+      bildirim = 'Ana ekrandaki mevzi/hedef/DTN/mühimmat değiştiği için önceki düzeltmeler silindi (eski düzeltmeler yeni hedefe uygulanamaz).';
+    }
+    st.sig = yeni; sv(st);
+    // geçersiz (menzil dışı) turları otomatik ayıkla
+    try {
+      var e = esasDegerler(), tot = { dy: 0, dr: 0 };
+      [['rounds', 2], ['r1', 1], ['r3', 3]].forEach(function (g) {
+        var dy = g[1] === 2 ? 0 : tot.dy, dr = g[1] === 2 ? 0 : tot.dr, ok = [];
+        for (var i = 0; i < st[g[0]].length; i++) {
+          var o = st[g[0]][i], ndy = dy + signed(o.yd, o.ym), ndr = dr + signed(o.rd, o.rm);
+          try { hesap(e, ndy, ndr); } catch (x) { bildirim += ' ' + (g[1]) + '. havanın ' + (i + 1) + '. düzeltmesi menzil dışı kaldığı için silindi.'; break; }
+          dy = ndy; dr = ndr; ok.push(o);
+        }
+        st[g[0]] = ok; if (g[1] === 2) { tot.dy = dy; tot.dr = dr; }
+      });
+      sv(st);
+    } catch (x) {}
+  }
   function ciz() {
-    var h = '<div class="not">Talimname 4-41 / 4-67. Her havan kendi düzeltme turlarını alır. Önce <b>esas havan (2.)</b> tanzimini yapar; 1. ve 3. havan esasın son verisiyle başlayıp kendi düzeltmelerini alır. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2., soldaki 3. havandır.</div>';
+    tutarlilik();
+    var h = (bildirim ? '<div class="kt" style="border-color:#d4892a;background:#fff3d6;color:#7a4a00;font-weight:800;font-size:.72rem">ℹ️ ' + bildirim + '</div>' : '') + hedefBilgi() + '<div class="not">Talimname 4-41 / 4-67. Her havan kendi düzeltme turlarını alır. Önce <b>esas havan (2.)</b> tanzimini yapar; 1. ve 3. havan esasın son verisiyle başlayıp kendi düzeltmelerini alır. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2., soldaki 3. havandır.</div>';
     NAMLU.forEach(function (n) {
       h += '<h4>' + n[1] + '</h4><div id="tzT' + n[0] + '"></div><div id="tzI' + n[0] + '"></div>' +
         '<div style="display:flex;gap:8px"><button class="b g" id="tzE' + n[0] + '">✔ Uygula</button><button class="b o" id="tzS' + n[0] + '" style="flex:0 0 38%">↶ Geri al</button></div><div id="tzM' + n[0] + '" class="not" style="color:#b91c1c;font-weight:800"></div>';
@@ -12471,6 +12508,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
         var o = { yd: g('yd').value, ym: g('ym').value, rd: g('rd').value, rm: g('rm').value };
         if (!signed(o.yd, o.ym) && !signed(o.rd, o.rm)) return;
         var msg = el('tzM' + n[0]); msg.textContent = '';
+        if (st.sig && st.sig !== imza()) { ciz(); return; }
         try {
           var t = toplam(n[0]), ee = esasDegerler();
           hesap(ee, t.dy + signed(o.yd, o.ym), t.dr + signed(o.rd, o.rm));
