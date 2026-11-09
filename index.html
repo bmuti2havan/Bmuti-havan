@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-67</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-68</span>
     </span>
   </div>
 
@@ -12619,6 +12619,117 @@ body.app-mode .left-panel{padding-bottom:10px!important}
 
 
 
+
+<style>
+#atisZamanKart{margin:8px 0;padding:9px 10px;border:1.5px solid #cfd8e6;border-radius:12px;background:rgba(255,255,255,.6)}
+[data-theme="dark"] #atisZamanKart{background:#161b22;border-color:#30363d}
+#atisZamanKart .az-b{font-weight:800;font-size:.72rem;letter-spacing:.3px;margin-bottom:6px;display:block}
+#atisZamanKart .az-r{display:flex;gap:6px;align-items:center;margin:5px 0;flex-wrap:wrap}
+#atisZamanKart .az-r label{flex:0 0 70px;font-size:.62rem;font-weight:800;opacity:.8}
+#atisZamanKart input{flex:1;min-width:0;padding:8px;border:1.5px solid #c9d3e0;border-radius:9px;font-size:.85rem;font-family:'DM Mono',monospace;box-sizing:border-box}
+#atisZamanKart button{padding:8px 10px;border:0;border-radius:9px;background:#1f3a5f;color:#fff;font-weight:800;font-size:.72rem;cursor:pointer;font-family:inherit}
+#atisZamanKart button.q{background:#e3eaf5;color:#1f3a5f}
+#atisZamanKart button.g{background:#15803d;flex:1}
+#atisZamanKart button.k{background:#c8102e}
+#azDurum{font-size:.7rem;font-weight:800;margin-top:4px;min-height:1em}
+#azBanner{position:fixed;left:0;right:0;top:0;z-index:100010;display:none;text-align:center;color:#fff;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;background:#12315c;box-shadow:0 3px 14px rgba(0,0,0,.5);cursor:pointer}
+#azBanner .l{font-size:.62rem;letter-spacing:2px;font-weight:800;opacity:.85}
+#azBanner .t{font:800 2.6rem/1.05 'DM Mono',monospace}
+#azBanner.ates{background:#b45309}
+#azBanner.ucus{background:#1f3a5f}
+#azBanner.son{background:#c8102e}
+#azAlarm{position:fixed;inset:0;z-index:100020;display:none;align-items:center;justify-content:center;flex-direction:column;background:#d90429;color:#fff;text-align:center;animation:azYan .5s infinite alternate;cursor:pointer}
+#azAlarm b{font-size:2.6rem;line-height:1.1;letter-spacing:1px;padding:0 14px}
+#azAlarm span{font-size:.85rem;margin-top:14px;opacity:.9}
+@keyframes azYan{from{background:#d90429}to{background:#6b0016}}
+</style>
+<div id="azBanner"><div class="l" id="azL"></div><div class="t" id="azT"></div></div>
+<div id="azAlarm"><b>🔴 DİKKAT DÜŞTÜ!</b><span>kapatmak için dokun</span></div>
+<script>
+(function () {
+  var el = function (i) { return document.getElementById(i); };
+  var hr = el('hedefRakim'); if (!hr) return;
+  var row = hr.closest('.param-row'); if (!row) return;
+  var kart = document.createElement('div'); kart.id = 'atisZamanKart'; kart.className = 'param-row';
+  kart.innerHTML = '<span class="az-b">⏱ ATIŞ ZAMANI (geri sayım)</span>' +
+    '<div class="az-r"><label>Atış saati</label><input id="azSaat" type="time" step="1"></div>' +
+    '<div class="az-r"><label></label><button class="q" data-d="30">+30 sn</button><button class="q" data-d="60">+1 dk</button><button class="q" data-d="120">+2 dk</button><button class="q" data-d="300">+5 dk</button></div>' +
+    '<div class="az-r"><label>Uçuş (sn)</label><input id="azUcus" type="number" inputmode="decimal" step="0.1" placeholder="HESAPLA sonrası otomatik"></div>' +
+    '<div class="az-r"><button class="g" id="azBasla">▶ Geri sayımı başlat</button><button class="k" id="azIptal">■ İptal</button></div>' +
+    '<div id="azDurum"></div>';
+  row.insertAdjacentElement('afterend', kart);
+
+  var elle = false, ctx = null, tm = null, fireAt = 0, flight = 0, wl = null, evre = '', sonBip = -1, alarmda = false;
+  el('azUcus').addEventListener('input', function () { elle = true; });
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ucusOku() {
+    var r = window.__sonHesaplananSonuc, v = r ? parseFloat(r.ucusSuresi) : NaN;
+    return isFinite(v) ? v : null;
+  }
+  function ucusDoldur() { if (elle) return; var v = ucusOku(); if (v != null) el('azUcus').value = v; }
+  var hb = el('hesaplaBtn'); if (hb) hb.addEventListener('click', function () { setTimeout(ucusDoldur, 500); });
+  ucusDoldur();
+  function durum(t, k) { var d = el('azDurum'); d.textContent = t; d.style.color = k || ''; }
+  function nowStr(off) { var d = new Date(Date.now() + off * 1000); return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+  kart.querySelectorAll('button.q').forEach(function (b) { b.onclick = function () { el('azSaat').value = nowStr(+b.getAttribute('data-d')); }; });
+
+  function bip(f, ms) {
+    try { if (!ctx) return; var o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = f; o.type = 'square'; g.gain.value = .25; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + ms / 1000); } catch (e) {}
+  }
+  function titre(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+  function bitir() {
+    clearInterval(tm); tm = null; evre = ''; alarmda = false;
+    el('azBanner').style.display = 'none'; el('azAlarm').style.display = 'none';
+    try { if (wl) { wl.release(); wl = null; } } catch (e) {}
+  }
+  function banner(sinif, etiket, metin) {
+    var b = el('azBanner'); b.style.display = 'block'; b.className = sinif; el('azL').textContent = etiket; el('azT').textContent = metin;
+  }
+  function mmss(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), m = Math.floor(s / 60); return pad(m) + ':' + pad(s % 60); }
+  function tik() {
+    var now = Date.now(), toAt = fireAt - now, dusme = fireAt + flight * 1000 - now;
+    if (toAt > 0) {
+      evre = 'bekle'; banner('', 'ATEŞE KALAN', mmss(toAt));
+      var s = Math.ceil(toAt / 1000);
+      if (s <= 5 && s !== sonBip) { sonBip = s; bip(s <= 3 ? 1000 : 700, 120); titre(60); }
+      durum('Atış ' + el('azSaat').value + ' · uçuş ' + flight + ' sn', '#1f3a5f');
+      return;
+    }
+    if (dusme > 3000) {
+      if (evre !== 'ucus') { evre = 'ucus'; sonBip = -1; bip(1400, 500); titre([300, 100, 300]); }
+      var gecen = now - fireAt;
+      if (gecen < 1500) banner('ates', 'ATEŞ!', 'ATEŞ!'); else banner('ucus', 'DÜŞMEYE KALAN', mmss(dusme));
+      durum('Mermi havada…', '#b45309');
+      return;
+    }
+    if (dusme > -4000) {
+      if (evre !== 'son') {
+        evre = 'son'; alarmda = true; el('azAlarm').style.display = 'flex';
+        try { ctx && ctx.resume(); } catch (e) {} bip(1800, 700); titre([500, 150, 500, 150, 500]);
+      }
+      banner('son', 'DÜŞMEYE KALAN', dusme > 0 ? mmss(dusme) : 'DÜŞTÜ');
+      var s2 = Math.ceil(dusme / 1000); if (s2 !== sonBip && s2 >= 0) { sonBip = s2; bip(1800, 300); }
+      durum('DİKKAT DÜŞTÜ!', '#c8102e');
+      return;
+    }
+    bitir(); durum('Atış tamamlandı.', '#15803d');
+  }
+  el('azBasla').onclick = function () {
+    var v = el('azSaat').value; if (!v) { durum('Önce atış saatini girin.', '#c8102e'); return; }
+    var p = v.split(':').map(Number), d = new Date(); d.setHours(p[0], p[1], p[2] || 0, 0);
+    var u = parseFloat(el('azUcus').value); if (!isFinite(u) || u <= 0) u = ucusOku();
+    if (u == null || !(u > 0)) { durum('Uçuş süresi yok: önce HESAPLA’ya basın veya sn girin.', '#c8102e'); return; }
+    if (d.getTime() < Date.now() - 500) { durum('Bu saat geçmiş. Daha ileri bir saat girin.', '#c8102e'); return; }
+    try { var AC = window.AudioContext || window.webkitAudioContext; if (!ctx && AC) ctx = new AC(); ctx && ctx.resume(); } catch (e) {}
+    try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wl = w; }).catch(function () {}); } catch (e) {}
+    bitir(); fireAt = d.getTime(); flight = u; sonBip = -1; el('azUcus').value = u;
+    tm = setInterval(tik, 150); tik();
+  };
+  el('azIptal').onclick = function () { bitir(); durum('Geri sayım iptal edildi.'); };
+  el('azBanner').onclick = function () { if (evre === 'bekle') return; };
+  el('azAlarm').onclick = function () { el('azAlarm').style.display = 'none'; };
+})();
+</script>
 
 </body>
 </html>
