@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-69</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-70</span>
     </span>
   </div>
 
@@ -12654,8 +12654,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   kart.innerHTML = '<span class="az-b">⏱ ATIŞ ZAMANI (geri sayım)</span>' +
     '<div class="az-r"><label>Atış saati</label><input id="azSaat" type="time" step="1"></div>' +
     '<div class="az-r"><label></label><button class="q" data-d="30">+30 sn</button><button class="q" data-d="60">+1 dk</button><button class="q" data-d="120">+2 dk</button><button class="q" data-d="300">+5 dk</button></div>' +
-    '<div class="az-r"><label>Uçuş (sn)</label><input id="azUcus" type="number" inputmode="decimal" step="0.1" placeholder="HESAPLA sonrası otomatik"></div>' +
-    '<div class="az-r"><button id="azAtildi" style="flex:1;background:#b45309;font-size:.8rem;padding:11px">💥 ATILDI — uçuşu şimdi başlat</button></div>' +
+    '<div class="az-r"><label>Uçuş (sn)</label><input id="azUcus" type="number" inputmode="decimal" step="0.1" placeholder="otomatik" style="max-width:90px"><button id="azAtildi" style="background:#b45309;white-space:nowrap" title="Mermi namludan çıktı: uçuş geri sayımını başlat">💥 Atıldı</button></div>' +
     '<div class="az-r"><button class="g" id="azBasla">▶ Geri sayımı başlat</button><button class="k" id="azIptal">■ İptal</button></div>' +
     '<div id="azDurum"></div>';
   row.insertAdjacentElement('afterend', kart);
