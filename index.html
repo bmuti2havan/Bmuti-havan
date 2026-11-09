@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-68</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-69</span>
     </span>
   </div>
 
@@ -12655,6 +12655,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     '<div class="az-r"><label>Atış saati</label><input id="azSaat" type="time" step="1"></div>' +
     '<div class="az-r"><label></label><button class="q" data-d="30">+30 sn</button><button class="q" data-d="60">+1 dk</button><button class="q" data-d="120">+2 dk</button><button class="q" data-d="300">+5 dk</button></div>' +
     '<div class="az-r"><label>Uçuş (sn)</label><input id="azUcus" type="number" inputmode="decimal" step="0.1" placeholder="HESAPLA sonrası otomatik"></div>' +
+    '<div class="az-r"><button id="azAtildi" style="flex:1;background:#b45309;font-size:.8rem;padding:11px">💥 ATILDI — uçuşu şimdi başlat</button></div>' +
     '<div class="az-r"><button class="g" id="azBasla">▶ Geri sayımı başlat</button><button class="k" id="azIptal">■ İptal</button></div>' +
     '<div id="azDurum"></div>';
   row.insertAdjacentElement('afterend', kart);
@@ -12699,7 +12700,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
       if (evre !== 'ucus') { evre = 'ucus'; sonBip = -1; bip(1400, 500); titre([300, 100, 300]); }
       var gecen = now - fireAt;
       if (gecen < 1500) banner('ates', 'ATEŞ!', 'ATEŞ!'); else banner('ucus', 'DÜŞMEYE KALAN', mmss(dusme));
-      durum('Mermi havada…', '#b45309');
+      durum('Mermi havada · uçuş ' + flight + ' sn', '#b45309');
       return;
     }
     if (dusme > -4000) {
@@ -12723,6 +12724,14 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     try { var AC = window.AudioContext || window.webkitAudioContext; if (!ctx && AC) ctx = new AC(); ctx && ctx.resume(); } catch (e) {}
     try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wl = w; }).catch(function () {}); } catch (e) {}
     bitir(); fireAt = d.getTime(); flight = u; sonBip = -1; el('azUcus').value = u;
+    tm = setInterval(tik, 150); tik();
+  };
+  el('azAtildi').onclick = function () {
+    var u = parseFloat(el('azUcus').value); if (!isFinite(u) || u <= 0) u = ucusOku();
+    if (u == null || !(u > 0)) { durum('Uçuş süresi yok: önce HESAPLA’ya basın veya sn girin.', '#c8102e'); return; }
+    try { var AC = window.AudioContext || window.webkitAudioContext; if (!ctx && AC) ctx = new AC(); ctx && ctx.resume(); } catch (e) {}
+    try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wl = w; }).catch(function () {}); } catch (e) {}
+    bitir(); fireAt = Date.now(); flight = u; sonBip = -1; el('azUcus').value = u;
     tm = setInterval(tik, 150); tik();
   };
   el('azIptal').onclick = function () { bitir(); durum('Geri sayım iptal edildi.'); };
