@@ -2859,7 +2859,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-66</span>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.07-67</span>
     </span>
   </div>
 
@@ -12456,6 +12456,41 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     }).join('') + '</table>';
   }
   var NAMLU = [[2, '2. HAVAN (esas) — düzeltme tanzimi', 'rounds'], [1, '1. HAVAN (sağdaki) — paralel demet tanzimi', 'r1'], [3, '3. HAVAN (soldaki) — paralel demet tanzimi', 'r3']];
+  function azMil(g1, g2) {
+    try { var a = mgrsToUtm(g1), b = mgrsToUtm(g2); if (!a || !b) return null; b = utmAyniDilim(a, b);
+      var m = Math.atan2(b.easting - a.easting, b.northing - a.northing) * 3200 / Math.PI; return ((m % 6400) + 6400) % 6400; } catch (x) { return null; }
+  }
+  function igAlfa() {
+    var i = st.ig || {}, ia = parseFloat(i.ia);
+    if (i.ia !== '' && i.ia != null && isFinite(ia)) return ((ia % 6400) + 6400) % 6400;
+    if (i.mg) return azMil(i.mg, esasDegerler().hG);
+    return null;
+  }
+  function betaMil() { var e = esasDegerler(); return azMil(e.mG, e.hG); }
+  function hedefAcisi(a) { var b = betaMil(); if (a == null || b == null) return null; var d = Math.abs(a - b) % 6400; return d > 3200 ? 6400 - d : d; }
+  function donustur(o) {
+    var y = signed(o.yd, o.ym), r = signed(o.rd, o.rm);
+    if (o.gh == null || !isFinite(o.gh)) return { dy: y, dr: r };
+    var b = betaMil(); if (b == null) return { dy: y, dr: r };
+    var th = (o.gh - b) * Math.PI / 3200, c = Math.cos(th), sn = Math.sin(th);
+    return { dr: r * c - y * sn, dy: r * sn + y * c };
+  }
+  function igKutu() {
+    var i = st.ig || {};
+    return '<div class="kt"><b>🔭 İleri gözetleyici konumu</b>' +
+      '<div class="not">İG havanla aynı hatta değilse düzeltmelerini kendi Gözetleyici‑Hedef (GH) hattına göre verir; AİM bunları havan‑hedef hattına çevirir (hedef açısı). Aşağıdan birini girin; boş bırakırsanız düzeltmeler havan‑hedef hattında kabul edilir.</div>' +
+      '<div class="st"><label style="flex:0 0 74px">İG koord.</label><input id="tzIgMg" placeholder="örn. 37S CB 49000 52500" value="' + (i.mg || '').replace(/"/g, '') + '"></div>' +
+      '<div class="st"><label style="flex:0 0 74px">GH İA</label><input id="tzIgIa" type="number" inputmode="numeric" placeholder="milyem (girilirse koordinata üstün)" value="' + (i.ia || '') + '"></div>' +
+      '<div id="tzIgOz" class="not" style="font-weight:800"></div></div>';
+  }
+  function igOzet() {
+    var o = el('tzIgOz'); if (!o) return;
+    var a = igAlfa(), b = betaMil();
+    if (a == null) { o.style.color = ''; o.textContent = 'İG hattı tanımsız → düzeltmeler havan‑hedef hattında uygulanır.'; return; }
+    var h = Math.round(hedefAcisi(a) / 10) * 10;
+    o.style.color = h > 500 ? '#b91c1c' : '';
+    o.textContent = 'GH İA ' + Math.round(a) + ' · havan‑hedef İA ' + Math.round(b) + ' · hedef açısı ' + h + ' milyem' + (h > 500 ? ' — 500\'ü aşıyor: İG’ye bildirilir, düzeltmeleri azaltması istenir (Talimname 6‑158).' : '.');
+  }
   function hedefBilgi() {
     try {
       var e = esasDegerler(), v = hesap(e, 0, 0);
@@ -12483,7 +12518,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
       [['rounds', 2], ['r1', 1], ['r3', 3]].forEach(function (g) {
         var dy = g[1] === 2 ? 0 : tot.dy, dr = g[1] === 2 ? 0 : tot.dr, ok = [];
         for (var i = 0; i < st[g[0]].length; i++) {
-          var o = st[g[0]][i], ndy = dy + signed(o.yd, o.ym), ndr = dr + signed(o.rd, o.rm);
+          var o = st[g[0]][i], dd = donustur(o), ndy = dy + dd.dy, ndr = dr + dd.dr;
           try { hesap(e, ndy, ndr); } catch (x) { bildirim += ' ' + (g[1]) + '. havanın ' + (i + 1) + '. düzeltmesi menzil dışı kaldığı için silindi.'; break; }
           dy = ndy; dr = ndr; ok.push(o);
         }
@@ -12494,24 +12529,29 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   }
   function ciz() {
     tutarlilik();
-    var h = (bildirim ? '<div class="kt" style="border-color:#d4892a;background:#fff3d6;color:#7a4a00;font-weight:800;font-size:.72rem">ℹ️ ' + bildirim + '</div>' : '') + hedefBilgi() + '<div class="not">Talimname 4-41 / 4-67. Her havan kendi düzeltme turlarını alır. Önce <b>esas havan (2.)</b> tanzimini yapar; 1. ve 3. havan esasın son verisiyle başlayıp kendi düzeltmelerini alır. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2., soldaki 3. havandır.</div>';
+    var h = (bildirim ? '<div class="kt" style="border-color:#d4892a;background:#fff3d6;color:#7a4a00;font-weight:800;font-size:.72rem">ℹ️ ' + bildirim + '</div>' : '') + hedefBilgi() + igKutu() + '<div class="not">Talimname 4-41 / 4-67. Her havan kendi düzeltme turlarını alır. Önce <b>esas havan (2.)</b> tanzimini yapar; 1. ve 3. havan esasın son verisiyle başlayıp kendi düzeltmelerini alır. Hedefe dönük bakıldığında sağdaki 1., ortadaki 2., soldaki 3. havandır.</div>';
     NAMLU.forEach(function (n) {
       h += '<h4>' + n[1] + '</h4><div id="tzT' + n[0] + '"></div><div id="tzI' + n[0] + '"></div>' +
         '<div style="display:flex;gap:8px"><button class="b g" id="tzE' + n[0] + '">✔ Uygula</button><button class="b o" id="tzS' + n[0] + '" style="flex:0 0 38%">↶ Geri al</button></div><div id="tzM' + n[0] + '" class="not" style="color:#b91c1c;font-weight:800"></div>';
     });
     h += '<div id="tzSon"></div><button class="b r" id="tzSifir" style="background:#c8102e">🗑 Tüm düzeltmeleri sıfırla</button>';
     TZ.innerHTML = h;
+    ['tzIgMg', 'tzIgIa'].forEach(function (id) {
+      el(id).oninput = function () { st.ig = { mg: el('tzIgMg').value.trim(), ia: el('tzIgIa').value.trim() }; sv(st); igOzet(); };
+    });
+    igOzet();
     NAMLU.forEach(function (n) {
       turlariCiz(n);
       el('tzE' + n[0]).onclick = function () {
         var d = el('tzI' + n[0]), g = function (s) { return d.querySelector('[data-k="n' + s + '"]'); };
         var o = { yd: g('yd').value, ym: g('ym').value, rd: g('rd').value, rm: g('rm').value };
+        var ga = igAlfa(); if (ga != null) o.gh = ga;
         if (!signed(o.yd, o.ym) && !signed(o.rd, o.rm)) return;
         var msg = el('tzM' + n[0]); msg.textContent = '';
         if (st.sig && st.sig !== imza()) { ciz(); return; }
         try {
           var t = toplam(n[0]), ee = esasDegerler();
-          hesap(ee, t.dy + signed(o.yd, o.ym), t.dr + signed(o.rd, o.rm));
+          var dd = donustur(o); hesap(ee, t.dy + dd.dy, t.dr + dd.dr);
         } catch (x) { msg.textContent = '⚠️ Bu düzeltme uygulanamaz: ' + (x.message || 'menzil dışı') + ' (şu ana kadarki toplam ' + Math.round(toplam(n[0]).dr) + ' m mesafe düzeltmesi var; gerekirse “Geri al” yapın)'; return; }
         st[n[2]].push(o); sv(st); turlariCiz(n); hesapla();
       };
@@ -12522,8 +12562,8 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   }
   function toplam(no) {
     var dy = 0, dr = 0;
-    st.rounds.forEach(function (o) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); });
-    if (no !== 2) st[no === 1 ? 'r1' : 'r3'].forEach(function (o) { dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm); });
+    st.rounds.forEach(function (o) { var d = donustur(o); dy += d.dy; dr += d.dr; });
+    if (no !== 2) st[no === 1 ? 'r1' : 'r3'].forEach(function (o) { var d = donustur(o); dy += d.dy; dr += d.dr; });
     return { dy: dy, dr: dr };
   }
   function turlariCiz(n) {
@@ -12533,7 +12573,12 @@ body.app-mode .left-panel{padding-bottom:10px!important}
     var p = [];
     if (signed(o.yd, o.ym)) p.push(Math.abs(o.ym) + ' ' + (o.yd === 'sag' ? 'SAĞA' : 'SOLA'));
     if (signed(o.rd, o.rm)) p.push(Math.abs(o.rm) + ' ' + (o.rd === 'uzalt' ? 'UZALT' : 'KISALT'));
-    return p.join(' · ');
+    var t = p.join(' · ');
+    if (o.gh != null && isFinite(o.gh)) { var d = donustur(o), q = [];
+      if (Math.round(d.dy)) q.push(Math.abs(Math.round(d.dy)) + (d.dy > 0 ? ' SAĞA' : ' SOLA'));
+      if (Math.round(d.dr)) q.push(Math.abs(Math.round(d.dr)) + (d.dr > 0 ? ' UZALT' : ' KISALT'));
+      t += ' [İG hattı → havan hattı: ' + (q.join(' · ') || '—') + ']'; }
+    return t;
   }
   function hesapla() {
     var e = esasDegerler(), s = el('tzSon'), ilk;
@@ -12547,7 +12592,7 @@ body.app-mode .left-panel{padding-bottom:10px!important}
       if (n[0] !== 2 && !fin[2]) { el('tzT' + n[0]).innerHTML = '<div class="kt" style="border-color:#c8102e">⚠️ Önce esas havanın düzeltmesi geçerli olmalı.</div>'; hataVar = true; return; }
       var rows = [{ ad: n[0] === 2 ? 'İlk atış' : 'Esas verisi', v: n[0] === 2 ? ilk : fin[2] }];
       for (var i = 0; i < st[n[2]].length; i++) {
-        var o = st[n[2]][i]; dy += signed(o.yd, o.ym); dr += signed(o.rd, o.rm);
+        var o = st[n[2]][i], dd = donustur(o); dy += dd.dy; dr += dd.dr;
         try { rows.push({ ad: (i + 1) + '. dz.<br><small style="font-size:.55rem;font-weight:600">' + etiket(o) + '</small>', v: hesap(e, dy, dr) }); }
         catch (x) { hata = (i + 1) + '. düzeltme uygulanamıyor: ' + (x.message || 'menzil dışı') + '. “Geri al” ile son düzeltmeyi silin.'; hataVar = true; break; }
       }
