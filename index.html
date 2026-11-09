@@ -2012,7 +2012,17 @@ input:focus, select:focus, textarea:focus {
         var bn = document.getElementById('bottomNav'); if (bn) bn.style.display = 'flex';
         var ks = document.getElementById('kullaniciSatir');
         if (ks) { ks.innerHTML = 'Kullanıcı: <b>' + String(window.HAIS_KULLANICI).replace(/[&<>"']/g, '') + '</b><a id="cikisLink">Çıkış</a>';
-          document.getElementById('cikisLink').onclick = function () { try { sessionStorage.removeItem(OK); } catch (e) {} location.reload(); }; }
+          document.getElementById('cikisLink').onclick = function () { try { sessionStorage.removeItem(OK); } catch (e) {} location.reload(); };
+          var yb = document.createElement('a'); yb.textContent = 'Yedekle'; yb.onclick = function () {
+            var o = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k.indexOf(on) === 0) o[k.slice(on.length)] = localStorage.getItem(k); }
+            var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ hais: 1, kullanici: window.HAIS_KULLANICI, veri: o })], { type: 'application/json' }));
+            a.download = 'HAIS_kayitlar_' + oturum + '.json'; document.body.appendChild(a); a.click(); a.remove(); };
+          var yy = document.createElement('a'); yy.textContent = 'Geri yükle'; yy.onclick = function () {
+            var f = document.createElement('input'); f.type = 'file'; f.accept = '.json,application/json';
+            f.onchange = function () { var r = new FileReader(); r.onload = function () { try { var d = JSON.parse(r.result); if (!d.hais || !d.veri) throw 0;
+              Object.keys(d.veri).forEach(function (k) { if (KULLANICI_ANAHTARLARI.test(k)) localStorage.setItem(k, d.veri[k]); }); location.reload(); } catch (e) { alert('Geçersiz yedek dosyası'); } }; r.readAsText(f.files[0]); };
+            f.click(); };
+          ks.appendChild(yb); ks.appendChild(yy); }
       }, 0);
       return;
     }
@@ -2956,7 +2966,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.09-71</span><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.09-72</span><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -11672,7 +11682,7 @@ body.hais-offline #haisCevrimdisi{display:inline-block;}
       muh: s['mühimmat'] || '', mesafe: s.mesafe, yan: (typeof formatMil === 'function' ? formatMil(s.yan) : s.yan), yuk: s.yukselis, bh: s.bh || '' };
     var son = l[0];
     if (son && son.grid === kayit.grid && son.rakim === kayit.rakim && son.muh === kayit.muh && son.mesafe === kayit.mesafe && son.yan === kayit.yan && son.yuk === kayit.yuk) return; // aynı sonuç tekrar yazılmaz
-    l.unshift(kayit); if (l.length > 15) l.length = 15;
+    l.unshift(kayit); if (l.length > (window.HAIS_KULLANICI ? 200 : 15)) l.length = (window.HAIS_KULLANICI ? 200 : 15);
     LS.set(GECMIS_AN, l); gecmisCiz();
   };
   function listeOlaylari() {
