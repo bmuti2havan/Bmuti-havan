@@ -2744,6 +2744,7 @@ input:focus, select:focus, textarea:focus {
           <div class="param-row"><label>Hava Sıcaklığı (°C)</label><input type="number" id="havaSicaklik" value="15" step="1"></div>
           <div class="param-row"><label>Hava Basıncı (hPa)</label><input type="number" id="havaBasinc" value="1013" step="5"></div>
           <div class="param-row"><label>Nem (%)</label><input type="number" id="nemOrani" value="60" step="5"></div>
+          <div class="param-row"><label>Metro İstasyonu Rakımı (m) <span style="font-size:.65rem;font-weight:400;opacity:.75">isteğe bağlı · 120 mm Cetvel-D</span></label><input type="number" id="metroIstRakim" placeholder="boşsa düzeltme yok" step="10"></div>
           <button id="applyMetroBtn" class="btn btn-metro">Metro Düzeltmesini Uygula</button>
           <button id="metroOtoCek" class="btn btn-metro" style="background:#e6fcf7;color:#0d9488;border-color:#5eead4;margin-top:4px;"
             onclick="metroOtoCekGelismis(this)">🌐 Canlı Metro Verisi Çek</button>
@@ -2969,7 +2970,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-76</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-77</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -7213,6 +7214,29 @@ const metroF81_m43a1b1 = {
     // Ham sıcaklık(°C)/basınç(mb) girdisinden, resmi "Balistik Metro Raporu" formatındaki
     // Hava Isısı % / Hava Yoğunluğu % değerlerine yaklaşık (fizik tabanlı) dönüşüm.
     // Standart: 15°C (288.15K), 1013.25mb. % değerler bu standarda oran olarak ifade edilir.
+
+    // CETVEL-D (AAC 120-C-3, sayfa 25-27): metro istasyonu ile havan arasındaki rakım farkı için
+    // sıcaklık ve yoğunluk yüzde düzeltmesi. Değerler 0-990 m için 10 m adımlı (satır+sütun), sonra 1000/1500/2000/2500/3000 m.
+    // Havan istasyondan YÜKSEKTE ise düzeltme (-), ALÇAKTA ise (+) uygulanır (sayfa 14 çözümlü örneği ile uyumlu).
+    const cetvelD_sic = [0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.3,0.3,0.3,0.4,0.4,0.4,0.4,0.5,0.5,0.5,0.5,0.6,0.6,0.6,0.6,0.6,0.7,0.7,0.7,0.7,0.7,0.8,0.8,0.8,0.8,0.8,0.9,0.9,0.9,0.9,0.9,1.0,1.0,1.0,1.0,1.0,1.1,1.1,1.1,1.1,1.2,1.2,1.2,1.3,1.3,1.3,1.3,1.4,1.4,1.4,1.4,1.5,1.5,1.5,1.5,1.5,1.6,1.6,1.6,1.6,1.6,1.7,1.7,1.7,1.7,1.7,1.8,1.8,1.8,1.8,1.8,1.9,1.9,1.9,1.9,1.9,2.0,2.0,2.0,2.0,2.1,2.1,2.1,2.2,2.2,2.2,2.2,2.3, [1000,2.3],[1500,3.4],[2000,4.5],[2500,5.6],[3000,6.8]];
+    const cetvelD_yog = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,5.1,5.2,5.2,5.3,5.4,5.5,5.6,5.7,5.8,5.9,6.0,6.1,6.1,6.2,6.3,6.4,6.5,6.6,6.7,6.8,6.9,7.0,7.1,7.2,7.3,7.4,7.5,7.6,7.7,7.8,7.9,8.0,8.1,8.1,8.2,8.3,8.4,8.5,8.6,8.6,8.7,8.8,9.0,9.0,9.1,9.2, [1000,9.3],[1500,13.6],[2000,17.8],[2500,21.9],[3000,25.8]];
+    function _cetvelDInterp(tbl, h) {
+        // tbl: önce 100 adet 10 m adımlı değer (düz dizi), sonra [yükseklik, değer] çiftleri
+        const pts = []; for (let i = 0; i < 100; i++) pts.push([i * 10, tbl[i]]);
+        for (let i = 100; i < tbl.length; i++) pts.push(tbl[i]);
+        if (h <= 0) return 0;
+        if (h >= pts[pts.length - 1][0]) return pts[pts.length - 1][1];
+        for (let i = 0; i < pts.length - 1; i++) {
+            if (h <= pts[i + 1][0]) { const r = (h - pts[i][0]) / (pts[i + 1][0] - pts[i][0]); return pts[i][1] + r * (pts[i + 1][1] - pts[i][1]); }
+        }
+        return 0;
+    }
+    // dH = havan rakımı - metro istasyonu rakımı (m). Dönüş: sıcaklık ve yoğunluk yüzde düzeltmesi (işaretli).
+    function cetvelDDuzeltme(dH) {
+        if (!isFinite(dH)) return { sic: 0, yog: 0 };
+        const k = dH > 0 ? -1 : 1, h = Math.abs(dH);
+        return { sic: k * _cetvelDInterp(cetvelD_sic, h), yog: k * _cetvelDInterp(cetvelD_yog, h) };
+    }
     function havaSicakligiYuzde(tempC) { return ((tempC + 273.15) / 288.15) * 100; }
     function havaYogunluguYuzde(tempC, basincMb) {
         // İdeal gaz yasası: yoğunluk ∝ Basınç / Sıcaklık(K). Standart yoğunluk = 100%.
@@ -7477,15 +7501,22 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
             }
 
             // Sıcaklık düzeltmesi
-            const sicaklikYuzdeFark = havaSicakligiYuzde(havaSicaklikC) - 100;
+            // Metro istasyonu rakımı girildiyse Cetvel-D rakım düzeltmesi (sıcaklık ve yoğunluk yüzdesi)
+            let _dSic = 0, _dYog = 0, _dKullanildi = false;
+            const _istEl = document.getElementById('metroIstRakim'), _mvEl = document.getElementById('mevziRakim');
+            if (_istEl && _istEl.value !== '' && _mvEl) {
+                const _ist = parseFloat(_istEl.value), _mv = parseFloat(_mvEl.value) || 0;
+                if (isFinite(_ist)) { const _d = cetvelDDuzeltme(_mv - _ist); _dSic = _d.sic; _dYog = _d.yog; _dKullanildi = true; }
+            }
+            const sicaklikYuzdeFark = havaSicakligiYuzde(havaSicaklikC) - 100 + _dSic;
             const sicaklikDuzeltmeM = sicaklikYuzdeFark * sicaklikBirim;
 
             // Yoğunluk düzeltmesi
-            const yogunlukYuzdeFark = havaYogunluguYuzde(havaSicaklikC, havaBasincMb) - 100;
+            const yogunlukYuzdeFark = havaYogunluguYuzde(havaSicaklikC, havaBasincMb) - 100 + _dYog;
             const yogunlukDuzeltmeM = yogunlukYuzdeFark * yogunlukBirim;
 
             totalRangeM = Math.round(ruzgarDuzeltmeM + sicaklikDuzeltmeM + yogunlukDuzeltmeM);
-            mesafeKaynak = `resmi (Cetvel-F BH${bh})`;
+            mesafeKaynak = `resmi (Cetvel-F BH${bh})` + (_dKullanildi ? ' + Cetvel-D rakım düzeltmesi' : '');
         }
     } else if (cfRow81) {
         // 81mm MKE MOD-214 RESMİ Cetvel-F (KKYY 164-14) — cfRow81: [0]=yan,[1]=Baş,[2]=Kuyruk,[3]=sıcaklık,[4]=yoğunluk
