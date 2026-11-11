@@ -2235,6 +2235,7 @@ input:focus, select:focus, textarea:focus {
       <div data-ammo120="tahrip" class="ammo-option selected"><span class="ammo-name">Mod 209 (Tahrip)</span><span class="ammo-range">1500–8300 m</span></div>
       <div data-ammo120="mod236" class="ammo-option"><span class="ammo-name">💡 MOD 236 Aydınlatma</span><span class="ammo-range">1500–8300 m</span></div>
       <div data-ammo120="sis" class="ammo-option"><span class="ammo-name">Mod 226 (Sis)</span><span class="ammo-range">1500–8300 m</span></div>
+      <div data-ammo120="hc" class="ammo-option"><span class="ammo-name">Mod 250 (HC Sis)</span><span class="ammo-range">1500–8300 m</span></div>
     </div>
     <div id="ammoSelector106" style="display:none" class="ammo-grid">
       <div data-ammo106="m329" class="ammo-option selected"><span class="ammo-name">M329A1 HE</span><span class="ammo-range">920–5650 m</span></div>
@@ -2970,7 +2971,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-78</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-79</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -5167,22 +5168,39 @@ body {
 
           <h3>Mod-209 Tahrip Mühimmatı</h3>
           <ul>
-            <li><b>BH1 Menzil:</b> 1500–2150 m</li>
-            <li><b>BH5 Menzil:</b> 2700–4320 m</li>
+            <li><b>BH1 Menzil:</b> 1500–2150 m &nbsp; <b>BH2:</b> 1750–2700 &nbsp; <b>BH3:</b> 2050–3100 &nbsp; <b>BH4:</b> 2450–3565</li>
+            <li><b>BH5 Menzil:</b> 2700–4320 m &nbsp; <b>BH6:</b> 3600–5285 &nbsp; <b>BH7:</b> 4400–6355 &nbsp; <b>BH8:</b> 5100–6890 &nbsp; <b>BH9:</b> 5800–7705</li>
             <li><b>BH10 Menzil:</b> 6300–8300 m (8180m'ye kadar tablo verisi, sonrası tahmini)</li>
-            <li><b>Nişangah Aralığı:</b> 820–1182 milyem (BH ve mesafeye göre)</li>
+            <li><b>Nişangah Aralığı:</b> 786–1192 milyem (BH ve mesafeye göre)</li>
           </ul>
 
           <h3>BH Seçimi — Otomatik / Manuel</h3>
           <p>Uygulama girilen mesafeye göre BH'ı otomatik seçer. Manuel mod aktif edildiğinde komutan istediği BH'ı seçebilir. Manuel BH seçimi; özel taktik durumlar, uçuş süresi kontrolü veya tepe aşımı gereksinimleri için kullanılır.</p>
 
-          <h3>TAÇ Faktörleri (BH bazlı)</h3>
-          <p>120mm için TAÇ her BH'a özgü sabit çarpanla hesaplanır:</p>
-          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.82rem;">
-            BH1: −3.2 &nbsp; BH3: −3.8 &nbsp; BH5: −4.5<br>
-            BH7: −5.3 &nbsp; BH9: −5.7 &nbsp; BH10: −5.9
+          <h3>Mühimmat Çeşitleri (AAC 120-C-3, Bölüm 4)</h3>
+          <ul>
+            <li><b>MOD 209 HE (Tahrip):</b> TNT 4,240 kg; tapa M51A5 / M557 / VT-7250</li>
+            <li><b>MOD 226 WP (Sis):</b> Beyaz fosfor 4,900 kg; tapa M51A5 (0,05 sn tavikli veya hassas)</li>
+            <li><b>MOD 250 HC (Sis):</b> Heksakloretan (3 kanister); tapa VT-7250</li>
+            <li><b>MOD 236 ILL (Aydınlatma):</b> Kandil komplesi 2,600 kg; tapa DM93 MTSQ; kandil yanma süresi 60 sn; paraşüt+kandil düşme hızı 8 m/sn</li>
+            <li><b>Ortak:</b> Gövde kılavuz çapı 119,66 mm; helis 10°30' sağ; 40 yiv-set; kuyruklu atım boyu 827 mm, ağırlığı 18 kg; uçuş ağırlığı 15,706 kg (3 kare grubu); düşer kuyruk 265 mm / 1,100 kg; sevk fişeği MKE MOD 37 (~30 gr M8 barut)</li>
+            <li>Kuyruk namlu önüne 25–100 m düşer; gaz sızdırmazlık contası zorunludur (MOD 236 hariç).</li>
+          </ul>
+
+          <h3>Barut Hakkı ve İlk Hız (Sayfa 7)</h3>
+          <p style="background:#f5f6f8;padding:10px 14px;border-radius:6px;font-family:'DM Mono',monospace;font-size:.78rem;">
+            BH1: 162 m/s &nbsp; BH2: 180 &nbsp; BH3: 193 &nbsp; BH4: 208<br>
+            BH5: 232 &nbsp; BH6: 262 &nbsp; BH7: 297 &nbsp; BH8: 313<br>
+            BH9: 340 &nbsp; BH10: 365 m/s
           </p>
-          <p>Formül: TAÇ = (RakımFarkı / Mesafe_km) / 10 × BH_faktörü</p>
+          <p>Azami BH 10'dur; seçilen BH'dan büyük numaralı barut hakları kuyruk kompleksinden çıkarılır. BH seçilirken menzilin BH bölgesinin ortasında olmasına dikkat edilir.</p>
+
+          <h3>MOD 236 Tapa Ayarı (4.4.1)</h3>
+          <p>Cetvel-F'teki uçuş süresinden BH'ya göre şu süre çıkarılır: BH1–2: 5,5 sn, BH3–4: 4,5 sn, BH5–8: 3,5 sn, BH9–10: 3,0 sn. Sonuç 0,5 sn aralıklara yuvarlanır.<br>
+          Örnek: 3500 m, BH4, 916 mil, uçuş 32,9 sn → 32,9 − 4,5 = 28,4 → <b>28,5 sn</b>.</p>
+
+          <h3>Rakım Farkı Düzeltmesi (Cetvel-B / TAÇ)</h3>
+          <p>Hedef mevziden yüksek veya alçaksa yükseliş, resmî Cetvel-B tablosundan (BH başına, mesafe × hedef yüksekliği) okunur. Tablo dışı veya boş hücrede yaklaşık hesap kullanılır. Hava sıcaklığı/yoğunluğu için mevzi ile metro istasyonu arasındaki rakım farkı Cetvel-D ile düzeltilir (Metro panelindeki istasyon rakımı alanı).</p>
 
           <h3>Emniyet Şeması Örneği (KKT 315-29)</h3>
           <p>Asgari menzil 1500 m, tabii yan 49 m, sol hudut İA 1670 m ise:<br>
@@ -5209,7 +5227,7 @@ body {
             <li>Hedef ile mevzi arasındaki rakım farkından kaynaklanan nişangah düzeltmesi</li>
             <li>Rakım Farkı = Hedef Rakımı − Mevzi Rakımı</li>
             <li>Hedef yukarıdaysa nişangah azalır; aşağıdaysa artar</li>
-            <li>81mm için resmi AAC Cetvel-B tablosu; 120mm için BH bazlı faktör</li>
+            <li>81mm ve 120mm için resmî AAC Cetvel-B tablosu</li>
           </ul>
 
           <h3>Milyem Sistemi</h3>
@@ -8028,7 +8046,7 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
         document.getElementById('bh120ModeRow').style.display = cal === '120' ? 'flex' : 'none';
         // TAÇ her zaman aktif - otomatik
         let maxR = cal === '81' ? ammo81[currentAmmo81].maxRange : (cal === '106' ? 5650 : 8300);
-        let muhName = cal === '81' ? ammo81[currentAmmo81].name : (cal === '106' ? (currentAmmo106 === 'm329' ? 'M329A1 HE' : 'M328A1 Sis') : (currentAmmo120 === 'tahrip' ? 'Mod 209' : (currentAmmo120 === 'mod236' ? 'Mod 236 (Aydınlatma)' : 'Mod 226 (Sis)')));
+        let muhName = cal === '81' ? ammo81[currentAmmo81].name : (cal === '106' ? (currentAmmo106 === 'm329' ? 'M329A1 HE' : 'M328A1 Sis') : (currentAmmo120 === 'tahrip' ? 'Mod 209' : (currentAmmo120 === 'mod236' ? 'Mod 236 (Aydınlatma)' : (currentAmmo120 === 'hc' ? 'Mod 250 (HC Sis)' : 'Mod 226 (Sis)'))));
         document.getElementById('maxRangeDisplay').innerText = `🎯 ${muhName}  ·  Azami ${maxR} m`;
         document.getElementById('maxRangeDisplay').classList.add('active-ammo');
         // Hesaplama referansı önceliği: 81mm → Gerçek Kuzey, 106/120mm → Grid Kuzey
@@ -8341,7 +8359,7 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
             // BH10 tablo verisi 8180m'de bitmektedir; 8180-8300m aralığı için
             // tablonun son eğiminden tahmini ekstrapolasyon kullanılır.
             if(finalRange > 8300) throw new Error(`Menzil dışı (${Math.round(finalRange)}m > azami 8300m)`);
-            if (currentAmmo120 === 'tahrip' || currentAmmo120 === 'sis') {
+            if (currentAmmo120 === 'tahrip' || currentAmmo120 === 'sis' || currentAmmo120 === 'hc') {
                 // MOD 209/226/236/250 aynı Cetvel-F/B'yi kullanır (AAC 120-C-3 Cetvel-F başlığı); Sis de aynı yoldan hesaplanır
                 // BH: manuel mod aktifse seçili BH, değilse otomatik
                 let bh = bhAuto120 ? getBH(finalRange) : parseInt(document.getElementById('bh120Manual').value);
@@ -8365,20 +8383,32 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
                     }
                 }
                 yukselis = Math.min(1550, Math.max(400, yukselis));
-                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: currentAmmo120 === 'sis' ? 'Mod 226 Sis' : 'Mod 209 Tahrip', altFark, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight };
+                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: currentAmmo120 === 'sis' ? 'Mod 226 Sis' : (currentAmmo120 === 'hc' ? 'Mod 250 HC Sis' : 'Mod 209 Tahrip'), altFark, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight };
             } else if (currentAmmo120 === 'mod236') {
-                // MOD 236 Aydınlatma:
-                // KKT 315-30A L21749: Aydınlatmada tabii yan VE TAÇ (rakım farkı) uygulanmaz!
-                // Sadece mesafe → nişangah → tapa saniyesi
+                // MOD 236 Aydınlatma: AAC 120-C-3'e göre MOD 209/226/236/250 aynı Cetvel-F/B'yi kullanır
+                // (aynı balistik). Yükseliş, tabii yan ve (açıksa) Cetvel-B rakım düzeltmesi tahrip ile aynıdır;
+                // tapa = uçuş süresi − BH'ya göre sabit süre (4.4.1), 0,5 sn'ye yuvarlanır.
                 let bh = bhAuto120 ? getBH(finalRange) : parseInt(document.getElementById('bh120Manual').value);
                 bh = Math.min(10, Math.max(1, bh));
                 let yukselis = Math.round(interpolateTableExtrap(elev120_Tahrip[bh], finalRange));
-                // NOT: paralanma (TAÇ rakım) ve tabiiYan eklenmez - talimnameye göre
                 let flight = Number(interpolateTableExtrap(flightTime120_Tahrip[bh], finalRange).toFixed(1));
-                // Yan: sadece plan yanı (tabii yan yok, TAÇ yok)
-                let duzYan = Math.round(normalizeMils(finalYan));
-                const tapaSn = getMod236Tapa(bh, flight, altFark);
-                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'MOD 236 Aydınlatma', altFark: 0, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
+                let tabiiYanVal = interpolateTableExtrap(tabiiYan120_Tahrip[bh], finalRange);
+                let duzYan = Math.round(normalizeMils(finalYan + tabiiYanVal));
+                let sonAlt = 0;
+                if (tacEnabled) {
+                    const _bYuk = cetvelB120Yukselis(bh, finalRange, altFark);
+                    if (_bYuk !== null) {
+                        yukselis = Math.round(_bYuk);
+                    } else {
+                        let dtac = altFark / (finalRange / 1000);
+                        let tacFactor = tacFaktorByBH[bh] || -4.1;
+                        yukselis += Math.round((dtac / 10) * tacFactor);
+                    }
+                    sonAlt = altFark;
+                }
+                yukselis = Math.min(1550, Math.max(400, yukselis));
+                const tapaSn = getMod236Tapa(bh, flight, sonAlt);
+                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'MOD 236 Aydınlatma', altFark: sonAlt, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight, tapaSaniyesi: tapaSn };
             } else { // Sis
                 let weight = document.getElementById('weightGroup').value;
                 let elev = get120Elevation(finalRange, weight);
@@ -8458,7 +8488,7 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
         let aralik = 40;
         if(currentCaliber === '81' && ammo81[currentAmmo81]?.type === 'sis') aralik = 10;
         if(currentCaliber === '106' && currentAmmo106 === 'm328') aralik = 10;
-        if(currentCaliber === '120' && currentAmmo120 === 'sis') aralik = 10;
+        if(currentCaliber === '120' && (currentAmmo120 === 'sis' || currentAmmo120 === 'hc')) aralik = 10;
         let yanCorrDir = document.getElementById('yanCorrDir').value;
         let yanCorrM = parseFloat(document.getElementById('yanCorrMeters').value) || 0;
         let rangeCorrDir = document.getElementById('rangeCorrDir').value;
