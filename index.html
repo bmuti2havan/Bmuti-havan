@@ -2970,7 +2970,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-77</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-78</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -8162,7 +8162,9 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
             const dtac = mod236DtacPerBH[bh] || 0.4;
             t -= (altFark / 50) * dtac;
         }
-        return t > 0 ? Math.round(t*10)/10 : null;
+        // AAC 120-C-3 4.4.1: tapa ayar hassasiyeti 0,5 sn — 0,5 sn aralıklara yuvarlanır (32,9-4,5=28,4 → 28,5)
+        t = Math.round(t*2)/2;
+        return t > 0 ? t : null;
     }
 
     function calculateTargetSimpleWithYanCorrection(hGrid, hRak, mGrid, mRak, dtnIaMils, dtnYan, rCorrDir, rCorrM, yCorrDir, yCorrM, paralanma) {
@@ -8339,7 +8341,8 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
             // BH10 tablo verisi 8180m'de bitmektedir; 8180-8300m aralığı için
             // tablonun son eğiminden tahmini ekstrapolasyon kullanılır.
             if(finalRange > 8300) throw new Error(`Menzil dışı (${Math.round(finalRange)}m > azami 8300m)`);
-            if (currentAmmo120 === 'tahrip') {
+            if (currentAmmo120 === 'tahrip' || currentAmmo120 === 'sis') {
+                // MOD 209/226/236/250 aynı Cetvel-F/B'yi kullanır (AAC 120-C-3 Cetvel-F başlığı); Sis de aynı yoldan hesaplanır
                 // BH: manuel mod aktifse seçili BH, değilse otomatik
                 let bh = bhAuto120 ? getBH(finalRange) : parseInt(document.getElementById('bh120Manual').value);
                 bh = Math.min(10, Math.max(1, bh));
@@ -8362,7 +8365,7 @@ function calculateManualMetro(atisIaDeg, hedefMesafe, caliber, bh, ammoId) {
                     }
                 }
                 yukselis = Math.min(1550, Math.max(400, yukselis));
-                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: 'Mod 209 Tahrip', altFark, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight };
+                sonuc = { yan: duzYan, yukselis: yukselis, mesafe: Math.round(finalRange), bh: `BH ${bh}`, mühimmat: currentAmmo120 === 'sis' ? 'Mod 226 Sis' : 'Mod 209 Tahrip', altFark, havIaDeg, havIaMils, trueAzimuthMils, convergenceMils, ucusSuresi: flight };
             } else if (currentAmmo120 === 'mod236') {
                 // MOD 236 Aydınlatma:
                 // KKT 315-30A L21749: Aydınlatmada tabii yan VE TAÇ (rakım farkı) uygulanmaz!
