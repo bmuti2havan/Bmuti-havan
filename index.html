@@ -2966,7 +2966,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.09-72</span><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-73</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -12018,6 +12018,7 @@ body.app-mode #appUstBildirim{display:block}
     baslik('ARAÇLAR');
     var gb = el('ortakGorevAcBtnGozet');
     if (gb) dl.appendChild(tile('📨', 'Görev İste', function () { appKapat(); gb.click(); }));
+    dl.appendChild(tile('📖', 'Kullanım Kılavuzu', function () { appKapat(); if (window.kilavuzAc) kilavuzAc(); }));
     dl.appendChild(tile('📚', 'Teknik Bilgiler', function () { appKapat(); var m = el('bilgiModal'); if (m) m.style.display = 'flex'; }));
     window.__appEk.forEach(function (it) { if (!it.fn) return;
       dl.appendChild(tile(it.ikon, it.ad, function () { it.fn(); })); });
@@ -12846,5 +12847,43 @@ body.app-mode .left-panel{padding-bottom:10px!important}
 })();
 </script>
 
+<script>
+/* ── KULLANIM KILAVUZU ── */
+(function(){
+  var K=[["Giriş ve kullanıcı hesabı", ["Uygulama açılışta giriş ister. “Yeni kullanıcı oluştur” ile kendi kullanıcı adınızı ve şifrenizi belirleyin; sonraki girişlerde bunlarla girin.", "Hedefleriniz, geçmişiniz, atış listeniz, defteriniz ve tanzim kayıtlarınız yalnızca kendi hesabınızda görünür.", "Hesap bu cihaza özeldir. Şifreyi unutursanız kurtarılamaz; yeni hesap açmanız gerekir.", "Ekranın en altındaki satırdan Çıkış yapabilir, kayıtlarınızı Yedekle ile dosyaya alıp Geri yükle ile geri getirebilirsiniz."], ["giris"]], ["Kalibre ve mühimmat seçimi", ["Üstten 81, 106 veya 120 mm havanı seçin.", "Mühimmat kartlarından kullanacağınız mühimmatı seçin. Kartın altında menzili yazar; hedef bu menzilin dışındaysa sayı üretilmez, “Menzil dışı” uyarısı verilir.", "Kalibre değişince mühimmat listesi, kullanılan tablo ve hesaplama referansı birlikte değişir (81 mm: Gerçek Kuzey, 106 / 120 mm: Grid)."], ["ust", "cal120"]], ["Girdileri girme", ["DTN bilgileri: istikamet ve yanı milyem olarak yazın.", "Mevzi ve hedef: MGRS gridini ve rakımı girin. Haritadan veya konumdan almak da mümkündür.", "Hatalı veya sınır dışı değerde alan kırmızıya döner; düzeltmeden hesap yapılmaz.", "İsteğe bağlı alanlar: atış saati ve dost kuvvet gridi.", "Hazır olunca HESAPLA düğmesine basın."], ["girdi"]], ["Sonucu okuma", ["Üstteki büyük iki kart hedef yanı ve yükselişi (milyem) gösterir; dokununca değer kopyalanır.", "Altında mesafe, barut hakkı (BH), istikamet, rakım farkı, uçuş süresi ve mermi tepe yüksekliği bulunur.", "Sonuçları Kopyala, PDF Rapor ve Paylaş düğmeleriyle sonucu dışarı verebilirsiniz.", "Yükseliş ve yan, TAÇ (tepe açısı düzeltmesi) otomatik uygulanmış değerlerdir."], ["sonuc1", "sonuc2"]], ["Dost kuvvet kontrolü", ["Dost kuvvet gridini girerseniz hedefin ona uzaklığı denetlenir.", "Uzaklık 600 m’nin altındaysa kırmızı “tehlikeli yakınlık” uyarısı görünür.", "Alan boş bırakılırsa denetim yapılmaz. Uyarı hesabı engellemez; karar kullanıcıdadır."], ["dost"]], ["Metro (hava düzeltmesi)", ["Alt menüden Metro’yu açın. Rüzgâr hızı (knot) ve yönü (milyem), sıcaklık, basınç ve nemi girin.", "İsterseniz canlı hava verisini çekebilirsiniz (internet gerekir). Canlı veri bir tahmindir; resmî metro raporunuz varsa onu elle girin.", "Düzeltilen yan, yükseliş ve mesafe sonuç ekranında gösterilir."], ["metro1", "metro2"]], ["Konvoy (hareketli hedef)", ["Alt menüden Konvoy’u açın. Hedefin hareket yönünü (8 yön veya milyem) ve hızını (km/sa) girin.", "Uçuş süresi otomatik hesaplanır. Sonuçta 3 namlu için baş, orta ve son koordinatı (40 m aralık) çıkar.", "1–9 dakikalık zaman tablosu her 15 saniye için konum, yan, yükseliş ve BH verir. Menzil dışı satırlar işaretlenir.", "Konvoy dönerse veya hızı değişirse yeniden hesaplayın."], ["konvoy1", "konvoy2"]], ["Demet, aydınlatma ve sis", ["Daha fazla menüsünden ilgili modülü açın.", "Demet: kapalı, paralel veya özel demet için 3 havanın verisi tek seferde hesaplanır.", "Aydınlatma: 1 aydınlatma + 3 tahrip; hangisinin önce atılacağı, kaç saniye arayla ve tapa ayarı gösterilir.", "Sis: rüzgâra dik 3 nokta, 10 m aralıkla hesaplanır.", "3 ayrı hedef modülüyle farklı hedefler tek seferde hesaplanır."], ["demet", "aydin", "sis"]], ["Polar ve ileri gözetleyici", ["Polar: gözetleyici gridi, yön ve mesafeyi girin; hedef grid hesaplanır.", "İleri gözetleyici düzeltmesini girin; sistem bunu havan–hedef hattına çevirir (talimname 4-41 / 4-67).", "Hedef açısı 500 milyemi aşarsa uyarı çıkar (talimname 6-158)."], ["polar", "gozet"]], ["Tanzim", ["Daha fazla menüsünden Tanzim’i açın. Tanzim 3 namlu için tur tur ilerler.", "Her turda gözetleyicinin verdiği düzeltmeyi girin; yeni yan ve yükseliş hesaplanır. Son durum tablosu ve atış komutu paylaşılabilir.", "Hedef değişirse eski turlar geçersiz sayılır. Metro ve düzeltme faktörleri güvenlik için her tanzimde yeniden girilir."], ["tanzim1", "tanzim2"]], ["Atış zamanı ve düşme alarmı", ["Atış saatini girin veya +30 sn / +1 dk / +2 dk / +5 dk düğmelerini kullanın. Geri sayım başlar.", "Mermi namludan çıkınca Atıldı düğmesine basın: uçuş geri sayımı hemen başlar.", "Ekranın üstünde canlı sayaç görünür; bip ve titreşim olur.", "Düşmeye 3 saniye kala tam ekran kırmızı “DİKKAT DÜŞTÜ!” alarmı verilir."], ["zaman1", "zaman2", "zaman3"]], ["Harita, atış listesi ve defter", ["Harita: uydu haritasından mevzi ve hedef seçin, konumdan alın veya MGRS arayın.", "Atış listesi: çok hedef ekleyin, “Hepsini hesapla” ile toplu hesap yapın. Metin, KML, TXT veya CSV içe aktarabilirsiniz.", "Atış defteri: düşme sonuçlarını kaydedin; sistem K ve yan faktörü önerir.", "Kayıtlı hedefler ve geçmiş hesaplar kendi hesabınızda saklanır."], ["harita", "liste", "defter"]], ["Ortak ekran ve görev isteme", ["Ortak atış görevinde 4 haneli oda koduyla ekip aynı görevi anlık görür.", "Roller: Ateş İdare, Komutan, İleri Gözetleyici, Manga Personeli. Ekran role göre sadeleşir; Komutan onay, ret veya bekle verir.", "İleri Gözetleyici “Görev İste” ile demet, aydınlatma, sis veya konvoy talep eder.", "Yalnızca atış sonuçları paylaşılır. İnternet gerekir."], ["ortak", "gorev"]], ["Teknik bilgiler, gece görüş ve görünüm", ["Teknik Bilgiler: emniyet kuralları ve havan bilgileri.", "Gece görüş: kırmızı ekran; ayrıca Gece / Gündüz teması.", "Daha fazla menüsünden Klasik Görünüm’e geçebilirsiniz; geri dönmek için “Uygulama Görünümü” düğmesine basın.", "Çevrimdışıyken ekranda rozet görünür; temel hesaplar internetsiz çalışır."], ["teknik", "gece", "cekmece"]]];
+  var css=document.createElement('style');
+  css.textContent='#kilavuzOv{position:fixed;inset:0;z-index:9600;background:#f3f6fb;display:none;flex-direction:column;font-family:inherit;color:#1b2740}'+
+  '#kilavuzOv .kh{background:#0b1f3d;color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex:none}#kilavuzOv .kh b{font-size:1rem}#kilavuzOv .kh button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;padding:7px 12px;font-weight:700;font-size:.9rem}'+
+  '#kilavuzOv .kg{overflow:auto;flex:1;padding:12px 14px 40px;-webkit-overflow-scrolling:touch}#kilavuzOv .kn{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}'+
+  '#kilavuzOv .kn a{background:#fff;border:1px solid #cfdaee;color:#0b1f3d;border-radius:16px;padding:6px 11px;font-size:.78rem;font-weight:600;cursor:pointer}'+
+  '#kilavuzOv .kc{background:#fff;border:1px solid #d6deec;border-radius:12px;padding:14px;margin-bottom:14px}#kilavuzOv h3{font-size:1.02rem;margin:0 0 8px;color:#0b1f3d}'+
+  '#kilavuzOv .kc ol{margin:0 0 10px 18px;padding:0}#kilavuzOv .kc li{font-size:.86rem;line-height:1.5;margin-bottom:5px}'+
+  '#kilavuzOv .ks{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}#kilavuzOv .ks img{height:300px;width:auto;border-radius:12px;border:3px solid #0b1220;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.25)}'+
+  '#kilavuzOv .kz{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9700;display:none;align-items:center;justify-content:center}#kilavuzOv .kz img{max-width:96%;max-height:96%;border-radius:10px}'+
+  '#kilavuzOv .kf{font-size:.72rem;color:#6b7a96;text-align:center;margin-top:6px}'+
+  '[data-theme=dark] #kilavuzOv{background:#0e1626;color:#dbe4f5}[data-theme=dark] #kilavuzOv .kc,[data-theme=dark] #kilavuzOv .kn a{background:#16233b;border-color:#2a3b5c;color:#dbe4f5}[data-theme=dark] #kilavuzOv h3{color:#fff}'+
+  '#kilavuzLink{cursor:pointer;color:#ffd166;text-decoration:underline;font-weight:700}';
+  document.head.appendChild(css);
+  var ov=null;
+  function kur(){
+    ov=document.createElement('div'); ov.id='kilavuzOv';
+    var h='<div class="kh"><b>📖 Kullanım Kılavuzu</b><button type="button" id="kilavuzKapat">Kapat ✕</button></div><div class="kg" id="kilavuzGovde"><div class="kn">';
+    K.forEach(function(c,i){h+='<a data-i="'+i+'">'+(i+1)+'. '+c[0]+'</a>';});
+    h+='</div>';
+    K.forEach(function(c,i){
+      h+='<div class="kc" id="kil'+i+'"><h3>'+(i+1)+'. '+c[0]+'</h3><ol>'+c[1].map(function(a){return '<li>'+a+'</li>';}).join('')+'</ol><div class="ks">'+
+        c[2].map(function(g){return '<img loading="lazy" src="kilavuz/'+g+'.jpg" alt="'+c[0]+'">';}).join('')+'</div></div>';
+    });
+    h+='<div class="kf">Ekran görüntüleri örnek verilerle hazırlanmıştır. HAİS yardımcı araçtır; atışlarda resmî tablolar, talimname ve emniyet kuralları esastır. Görüntüye dokunarak büyütebilirsiniz.</div></div><div class="kz" id="kilavuzZ"><img></div>';
+    ov.innerHTML=h; document.body.appendChild(ov);
+    ov.querySelector('#kilavuzKapat').onclick=function(){ov.style.display='none';};
+    ov.querySelectorAll('.kn a').forEach(function(a){a.onclick=function(){var t=document.getElementById('kil'+a.getAttribute('data-i'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});};});
+    var z=ov.querySelector('#kilavuzZ'); z.onclick=function(){z.style.display='none';};
+    ov.querySelectorAll('.ks img').forEach(function(im){im.onclick=function(){z.querySelector('img').src=im.src;z.style.display='flex';};});
+  }
+  window.kilavuzAc=function(){ if(!ov)kur(); ov.style.display='flex'; ov.querySelector('#kilavuzGovde').scrollTop=0; };
+  document.addEventListener('DOMContentLoaded',function(){var l=document.getElementById('kilavuzLink'); if(l)l.onclick=window.kilavuzAc;});
+})();
+</script>
 </body>
 </html>
