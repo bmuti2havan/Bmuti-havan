@@ -2971,7 +2971,7 @@ input:focus, select:focus, textarea:focus {
   <!-- PLANLANAN GELİŞTİRMELER -->
   <div style="text-align:center;padding:10px 20px;background:#1a2332;border-top:1px solid rgba(255,255,255,0.06);">
     <span style="font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:.3px;">
-      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-81</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
+      Atış değerleri yardımcı araçtır. Resmî atış tabloları ve komutanın kararı esastır.<br><span id="haisSurum" style="opacity:.7;font-size:.9em;">Sürüm 2026.11.11-82</span><div style="margin-top:6px"><a id="kilavuzLink">📖 Kullanım Kılavuzu</a></div><div id="kullaniciSatir"></div>
     </span>
   </div>
 
@@ -13771,13 +13771,17 @@ body.app-mode .left-panel{padding-bottom:10px!important}
   var hr = el('hedefRakim'); if (!hr) return;
   var row = hr.closest('.param-row'); if (!row) return;
   var kart = document.createElement('div'); kart.id = 'atisZamanKart'; kart.className = 'param-row';
-  kart.innerHTML = '<span class="az-b">⏱ ATIŞ ZAMANI (geri sayım)</span>' +
+  kart.innerHTML = '<button type="button" id="azAc" aria-expanded="false" style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;font-size:.78rem">⏱ ATIŞ ZAMANI (geri sayım)<span id="azOk">▾</span></button><div id="azGovde" style="display:none;margin-top:6px">' +
     '<div class="az-r"><label>Atış saati</label><input id="azSaat" type="time" step="1"></div>' +
     '<div class="az-r"><label></label><button class="q" data-d="30">+30 sn</button><button class="q" data-d="60">+1 dk</button><button class="q" data-d="120">+2 dk</button><button class="q" data-d="300">+5 dk</button></div>' +
     '<div class="az-r"><label>Uçuş (sn)</label><input id="azUcus" type="number" inputmode="decimal" step="0.1" placeholder="otomatik" style="max-width:90px"><button id="azAtildi" style="background:#b45309;white-space:nowrap" title="Mermi namludan çıktı: uçuş geri sayımını başlat">💥 Atıldı</button></div>' +
     '<div class="az-r"><button class="g" id="azBasla">▶ Geri sayımı başlat</button><button class="k" id="azIptal">■ İptal</button></div>' +
-    '<div id="azDurum"></div>';
+    '<div id="azDurum"></div></div>';
   row.insertAdjacentElement('afterend', kart);
+  el('azAc').onclick = function () {
+    var g = el('azGovde'), ac = g.style.display === 'none';
+    g.style.display = ac ? 'block' : 'none'; el('azOk').textContent = ac ? '▴' : '▾'; this.setAttribute('aria-expanded', ac ? 'true' : 'false');
+  };
 
   var elle = false, ctx = null, tm = null, fireAt = 0, flight = 0, wl = null, evre = '', sonBip = -1, alarmda = false;
   el('azUcus').addEventListener('input', function () { elle = true; });

@@ -1,4 +1,4 @@
-const CACHE = 'hais-v81';
+const CACHE = 'hais-v82';
 const ASSETS = ['./', './index.html'];
 const KILAVUZ = ['./kilavuz/aydin.jpg', './kilavuz/cal120.jpg', './kilavuz/cekmece.jpg', './kilavuz/defter.jpg', './kilavuz/demet.jpg', './kilavuz/dost.jpg', './kilavuz/gece.jpg', './kilavuz/girdi.jpg', './kilavuz/giris.jpg', './kilavuz/gorev.jpg', './kilavuz/gozet.jpg', './kilavuz/harita.jpg', './kilavuz/konvoy1.jpg', './kilavuz/konvoy2.jpg', './kilavuz/liste.jpg', './kilavuz/metro1.jpg', './kilavuz/metro2.jpg', './kilavuz/ortak.jpg', './kilavuz/polar.jpg', './kilavuz/sis.jpg', './kilavuz/sonuc1.jpg', './kilavuz/sonuc2.jpg', './kilavuz/tanzim1.jpg', './kilavuz/tanzim2.jpg', './kilavuz/teknik.jpg', './kilavuz/ust.jpg', './kilavuz/zaman1.jpg', './kilavuz/zaman2.jpg', './kilavuz/zaman3.jpg'];
 
